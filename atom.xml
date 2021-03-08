@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://zyyiszyy.github.io</id>
+    <title>zyyire</title>
+    <updated>2021-03-08T17:32:59.446Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://zyyiszyy.github.io"/>
+    <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
+    <subtitle>破碎吧现实，崩裂吧精神，放逐这个世界！</subtitle>
+    <logo>https://zyyiszyy.github.io/images/avatar.png</logo>
+    <icon>https://zyyiszyy.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2021, zyyire</rights>
+    <entry>
+        <title type="html"><![CDATA[学习Git遇到的一些问题]]></title>
+        <id>https://zyyiszyy.github.io/post/xue-xi-git-de-yi-xie-jian-dan-shi-yong-fang-fa/</id>
+        <link href="https://zyyiszyy.github.io/post/xue-xi-git-de-yi-xie-jian-dan-shi-yong-fang-fa/">
+        </link>
+        <updated>2021-03-08T14:48:12.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="git提交的步骤">git提交的步骤</h2>
+<pre><code>git add .  //添加文件到本地仓库
+git commit -m &quot;first commit&quot;  //添加描述信息
+git remote add origin main  //连接远程仓库
+git push -u origin main  //把本地仓库的文件推送到远程仓库
+</code></pre>
+<h2 id="提交出现以下错误">提交出现以下错误</h2>
+<p><img src="https://zyyiszyy.github.io/post-images/1615219179296.png" alt="" loading="lazy"><br>
+推送之前加入：<br>
+<code>git pull origin main</code></p>
+<h2 id="若还是失败提示以下错误">若还是失败，提示以下错误</h2>
+<p><img src="https://zyyiszyy.github.io/post-images/1615219289494.png" alt="" loading="lazy"><br>
+例如更新博客时，可尝试强制push：<br>
+<code>git push -f origin main</code><br>
+此方法不要随便用，因为强制push会覆盖掉远程的所有代码。</p>
+<h2 id="初始使用git远程上传文件设置">初始使用git远程上传文件设置</h2>
+<p>1、ssh-keygen -t rsa -C &quot;xxxxx@qq.com&quot;  //生成ssh密钥<br>
+2、进文件id——rsa.pub，复制密钥到github<br>
+3、ssh -T git@github.com   //检测是否配置成功，成功提示Hi xxxx......<br>
+4、git config --global user.name &quot;username&quot;<br>
+git config --global user.email &quot;xxxxx@qq.com&quot;     //配置信息<br>
+5、git init   //git初始化<br>
+6、git commit -m &quot;first commit&quot;   //添加描述信息<br>
+7、git remote add origin git@github.com:zyyiszyy/zyyiszyy.github.io.git  //连接远程仓库，失败的话先 git remote rm origin<br>
+8、git pull --rebase origin main  //拉取远程库<br>
+9、git push -u origin main  //把本地仓库的文件推送到远程仓库<br>
+10、若还是失败，考虑强制：git push -f origin main   用之前要慎重考虑！！！</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[接触CTF以来的闲散笔记]]></title>
+        <id>https://zyyiszyy.github.io/post/idle_notes/</id>
+        <link href="https://zyyiszyy.github.io/post/idle_notes/">
+        </link>
+        <updated>2021-03-07T08:03:43.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="dns刷新">dns刷新：</h3>
+<pre><code>ipconfig /flushdns
+</code></pre>
+<h3 id="z3py约束求解">z3py约束求解：</h3>
+<pre><code>先定义变量：a1=BitVec('a1',32)    a2=Int('a2')      #注意这里的变量类型是z3里的，不是python里的，要转化才可用
+创建约束求解器：solver=Solver()                          #如果有位运算就要bitvec
+添加约束条件：solver.add(a&gt;1)
+判断解是否存在：if solver.check()==sat:   #不存在为unsat
+输出解：print(solver.model())
+取出解的某项的值：solver.model()[a1]
+位变量bitvec转化python整数：solver.model()[a1].as_long()
+约束可以逻辑运算：Or,And,Not
+示例脚本有保存
+</code></pre>
+<h3 id="ropgadget或等rop链">ROPgadget或等rop链：</h3>
+<pre><code>ROPgadget --binary 文件路径 --ropchain
+</code></pre>
+<h3 id="kali的checksec使用">kali的checksec使用：</h3>
+<pre><code>checksec --file=文件路径
+</code></pre>
+<h3 id="ubuntu打开命令行">Ubuntu打开命令行：</h3>
+<pre><code>ctrl+alt+T
+</code></pre>
+<h3 id="gdb的一些命令">gdb的一些命令：</h3>
+<pre><code>r `python -c 'print &quot;A&quot;*'268 + &quot;B&quot;*4+&quot;C&quot;*4`
+p/x $esp          查看esp寄存器的值
+x/x $esp          查看寄存器的值并显示其地址
+</code></pre>
+<h3 id="python2里写中文">python2里写中文：</h3>
+<pre><code>加上：#-*-coding:utf-8-*-
+</code></pre>
+<h3 id="usrbinpython">#!/usr/bin/python</h3>
+<pre><code>脚本语言的第一行，目的就是指出，你想要你的这个文件中的代码用什么可执行程序去运行它。
+</code></pre>
+<h3 id="提示xe6什么的错误">提示'\xe6'什么的错误：</h3>
+<pre><code>脚本前面加：#_*_coding:utf8_*_
+</code></pre>
+<h3 id="查看各个端口和对应使用的进程uid">查看各个端口和对应使用的进程uid：</h3>
+<pre><code>netstat -ano
+</code></pre>
+<h3 id="字符串转字节">字符串转字节：</h3>
+<pre><code>bytes(m,'utf-8')
+str(m,'utf-8')
+from Crypto.Util.number import *
+long_to_bytes(m)
+</code></pre>
+<h3 id="python反编译">python反编译：</h3>
+<pre><code>uncompyle6是一个原生python的跨版本反编译器和fragment反编译器
+uncompyle6 -o babypy.py babypy.pyc
+</code></pre>
+<h3 id="python编译">python编译：</h3>
+<pre><code>&gt;&gt;&gt; import py_compile
+&gt;&gt;&gt; py_compile.compile(r'/Users/zhangyi/Downloads/md5.py')
+</code></pre>
+<h3 id="kali更改时间">kali更改时间：</h3>
+<pre><code>while true; do date -us &quot;2018-01-01 00:00:00&quot;;done
+</code></pre>
+<h3 id="python相关">python相关：</h3>
+<pre><code>不能直接float变16进制，pwntools的p64里只能放16进制，可以用在线工具或写脚本。
+</code></pre>
+<h3 id="python写字符串依次遍历">python写字符串依次遍历：</h3>
+<pre><code>a=‘ada’，b='',for i in range(len(a)):****
+</code></pre>
+<h3 id="竖列变行">竖列变行：</h3>
+<pre><code>选择abc所在的三行，按Ctrl+H（编辑菜单，替换），将 ^p 替换为 &quot; &quot;。
+</code></pre>
+<h3 id="upx脱壳">upx脱壳：</h3>
+<pre><code>cmd运行upx.exe -d 目标路径
+</code></pre>
+<h3 id="ord是ascii变为数字">ord是ASCII变为数字，</h3>
+<pre><code>chr数字变ASCII字符
+</code></pre>
+<h3 id="jar文件为java可执行文件">.jar文件为java可执行文件：</h3>
+<pre><code>打开jar文件方式：cmd：Java -jar 目标路径
+</code></pre>
+<h3 id="vim各个模式切换">vim各个模式切换：</h3>
+<pre><code>i进入编辑模式，esc退出编辑模式进入一般命令模式，：进入命令行模式。wq！保存并退出。
+</code></pre>
+<h3 id="在kali写c代码">在kali写C代码：</h3>
+<pre><code>建立文本.c文件名。命令：gcc test.c编译，在默认目录里生成a.out文件，运行就是代码运行结果。
+</code></pre>
+<h3 id="随机数注意事项">随机数注意事项：</h3>
+<pre><code>windows和linux环境下相同种子伪随机数生成是不同的。
+</code></pre>
+<h3 id="c保留两位小数输出">C++保留两位小数输出：</h3>
+<pre><code>#include &lt;iomanip&gt;   cout &lt;&lt; &quot;a=&quot; &lt;&lt;fixed&lt;&lt; setprecision(2) &lt;&lt; a &lt;&lt;endl; //输出结果为a=0.20
+</code></pre>
+<h3 id="c排序函数和逆向输出字符串">C++排序函数和逆向输出（字符串）：</h3>
+<pre><code>reverse(remain.begin(),remain.end());
+sort（a,a+n）;
+</code></pre>
+<h3 id="c获取数组的长度">C++获取数组的长度：</h3>
+<pre><code>len=sizeof(a)/sizeof(a[0])；
+</code></pre>
+<h3 id="很多aaabbb有关的密码">很多AAABBB有关的密码：</h3>
+<pre><code>培根密码：5个一组。摩斯密码:  .-  组成
+</code></pre>
+<h3 id="rar块的开头">rar块的开头：</h3>
+<pre><code>文件块0x74
+</code></pre>
+<h3 id="密码种类有很多">密码种类有很多：</h3>
+<pre><code>MD5，base64，培根密码，摩斯密码，栅栏密码(W型和传统型)，
+</code></pre>
+<h3 id="常见文件的文件头">常见文件的文件头：</h3>
+<pre><code>https://blog.csdn.net/weixin_44604541/article/details/110082054
+</code></pre>
+<h3 id="rot13在线解密">Rot13在线解密：</h3>
+<pre><code>https://www.jisuan.mobi/puzzm6z1B1HH6yXW.html
+</code></pre>
+<h3 id="md5在线解密">md5在线解密：</h3>
+<pre><code>https://www.somd5.com/
+</code></pre>
+<h3 id="base64在线解码">base64在线解码：</h3>
+<pre><code>https://www.sojson.com/base64.html
+</code></pre>
+<h3 id="pdf转word">pdf转word：</h3>
+<pre><code>https://app.xunjiepdf.com/pdf2word/
+</code></pre>
+<h3 id="mosi密码">mosi密码：</h3>
+<pre><code>http://moersima.00cha.net/
+</code></pre>
+<h3 id="培根密码">培根密码：</h3>
+<pre><code>http://rumkin.com/tools/cipher/baconian.php
+</code></pre>
+<h3 id="栅栏密码w型">栅栏密码（W型）：</h3>
+<pre><code>http://www.atoolbox.net/Tool.php?Id=777
+</code></pre>
+<h3 id="栅栏密码传统">栅栏密码（传统）：</h3>
+<pre><code>http://www.atoolbox.net/Tool.php?Id=855
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[CUMTCTF2021寒假赛部分WP]]></title>
+        <id>https://zyyiszyy.github.io/post/cumtctf-han-jia-sai-bu-fen-wp/</id>
+        <link href="https://zyyiszyy.github.io/post/cumtctf-han-jia-sai-bu-fen-wp/">
+        </link>
+        <updated>2021-01-31T12:45:49.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="re1">RE1</h2>
+<p>先根据ida分析逻辑，写出了加密的脚本，下图是加密的逻辑，还不是完全正确，可能还要部位或怎么，但主要逻辑如下，有两层循环每次外层循环，一开始存flag的那块内存就会改变，并且ki改变。外层循环结束得到一个ki，然后存str【ki】，最终比较是否为已知的那串字符串，借此判断flag正误。</p>
+<figure data-type="image" tabindex="1"><img src="https://zyyiszyy.github.io/post-images/1615187267465.png" alt="" loading="lazy"></figure>
+<p>一开始没看出来是base58，硬着头皮逆，一直卡了两三天，因为是左移8位，所以直接flagg【i】*58+ki取低八位就是ascii值，每次确定一个位，先从最后一位开始逆，上一位的ki也是可以求出来。逆脚本中的k一开始以为是多少都不影响结果，因为试了好多次都算出来最后一位是125就是‘}’，但再多算几位就不一样了。最后几乎要放弃这道题的时候试了下如图让每轮初始k=0，结果出来正确结果。可以说在自己都没理解的情况下写出了解题脚本🤣</p>
+<p><img src="https://zyyiszyy.github.io/post-images/1615187280597.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615187287238.png" alt="" loading="lazy"></p>
+<p>后来得到flag才焕然大悟这是个算法，可能base64的变行，叫做base58，要是能一眼看出，直接就可用在线工具求解。</p>
+<figure data-type="image" tabindex="2"><img src="https://zyyiszyy.github.io/post-images/1615187296228.png" alt="" loading="lazy"></figure>
+<h2 id="re2">RE2</h2>
+<p>先随便输入flag如下，flag头是正确的：</p>
+<figure data-type="image" tabindex="3"><img src="https://zyyiszyy.github.io/post-images/1615187359242.png" alt="" loading="lazy"></figure>
+<p>动态调试先看出32位flag：</p>
+<figure data-type="image" tabindex="4"><img src="https://zyyiszyy.github.io/post-images/1615187362936.png" alt="" loading="lazy"></figure>
+<p>走到如图位置发现是一个判断，因为我输入的flag开头CUMTCTF{是正确的，先出现几次相等，未发生跳转，后来出错，跳转输出提示错误。</p>
+<figure data-type="image" tabindex="5"><img src="https://zyyiszyy.github.io/post-images/1615187390149.png" alt="" loading="lazy"></figure>
+<p>这是一开始CUMTCTF{的判断：</p>
+<figure data-type="image" tabindex="6"><img src="https://zyyiszyy.github.io/post-images/1615187393682.png" alt="" loading="lazy"></figure>
+<p>这里出现错误，前面发现C和T出现两次的字母对应的数字也是一样的，由此推测应该是一个字符能对应出一个数字，是个单表查表操作：</p>
+<figure data-type="image" tabindex="7"><img src="https://zyyiszyy.github.io/post-images/1615187487734.png" alt="" loading="lazy"></figure>
+<p>将下面的跳转语句nop掉，方便F9快速观察做表，然后依次输入可见字符列表，查表得到flag。</p>
+<figure data-type="image" tabindex="8"><img src="https://zyyiszyy.github.io/post-images/1615187491921.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[hackme逆向题目部分WP]]></title>
+        <id>https://zyyiszyy.github.io/post/hackme-ni-xiang-ti-mu-bu-fen-wp/</id>
+        <link href="https://zyyiszyy.github.io/post/hackme-ni-xiang-ti-mu-bu-fen-wp/">
+        </link>
+        <updated>2021-01-09T09:29:53.000Z</updated>
+        <content type="html"><![CDATA[<p>注：此平台对我这个新手来说能学会不少东西，比如.net平台的反编译，z3py工具的使用，checksec、ROPgadget命令的使用，java反编译，python字节码文件的反编译等等，还通过一些题目学到了一些爆破脚本怎么写，对本地时间的判断和怎么用脚本不断的更改本地时间……每次做一道题目仿佛我离逆向这个入门门槛更近了一步，每做一道题目都能进步许多。不过后来做题难度不断提升，做到后面分数到达200的时候，几乎每道题目做起来都很困难，个人水平进步有限，经常分析能分析到不少东西，但离做出题目还是相差甚远，所以经常求助于大佬的博客。如果有地方出现问题，还望师傅们谅解。</p>
+<h2 id="helloworld">Helloworld</h2>
+<p>先看文件位数和类型，发现是32位ELF文件。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189735160.png" alt="" loading="lazy"><br>
+拖到32位ida里，看到源代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189740365.png" alt="" loading="lazy"><br>
+大致逻辑输入n，判断相等就输出flag，很简单，在kali输入数字314159265，此时突然发现这是Π，只是没有小数点，输入进去如图得到flag<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189751649.png" alt="" loading="lazy"></p>
+<h2 id="simple">Simple</h2>
+<p>查看文件细节，32位elf文件，无壳。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189825818.png" alt="" loading="lazy"><br>
+32位ida打开，找到关键代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189833500.png" alt="" loading="lazy"><br>
+发现是首先判断输入字符串如果有字符ASCII为10，则对应位变为ASCII为0的字符，否则check加1。看check发现没有减1后为10的，所以全-1求字符串即为flag花括号里内容，脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189842484.png" alt="" loading="lazy"></p>
+<h2 id="passthis">Passthis</h2>
+<p>检查文件，32为exe程序，直接可以cmd里运行。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189890103.png" alt="" loading="lazy"><br>
+拖入32位ida里运行,查看关键代码，发现判断一串字符和输入flag按位异或看是否-121，都是的话输出good flag。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189898195.png" alt="" loading="lazy"><br>
+看懂逻辑写脚本如下，得到flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189903491.png" alt="" loading="lazy"></p>
+<h2 id="accumulator">Accumulator</h2>
+<p>查看伪代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190316805.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615189977738.png" alt="" loading="lazy"><br>
+找到了关键函数和主函数，key_function是check函数，里面找到一个数组：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190008511.png" alt="" loading="lazy"><br>
+将其导出，全选按shift+E，选择合适的导出方式：结果如下<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190015476.png" alt="" loading="lazy"><br>
+直接看伪代码长时间仍没有看懂，因题目名字为accumlator（累加器），结合伪代码猜测是将每个数累加然后与数组比较，写脚本试一下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190021941.png" alt="" loading="lazy"><br>
+可以看到flag。<br>
+此题后来看别人博客，发现大多都感觉伪代码逻辑有些混乱，因为是用到sha512直接逆向就放弃了，根据动态调试分析得出逻辑大致就是累加然后和数组判断。</p>
+<h2 id="pyyy">Pyyy</h2>
+<p>下载文件发现是.pyc结尾，是python编译生成的二进制文件，<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190396464.png" alt="" loading="lazy"><br>
+下载uncompyle6进行反编译，得到python源文件命名为pyyy.py：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190409352.png" alt="" loading="lazy"><br>
+打开源文件代码如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190416089.png" alt="" loading="lazy"><br>
+这里有一个输入，然后有一个判断，这里可以直接将输入和判断代码注释掉，执行直接就是flag<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190436518.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615190444362.png" alt="" loading="lazy"></p>
+<h2 id="ccc">CCC</h2>
+<p>Ida打开文件，查看主函数内容如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190563200.png" alt="" loading="lazy"><br>
+这时发现一个verify函数，应该是判断flag的函数，进入函数发现如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190588746.png" alt="" loading="lazy"><br>
+逻辑大概是每次增加三位做crc32循环冗余检测，结果和hashes数组里的值判断，相等返回真。查看hashes数组如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190600806.png" alt="" loading="lazy"><br>
+写脚本每次增加三位爆破，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190613579.png" alt="" loading="lazy"></p>
+<h2 id="bitx">Bitx</h2>
+<p>先查看文件类型，是32位elf，在ida中打开，查看判断结果为good的地方,即判断函数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190698273.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615190711231.png" alt="" loading="lazy"><br>
+比较容易看懂，把地址0x804a040处的数据依次操作，然后flag对应的位+9后<br>
+与之进行比较，先找到数据如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190718304.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615190749193.png" alt="" loading="lazy"><br>
+写脚本如下，得到flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190770365.png" alt="" loading="lazy"></p>
+<h2 id="gccc">GCCC</h2>
+<p>先正常分析文件类型，并用对应的ida打开，发现如下<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190816910.png" alt="" loading="lazy"><br>
+因此发现是使用的IL语言，是.net平台的应用程序，IL是一种中间语言，需要其专门的反编译器，使用.net Reflector对其反编译，然后找到主函数代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190823422.png" alt="" loading="lazy"><br>
+比较容易看出函数逻辑，输入的num，buffer和num和num3异或，然后判断是否是大写字母和{}“ ”集合的内容，如果是就放入字符串str，观察后面代码又判断FLAG{}，所以知道str就是flag，写脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190828804.png" alt="" loading="lazy"></p>
+<h2 id="what-the-hell">What-the-hell</h2>
+<p>Ida打开查看主函数代码如图：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190932984.png" alt="" loading="lazy"><br>
+Calc_key3函数如图，再查看Check_prime函数，先看1和2情况，再看是否大于3且为奇数，再看是否为3倍数，一层层检查判断是否为素数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190949841.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615190984951.png" alt="" loading="lazy"><br>
+再看what函数里,发现是递归求斐波那契数列，这里要小心，因为result是整数，所以可能会发生整数溢出：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190995544.png" alt="" loading="lazy"><br>
+再查看解密flag函数，发现解密较简单，主要难点不知道a1,a2和key：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191028614.png" alt="" loading="lazy"><br>
+这时搜索资料发现有种方法约束求解，用z3py工具，这里写脚本不熟练，思路是先根据calc_key3函数里的三个if条件作为约束求解，再根据素数排除一部分解。斐波那契判断时可能会发生整数溢出，python写此功能不熟练，所以换C++判断排除剩下的解：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191038205.png" alt="" loading="lazy"><br>
+上图求解结果为：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191055366.png" alt="" loading="lazy"><br>
+判断a1是否时斐波那契数，代码和结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191067530.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191086436.png" alt="" loading="lazy"><br>
+另一个长时间运行不出结果，判断猜测a1=4284256177,a2=1234567890,key=a2*887+1=1095061718431。<br>
+还有一处要注意的是，参数传递时强制转化为了int和unsigned int，会发生整数溢出，在脚本里要注意体现。<br>
+解密脚本和运行结果如图：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191168505.png" alt="" loading="lazy"></p>
+<h2 id="unpackme">unpackme</h2>
+<p>由题目要求得知是有壳程序，先文件分析查看什么壳和判断多少位程序：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191215727.png" alt="" loading="lazy"><br>
+由上图可知是upx壳，使用upx –d xxx脱壳发现提示如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191221427.png" alt="" loading="lazy"><br>
+查阅资料，发现是一种加壳后的再次保护，用16进制文件编辑器打开，发现如下信息：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191253370.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191305340.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191310150.png" alt="" loading="lazy"><br>
+16进制编辑器打开界面<br>
+发现标志位都被修改，将ctf改为UPX，最后？改为！，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191267346.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191272898.png" alt="" loading="lazy"><br>
+然后保存到文件，再次命令脱壳，脱壳成功：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191338614.png" alt="" loading="lazy"><br>
+直接运行发现失败，32位ida打开，发现函数和字符串都比较正常，判断应该是第一步脱壳成功了：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191343445.png" alt="" loading="lazy"><br>
+找关键代码，最终定位如下图的代码处：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191384784.png" alt="" loading="lazy"><br>
+这里str是已知的，pbData已知的，就char string未知，直接爆破，代码和结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191390252.png" alt="" loading="lazy"></p>
+<h2 id="2018-rev">2018-rev</h2>
+<p>先在KALI里打开文件，发现提示如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191449391.png" alt="" loading="lazy"><br>
+用ida远程调试，找到判断变量的那几个位置，逐个更改栈或内存内容：<br>
+第一个判断jnz，将r13寄存器改为7E2：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191460504.png" alt="" loading="lazy"><br>
+单步运行如下图，将rdx的地址里的字节改为01：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191471752.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191479970.png" alt="" loading="lazy"><br>
+继续单步运行，如下图判断条件处，将rdx地址的字节改为01，<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191487412.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191497636.png" alt="" loading="lazy"><br>
+继续单步运行，发现跳到这个位置，jnz跳到判断时间的地方，如果不继续更改就会终止程序，输出要在对应的时间打开，如图：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191592537.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191553496.png" alt="" loading="lazy"><br>
+这里再Kali输入指令，不断更改时间，命令代码如图：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191559884.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191567342.png" alt="" loading="lazy"><br>
+前面操作不变，再来一次，即可输出flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191613141.png" alt="" loading="lazy"></p>
+<h2 id="mov">MOV</h2>
+<p>这道题题目提示是mov是图灵完全的，搜索图灵完全的意思大致是mov一个指令便能实现所有指令的功能，能够实现所有的逻辑表达。Ida打开，先查看字符串，能看到一些提示正确flag和错误flag的提示，剩下的很乱：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191656513.png" alt="" loading="lazy"><br>
+一开始仗着刚复习过一遍汇编，看看能不能看懂汇编，分析一段时间后无奈放弃，实在是太难了……全是mov指令，跳转在哪都找不到：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191664259.png" alt="" loading="lazy"><br>
+查看大佬的题解，发现很多都是拿qira做出来的，还有一位是pin做出来的，自己尝试了下安装环境，一个比一个难装，哎，以后找多点博客再继续尝试安装，经过一些大佬的提示 ，发现这道题存在非预期，也可以说是一个bug，输入只要前面的字符串和flag的相等，就能判断正确：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191670849.png" alt="" loading="lazy"><br>
+通过这道题还学会了写这种爆破脚本，怎么判断程序的输出：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191676902.png" alt="" loading="lazy"><br>
+执行结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191683062.png" alt="" loading="lazy"></p>
+<h2 id="a-maze">a-maze</h2>
+<p>一道迷宫题目，和平常迷宫题目不一样的是解压得到两个文件，一个是地图文件，一个是走迷宫的主要逻辑（平时都是算法生成地图或者直接列出地图）。ida打开maze，很容易找到关键代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191739514.png" alt="" loading="lazy"><br>
+和：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191747818.png" alt="" loading="lazy"><br>
+qword_601088是map里的内容，<em>a1是输入的内容，v2判断结果是否到达终点，-1的话到达终点。16进制打开文件，搜索0xFFFFFFFF，其为-1的补码，发现如下有大片-1：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191757125.png" alt="" loading="lazy"><br>
+前面代码可以看出，v2左移了9位，然后4</em>（flag&amp;0x7f），后九位是flag决定的，前面的32-9位是由v2决定的。计算0xfb000的v2为2008。然后倒着推flag。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191767790.png" alt="" loading="lazy"><br>
+脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191776000.png" alt="" loading="lazy"><br>
+运行结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191800631.png" alt="" loading="lazy"></p>
+<p>参考：<br>
+<a href="http://blog.iyzyi.com/index.php/archives/1106/">http://blog.iyzyi.com/index.php/archives/1106/</a><br>
+<a href="https://l1b0.fun/a5a95622/">https://l1b0.fun/a5a95622/</a><br>
+<a href="https://m4x.fun/post/hackme.inndy-writeup/">https://m4x.fun/post/hackme.inndy-writeup/</a></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[CUMTCTF2020岁末赛部分WP]]></title>
+        <id>https://zyyiszyy.github.io/post/cumtctf2020-sui-mo-sai-bu-fen-wp/</id>
+        <link href="https://zyyiszyy.github.io/post/cumtctf2020-sui-mo-sai-bu-fen-wp/">
+        </link>
+        <updated>2020-12-27T02:09:26.000Z</updated>
+        <content type="html"><![CDATA[<p>注：这是一个学期的最后一场比赛，也是检验一个学期学习re成果的时候了，这次算是发挥出自己最大的能力了，自己得分在队伍中也算是占较大比重了。另外，向re新手强推hackme刷题网站，能提升不少能力。这次比赛喜提一等奖，好像是第三名，继续加油。</p>
+<h2 id="签到">签到：</h2>
+<p>Ida打开就看到flag<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181380811.png" alt="" loading="lazy"></p>
+<h2 id="zzzz3333333">Zzzz3333333</h2>
+<p>Ida打开查找关键代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181400324.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181406817.png" alt="" loading="lazy"><br>
+找到一个判断函数，数了数38个判断条件，又有38个未知数，未知数就是flag，想到用z3py约束求解器，写脚本求解，脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181470963.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181476257.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181480916.png" alt="" loading="lazy"><br>
+实际出现一点小问题，有一些乱码可能某个数改错了出现了多解，增加判断条件输出不同的解，找正确的那个。</p>
+<h2 id="奇怪的exe">奇怪的exe</h2>
+<p>下载文件，发现是python写的exe文件。先用pyinstxtractor解包，找到一个名字为3的可疑文件:<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181632590.png" alt="" loading="lazy"><br>
+16进制编辑器打开发现里面有输入flag等字眼，改名为pyc文件，然后拿去反编译，提示错误，再看16进制编辑页面：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181638380.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181669038.png" alt="" loading="lazy"><br>
+发现magic number错误，用对应的python版本编译一个文件，查看其magic number如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181675215.png" alt="" loading="lazy"><br>
+将第一行加到3.py上，再用uncompyle6反编译，得到源码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181681573.png" alt="" loading="lazy"><br>
+很容易逆，先异或求s，再对应每三位还原，得到base64加密后的flag，解密得到flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181758415.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181764017.png" alt="" loading="lazy"></p>
+<h2 id="ez_code">ez_code</h2>
+<p>下载文件发现是python字节码，翻译字节码得到如下代码：</p>
+<pre><code>flag=input()
+print(flag)
+if len(flag)!=36:
+    print('wrong length!')
+a=[]
+t=0
+for i in flag:
+    if t&amp;1==1:             #偶数
+        a.append(ord(i)+128)
+    else:
+        a.append(ord(i))
+    t=t+1
+b=a[0]&gt;&gt;5              #f-&gt;3
+for i in range(len(a)):
+    if i==len(a)-1:
+        a[i]=(a[i]*8)&amp;255|b
+    else:
+        a[i]=(a[i]*8)&amp;255|(a[i+1]&gt;&gt;5)
+num=[]
+for i in range(2,129):       ##################
+    t=False
+    for j in range(2,i):
+        if i%j==0:
+            t=True
+    if not t:
+        num.append(i)
+for i in range(len(num)):
+    print(num[i])
+c=[0]*len(a)
+for i in range(len(a)):       #36
+    x1=(a[i]&gt;&gt;4)^(num[i%31]&amp;15)
+    x2=(a[i]&amp;15)^(num[i%31]&gt;&gt;4)
+    c[i]=x2*16+x1
+d=[227,169,227,45,232,33,126,162,195,9,239,187,245,180,69,164,123,185,93,0,198,58,246,149,211,156,218,166,65,41,86,173,121,41,125,167]
+#print(len(d))
+e=1
+for i in range(len(d)):
+    if d[i]!=c[i]:
+        e=0              #####
+if e==1:
+    print('you are right!')
+else:
+    print('wrong')
+</code></pre>
+<p>可以先根据d[i]=c[i], c[i]=x2*16+x1爆破a[i]。然后再逆向还原，通过分析发现前面代码的大概意思是将a所有位的二进制码左移3位，所以逆向的话右移三位，在根据判断末尾是否为0对应减去128。脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181820797.png" alt="" loading="lazy"></p>
+<h2 id="time">time</h2>
+<p>先cmd运行文件发现提示：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181894529.png" alt="" loading="lazy"><br>
+所以应该有一些运行时的判断条件，ida打开：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181900633.png" alt="" loading="lazy"><br>
+这就是为什么直接运行会提示not yet，它会先对运行时本地时间进行判断，符合才会进入主函数，主函数如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181908183.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181914760.png" alt="" loading="lazy"><br>
+先传入参数是一个对时间的式子:<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181920825.png" alt="" loading="lazy"><br>
+计算结果就是0xd563e400，然后按照字节判断是否是字母或者数字，不是的话就循环下一次，是的话放入x_0里，这里发现除了0x00字节，一共是传入了3位dcU。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181970160.png" alt="" loading="lazy"><br>
+接下来是判断flag是否是字母或数字，是的话接着放入x_0地址处，注意这时前面有3个字符的：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181977825.png" alt="" loading="lazy"><br>
+然后生成一个先数字，再小写字母，再大写字母的表，放入table里：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181982262.png" alt="" loading="lazy"><br>
+接着创建一个数组，存放x_0里字符串对应在table的位置，数组名改为array_666：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181988543.png" alt="" loading="lazy"><br>
+下面找到关键函数，点开：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181994957.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615182041534.png" alt="" loading="lazy"><br>
+大致就是array里对应i加上flag对应在table里的位置，然后对62求余，其中62就是table的长度，求余结果就是table的下标，然后放入字符串里，这里取名为stringggg，其中array比flag长3位，长在前面传入参数那里，这也使得能够逆向求解。<br>
+再回到主函数，最后有两个字符串进行比较，一个就是刚才生成的stringggg，一个是str1：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182047584.png" alt="" loading="lazy"><br>
+Str1是已知的：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182054945.png" alt="" loading="lazy"><br>
+然后就可以每三位每三位的求flag，脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182059803.png" alt="" loading="lazy"><br>
+没有优化脚本，先输入13，12，56就是dcU对应table表里的下标，每次出的3个结果就是下一轮的输入，最后输出完整的flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182067002.png" alt="" loading="lazy"></p>
+<h2 id="pwn1">pwn1</h2>
+<p>ida打开分析代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182108196.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615182116356.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615182120812.png" alt="" loading="lazy"><br>
+代码很短，先直接读入内容然后放入buf变量，然后将buf的最后一位变为0，n为buf的长度，最后比较s和buf的内容，比较长度为n字节。返回值是v4，在调用函数外面v4又给了result，result==123的话打开shell。虽然代码短但信息量还不少。这里可以通过刚开始字节设置0x00来绕过长度判断那里，再溢出覆盖整数v4为123,对应变量在栈中的位置如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182128070.png" alt="" loading="lazy"><br>
+写脚本和运行结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182133421.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[CUMTCTF2020“华为杯”部分WP]]></title>
+        <id>https://zyyiszyy.github.io/post/cumtctf2020hua-wei-bei-bu-fen-wp1/</id>
+        <link href="https://zyyiszyy.github.io/post/cumtctf2020hua-wei-bei-bu-fen-wp1/">
+        </link>
+        <updated>2020-10-23T14:17:38.000Z</updated>
+        <content type="html"><![CDATA[<p>注：这是参加的第二次ctf比赛，比赛前在攻防世界上刷了一些re方向的题目，算是初步对re有了些感觉吧。这次比赛最大的收获是掌握了pwn的简单栈溢出和整数溢出，大致了解了pwn方向的题目是什么样子。在自己和队友的共同努力下，这次比赛拿到了二等奖，算是自己近段时间的付出得到了一些鼓励吧，接下来再接再厉！</p>
+<h2 id="hello_world">Hello_world</h2>
+<p>先查看程序类型，发现是 64 位 windows 下运行的程序。</p>
+<figure data-type="image" tabindex="1"><img src="https://zyyiszyy.github.io/post-images/1615186327993.png" alt="" loading="lazy"></figure>
+<p>先运行一下程序，了解大致情况。</p>
+<figure data-type="image" tabindex="2"><img src="https://zyyiszyy.github.io/post-images/1615186390266.png" alt="" loading="lazy"></figure>
+<p>使用 64 位 ida 打开，查看字符串：</p>
+<figure data-type="image" tabindex="3"><img src="https://zyyiszyy.github.io/post-images/1615186656612.png" alt="" loading="lazy"></figure>
+<p>发现’you got it’，猜测是判断字符串正误。点进去找到变量， 交叉引用找到调用它的函数，tab 键找到 C 伪代码如下：</p>
+<figure data-type="image" tabindex="4"><img src="https://zyyiszyy.github.io/post-images/1615186661666.png" alt="" loading="lazy"></figure>
+<p>运行以下脚本得到 flag。</p>
+<figure data-type="image" tabindex="5"><img src="https://zyyiszyy.github.io/post-images/1615186682600.png" alt="" loading="lazy"></figure>
+<h2 id="non_name">Non_name</h2>
+<p>先查看程序类型，发现是 64 位 windows 下可执行程序。运行程序，查看运行的情况，发现 math 字眼：</p>
+<figure data-type="image" tabindex="6"><img src="https://zyyiszyy.github.io/post-images/1615186739500.png" alt="" loading="lazy"></figure>
+<p>用 ida64 打开，查看字符串，提示很明显。</p>
+<figure data-type="image" tabindex="7"><img src="https://zyyiszyy.github.io/post-images/1615186750285.png" alt="" loading="lazy"></figure>
+<p>如下找到关键代码，str1 和 str2 已知，分别 12 个元素和 4 个元素，看懂后实际上就是列一个四元一次方程组。</p>
+<figure data-type="image" tabindex="8"><img src="https://zyyiszyy.github.io/post-images/1615186757883.png" alt="" loading="lazy"></figure>
+<p>先 python 变十进制，懒着再写脚本，直接在线工具求解：</p>
+<p><img src="https://zyyiszyy.github.io/post-images/1615186798468.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615186802740.png" alt="" loading="lazy"></p>
+<p>最后按照提示，分别 hex()再改下格式成功提交。</p>
+<h2 id="login">Login</h2>
+<p>先查看程序类型，是 64 位 ELF 程序。放在 kali 里面运行一下。</p>
+<figure data-type="image" tabindex="9"><img src="https://zyyiszyy.github.io/post-images/1615186943018.png" alt="" loading="lazy"></figure>
+<p>Ida64 打开，查看字符串。</p>
+<figure data-type="image" tabindex="10"><img src="https://zyyiszyy.github.io/post-images/1615186938166.png" alt="" loading="lazy"></figure>
+<p>先看到 login succeed，进入看一下，发现是/bin/sh 调用 shell。</p>
+<figure data-type="image" tabindex="11"><img src="https://zyyiszyy.github.io/post-images/1615186933153.png" alt="" loading="lazy"></figure>
+<p>拿小本本记下其地址：0x 4009E7</p>
+<figure data-type="image" tabindex="12"><img src="https://zyyiszyy.github.io/post-images/1615186920623.png" alt="" loading="lazy"></figure>
+<p>然后进入输入用户名和密码的代码。</p>
+<figure data-type="image" tabindex="13"><img src="https://zyyiszyy.github.io/post-images/1615186952420.png" alt="" loading="lazy"></figure>
+<p>发现输入 256 个字符，至此怀疑是栈溢出。</p>
+<figure data-type="image" tabindex="14"><img src="https://zyyiszyy.github.io/post-images/1615186983488.png" alt="" loading="lazy"></figure>
+<p>查看栈的确是栈溢出的类型，通过用户名输入 0x28 的数据和登录成功的返回地址，写的 exp 如下两种：</p>
+<p><img src="https://zyyiszyy.github.io/post-images/1615186987844.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615186990857.png" alt="" loading="lazy"></p>
+<p>运行 exp，可打开 shell，cat flag：</p>
+<figure data-type="image" tabindex="15"><img src="https://zyyiszyy.github.io/post-images/1615186993979.png" alt="" loading="lazy"></figure>
+<h2 id="login_plus">Login_plus</h2>
+<p>查看软件类型，发现是 64 位的 ELF 程序。发现很眼熟，和上题表面上多了个 id。</p>
+<figure data-type="image" tabindex="16"><img src="https://zyyiszyy.github.io/post-images/1615187074246.png" alt="" loading="lazy"></figure>
+<p>进入 ida64 查看字符串，发现很多都一样，也有/bin/sh，但从这里看多了一个 id。</p>
+<p><img src="https://zyyiszyy.github.io/post-images/1615187078447.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615187089034.png" alt="" loading="lazy"></p>
+<p>这时查看谁调用的 login 函数，又发现一段代码，逻辑也很容易看懂。</p>
+<figure data-type="image" tabindex="17"><img src="https://zyyiszyy.github.io/post-images/1615187093349.png" alt="" loading="lazy"></figure>
+<p>这时细心观察可以发现，原本的id是输入到int_64的v7，经过函数返回值是v7，然后返回到int类型的v5里，这时想到整数溢出。两个都是无符号型，int可以表示的范围：-2147483648<sub>2147483647，如果int大于上界，2147483648相当于-2147483648，2147483649相当于-2147483648，依次递推。int_64可以表示的范围：-9223372036854775808</sub>9223372036854775807。</p>
+<p>思路是：直接让v7不通过else语句，就不会因为密码错误改变v7的值，从而返回的是输入的v7，然后继续通过判断语句，到达输入成功的函数，打开shell获取flag。</p>
+<p>要想满足以上条件，需要v7(int_64)为真且!v5(int)为真，这里可以输入4294967296，先进入if语句，输出非管理员语句，然后直接返回自身到v5，这时因为整数溢出相当为0，v5为真成立，得到shell。</p>
+<figure data-type="image" tabindex="18"><img src="https://zyyiszyy.github.io/post-images/1615187097213.png" alt="" loading="lazy"></figure>
+]]></content>
+    </entry>
+</feed>

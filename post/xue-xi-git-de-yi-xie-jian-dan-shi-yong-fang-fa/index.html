@@ -1,0 +1,211 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>学习Git遇到的一些问题 | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615224777944">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="学习Git遇到的一些问题 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="git提交的步骤
+git add .  //添加文件到本地仓库
+git commit -m &quot;first commit&quot;  //添加描述信息
+git remote add origin main  //连接远程仓库
+gi..." />
+    <meta name="keywords" content="Notes" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615224777944" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              学习Git遇到的一些问题
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-08
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/cQHF3_fNo/" class="post-tag">
+                  # Notes
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/xue-xi-git-de-yi-xie-jian-dan-shi-yong-fang-fa.webp" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="git提交的步骤">git提交的步骤</h2>
+<pre><code>git add .  //添加文件到本地仓库
+git commit -m &quot;first commit&quot;  //添加描述信息
+git remote add origin main  //连接远程仓库
+git push -u origin main  //把本地仓库的文件推送到远程仓库
+</code></pre>
+<h2 id="提交出现以下错误">提交出现以下错误</h2>
+<p><img src="https://zyyiszyy.github.io/post-images/1615219179296.png" alt="" loading="lazy"><br>
+推送之前加入：<br>
+<code>git pull origin main</code></p>
+<h2 id="若还是失败提示以下错误">若还是失败，提示以下错误</h2>
+<p><img src="https://zyyiszyy.github.io/post-images/1615219289494.png" alt="" loading="lazy"><br>
+例如更新博客时，可尝试强制push：<br>
+<code>git push -f origin main</code><br>
+此方法不要随便用，因为强制push会覆盖掉远程的所有代码。</p>
+<h2 id="初始使用git远程上传文件设置">初始使用git远程上传文件设置</h2>
+<p>1、ssh-keygen -t rsa -C &quot;xxxxx@qq.com&quot;  //生成ssh密钥<br>
+2、进文件id——rsa.pub，复制密钥到github<br>
+3、ssh -T git@github.com   //检测是否配置成功，成功提示Hi xxxx......<br>
+4、git config --global user.name &quot;username&quot;<br>
+git config --global user.email &quot;xxxxx@qq.com&quot;     //配置信息<br>
+5、git init   //git初始化<br>
+6、git commit -m &quot;first commit&quot;   //添加描述信息<br>
+7、git remote add origin git@github.com:zyyiszyy/zyyiszyy.github.io.git  //连接远程仓库，失败的话先 git remote rm origin<br>
+8、git pull --rebase origin main  //拉取远程库<br>
+9、git push -u origin main  //把本地仓库的文件推送到远程仓库<br>
+10、若还是失败，考虑强制：git push -f origin main   用之前要慎重考虑！！！</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#git%E6%8F%90%E4%BA%A4%E7%9A%84%E6%AD%A5%E9%AA%A4">git提交的步骤</a></li>
+<li><a href="#%E6%8F%90%E4%BA%A4%E5%87%BA%E7%8E%B0%E4%BB%A5%E4%B8%8B%E9%94%99%E8%AF%AF">提交出现以下错误</a></li>
+<li><a href="#%E8%8B%A5%E8%BF%98%E6%98%AF%E5%A4%B1%E8%B4%A5%E6%8F%90%E7%A4%BA%E4%BB%A5%E4%B8%8B%E9%94%99%E8%AF%AF">若还是失败，提示以下错误</a></li>
+<li><a href="#%E5%88%9D%E5%A7%8B%E4%BD%BF%E7%94%A8git%E8%BF%9C%E7%A8%8B%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E8%AE%BE%E7%BD%AE">初始使用git远程上传文件设置</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/idle_notes/">
+              <h3 class="post-title">
+                接触CTF以来的闲散笔记
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,357 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>hackme逆向题目部分WP | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615224777944">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="hackme逆向题目部分WP | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="注：此平台对我这个新手来说能学会不少东西，比如.net平台的反编译，z3py工具的使用，checksec、ROPgadget命令的使用，java反编译，python字节码文件的反编译等等，还通过一些题目学到了一些爆破脚本怎么写，对本地时间的..." />
+    <meta name="keywords" content="Reverse,WriteUp,CTF" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615224777944" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              hackme逆向题目部分WP
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-01-09
+              </span>
+              <span>
+                9 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/niYg57IIi/" class="post-tag">
+                  # Reverse
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/pOo1m5_Uo/" class="post-tag">
+                  # WriteUp
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/lrSFwTVcv/" class="post-tag">
+                  # CTF
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/hackme-ni-xiang-ti-mu-bu-fen-wp.jpg" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>注：此平台对我这个新手来说能学会不少东西，比如.net平台的反编译，z3py工具的使用，checksec、ROPgadget命令的使用，java反编译，python字节码文件的反编译等等，还通过一些题目学到了一些爆破脚本怎么写，对本地时间的判断和怎么用脚本不断的更改本地时间……每次做一道题目仿佛我离逆向这个入门门槛更近了一步，每做一道题目都能进步许多。不过后来做题难度不断提升，做到后面分数到达200的时候，几乎每道题目做起来都很困难，个人水平进步有限，经常分析能分析到不少东西，但离做出题目还是相差甚远，所以经常求助于大佬的博客。如果有地方出现问题，还望师傅们谅解。</p>
+<h2 id="helloworld">Helloworld</h2>
+<p>先看文件位数和类型，发现是32位ELF文件。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189735160.png" alt="" loading="lazy"><br>
+拖到32位ida里，看到源代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189740365.png" alt="" loading="lazy"><br>
+大致逻辑输入n，判断相等就输出flag，很简单，在kali输入数字314159265，此时突然发现这是Π，只是没有小数点，输入进去如图得到flag<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189751649.png" alt="" loading="lazy"></p>
+<h2 id="simple">Simple</h2>
+<p>查看文件细节，32位elf文件，无壳。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189825818.png" alt="" loading="lazy"><br>
+32位ida打开，找到关键代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189833500.png" alt="" loading="lazy"><br>
+发现是首先判断输入字符串如果有字符ASCII为10，则对应位变为ASCII为0的字符，否则check加1。看check发现没有减1后为10的，所以全-1求字符串即为flag花括号里内容，脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189842484.png" alt="" loading="lazy"></p>
+<h2 id="passthis">Passthis</h2>
+<p>检查文件，32为exe程序，直接可以cmd里运行。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189890103.png" alt="" loading="lazy"><br>
+拖入32位ida里运行,查看关键代码，发现判断一串字符和输入flag按位异或看是否-121，都是的话输出good flag。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189898195.png" alt="" loading="lazy"><br>
+看懂逻辑写脚本如下，得到flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615189903491.png" alt="" loading="lazy"></p>
+<h2 id="accumulator">Accumulator</h2>
+<p>查看伪代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190316805.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615189977738.png" alt="" loading="lazy"><br>
+找到了关键函数和主函数，key_function是check函数，里面找到一个数组：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190008511.png" alt="" loading="lazy"><br>
+将其导出，全选按shift+E，选择合适的导出方式：结果如下<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190015476.png" alt="" loading="lazy"><br>
+直接看伪代码长时间仍没有看懂，因题目名字为accumlator（累加器），结合伪代码猜测是将每个数累加然后与数组比较，写脚本试一下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190021941.png" alt="" loading="lazy"><br>
+可以看到flag。<br>
+此题后来看别人博客，发现大多都感觉伪代码逻辑有些混乱，因为是用到sha512直接逆向就放弃了，根据动态调试分析得出逻辑大致就是累加然后和数组判断。</p>
+<h2 id="pyyy">Pyyy</h2>
+<p>下载文件发现是.pyc结尾，是python编译生成的二进制文件，<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190396464.png" alt="" loading="lazy"><br>
+下载uncompyle6进行反编译，得到python源文件命名为pyyy.py：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190409352.png" alt="" loading="lazy"><br>
+打开源文件代码如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190416089.png" alt="" loading="lazy"><br>
+这里有一个输入，然后有一个判断，这里可以直接将输入和判断代码注释掉，执行直接就是flag<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190436518.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615190444362.png" alt="" loading="lazy"></p>
+<h2 id="ccc">CCC</h2>
+<p>Ida打开文件，查看主函数内容如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190563200.png" alt="" loading="lazy"><br>
+这时发现一个verify函数，应该是判断flag的函数，进入函数发现如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190588746.png" alt="" loading="lazy"><br>
+逻辑大概是每次增加三位做crc32循环冗余检测，结果和hashes数组里的值判断，相等返回真。查看hashes数组如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190600806.png" alt="" loading="lazy"><br>
+写脚本每次增加三位爆破，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190613579.png" alt="" loading="lazy"></p>
+<h2 id="bitx">Bitx</h2>
+<p>先查看文件类型，是32位elf，在ida中打开，查看判断结果为good的地方,即判断函数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190698273.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615190711231.png" alt="" loading="lazy"><br>
+比较容易看懂，把地址0x804a040处的数据依次操作，然后flag对应的位+9后<br>
+与之进行比较，先找到数据如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190718304.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615190749193.png" alt="" loading="lazy"><br>
+写脚本如下，得到flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190770365.png" alt="" loading="lazy"></p>
+<h2 id="gccc">GCCC</h2>
+<p>先正常分析文件类型，并用对应的ida打开，发现如下<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190816910.png" alt="" loading="lazy"><br>
+因此发现是使用的IL语言，是.net平台的应用程序，IL是一种中间语言，需要其专门的反编译器，使用.net Reflector对其反编译，然后找到主函数代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190823422.png" alt="" loading="lazy"><br>
+比较容易看出函数逻辑，输入的num，buffer和num和num3异或，然后判断是否是大写字母和{}“ ”集合的内容，如果是就放入字符串str，观察后面代码又判断FLAG{}，所以知道str就是flag，写脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190828804.png" alt="" loading="lazy"></p>
+<h2 id="what-the-hell">What-the-hell</h2>
+<p>Ida打开查看主函数代码如图：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190932984.png" alt="" loading="lazy"><br>
+Calc_key3函数如图，再查看Check_prime函数，先看1和2情况，再看是否大于3且为奇数，再看是否为3倍数，一层层检查判断是否为素数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190949841.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615190984951.png" alt="" loading="lazy"><br>
+再看what函数里,发现是递归求斐波那契数列，这里要小心，因为result是整数，所以可能会发生整数溢出：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615190995544.png" alt="" loading="lazy"><br>
+再查看解密flag函数，发现解密较简单，主要难点不知道a1,a2和key：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191028614.png" alt="" loading="lazy"><br>
+这时搜索资料发现有种方法约束求解，用z3py工具，这里写脚本不熟练，思路是先根据calc_key3函数里的三个if条件作为约束求解，再根据素数排除一部分解。斐波那契判断时可能会发生整数溢出，python写此功能不熟练，所以换C++判断排除剩下的解：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191038205.png" alt="" loading="lazy"><br>
+上图求解结果为：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191055366.png" alt="" loading="lazy"><br>
+判断a1是否时斐波那契数，代码和结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191067530.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191086436.png" alt="" loading="lazy"><br>
+另一个长时间运行不出结果，判断猜测a1=4284256177,a2=1234567890,key=a2*887+1=1095061718431。<br>
+还有一处要注意的是，参数传递时强制转化为了int和unsigned int，会发生整数溢出，在脚本里要注意体现。<br>
+解密脚本和运行结果如图：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191168505.png" alt="" loading="lazy"></p>
+<h2 id="unpackme">unpackme</h2>
+<p>由题目要求得知是有壳程序，先文件分析查看什么壳和判断多少位程序：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191215727.png" alt="" loading="lazy"><br>
+由上图可知是upx壳，使用upx –d xxx脱壳发现提示如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191221427.png" alt="" loading="lazy"><br>
+查阅资料，发现是一种加壳后的再次保护，用16进制文件编辑器打开，发现如下信息：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191253370.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191305340.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191310150.png" alt="" loading="lazy"><br>
+16进制编辑器打开界面<br>
+发现标志位都被修改，将ctf改为UPX，最后？改为！，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191267346.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191272898.png" alt="" loading="lazy"><br>
+然后保存到文件，再次命令脱壳，脱壳成功：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191338614.png" alt="" loading="lazy"><br>
+直接运行发现失败，32位ida打开，发现函数和字符串都比较正常，判断应该是第一步脱壳成功了：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191343445.png" alt="" loading="lazy"><br>
+找关键代码，最终定位如下图的代码处：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191384784.png" alt="" loading="lazy"><br>
+这里str是已知的，pbData已知的，就char string未知，直接爆破，代码和结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191390252.png" alt="" loading="lazy"></p>
+<h2 id="2018-rev">2018-rev</h2>
+<p>先在KALI里打开文件，发现提示如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191449391.png" alt="" loading="lazy"><br>
+用ida远程调试，找到判断变量的那几个位置，逐个更改栈或内存内容：<br>
+第一个判断jnz，将r13寄存器改为7E2：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191460504.png" alt="" loading="lazy"><br>
+单步运行如下图，将rdx的地址里的字节改为01：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191471752.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191479970.png" alt="" loading="lazy"><br>
+继续单步运行，如下图判断条件处，将rdx地址的字节改为01，<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191487412.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191497636.png" alt="" loading="lazy"><br>
+继续单步运行，发现跳到这个位置，jnz跳到判断时间的地方，如果不继续更改就会终止程序，输出要在对应的时间打开，如图：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191592537.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191553496.png" alt="" loading="lazy"><br>
+这里再Kali输入指令，不断更改时间，命令代码如图：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191559884.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615191567342.png" alt="" loading="lazy"><br>
+前面操作不变，再来一次，即可输出flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191613141.png" alt="" loading="lazy"></p>
+<h2 id="mov">MOV</h2>
+<p>这道题题目提示是mov是图灵完全的，搜索图灵完全的意思大致是mov一个指令便能实现所有指令的功能，能够实现所有的逻辑表达。Ida打开，先查看字符串，能看到一些提示正确flag和错误flag的提示，剩下的很乱：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191656513.png" alt="" loading="lazy"><br>
+一开始仗着刚复习过一遍汇编，看看能不能看懂汇编，分析一段时间后无奈放弃，实在是太难了……全是mov指令，跳转在哪都找不到：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191664259.png" alt="" loading="lazy"><br>
+查看大佬的题解，发现很多都是拿qira做出来的，还有一位是pin做出来的，自己尝试了下安装环境，一个比一个难装，哎，以后找多点博客再继续尝试安装，经过一些大佬的提示 ，发现这道题存在非预期，也可以说是一个bug，输入只要前面的字符串和flag的相等，就能判断正确：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191670849.png" alt="" loading="lazy"><br>
+通过这道题还学会了写这种爆破脚本，怎么判断程序的输出：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191676902.png" alt="" loading="lazy"><br>
+执行结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191683062.png" alt="" loading="lazy"></p>
+<h2 id="a-maze">a-maze</h2>
+<p>一道迷宫题目，和平常迷宫题目不一样的是解压得到两个文件，一个是地图文件，一个是走迷宫的主要逻辑（平时都是算法生成地图或者直接列出地图）。ida打开maze，很容易找到关键代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191739514.png" alt="" loading="lazy"><br>
+和：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191747818.png" alt="" loading="lazy"><br>
+qword_601088是map里的内容，<em>a1是输入的内容，v2判断结果是否到达终点，-1的话到达终点。16进制打开文件，搜索0xFFFFFFFF，其为-1的补码，发现如下有大片-1：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191757125.png" alt="" loading="lazy"><br>
+前面代码可以看出，v2左移了9位，然后4</em>（flag&amp;0x7f），后九位是flag决定的，前面的32-9位是由v2决定的。计算0xfb000的v2为2008。然后倒着推flag。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191767790.png" alt="" loading="lazy"><br>
+脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191776000.png" alt="" loading="lazy"><br>
+运行结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615191800631.png" alt="" loading="lazy"></p>
+<p>参考：<br>
+<a href="http://blog.iyzyi.com/index.php/archives/1106/">http://blog.iyzyi.com/index.php/archives/1106/</a><br>
+<a href="https://l1b0.fun/a5a95622/">https://l1b0.fun/a5a95622/</a><br>
+<a href="https://m4x.fun/post/hackme.inndy-writeup/">https://m4x.fun/post/hackme.inndy-writeup/</a></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#helloworld">Helloworld</a></li>
+<li><a href="#simple">Simple</a></li>
+<li><a href="#passthis">Passthis</a></li>
+<li><a href="#accumulator">Accumulator</a></li>
+<li><a href="#pyyy">Pyyy</a></li>
+<li><a href="#ccc">CCC</a></li>
+<li><a href="#bitx">Bitx</a></li>
+<li><a href="#gccc">GCCC</a></li>
+<li><a href="#what-the-hell">What-the-hell</a></li>
+<li><a href="#unpackme">unpackme</a></li>
+<li><a href="#2018-rev">2018-rev</a></li>
+<li><a href="#mov">MOV</a></li>
+<li><a href="#a-maze">a-maze</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/cumtctf2020-sui-mo-sai-bu-fen-wp/">
+              <h3 class="post-title">
+                CUMTCTF2020岁末赛部分WP
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

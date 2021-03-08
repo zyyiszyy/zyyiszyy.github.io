@@ -1,0 +1,299 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CUMTCTF2020岁末赛部分WP | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615224777944">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="CUMTCTF2020岁末赛部分WP | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="注：这是一个学期的最后一场比赛，也是检验一个学期学习re成果的时候了，这次算是发挥出自己最大的能力了，自己得分在队伍中也算是占较大比重了。另外，向re新手强推hackme刷题网站，能提升不少能力。这次比赛喜提一等奖，好像是第三名，继续加油。..." />
+    <meta name="keywords" content="WriteUp,CTF" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615224777944" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              CUMTCTF2020岁末赛部分WP
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-12-27
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/pOo1m5_Uo/" class="post-tag">
+                  # WriteUp
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/lrSFwTVcv/" class="post-tag">
+                  # CTF
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/cumtctf2020-sui-mo-sai-bu-fen-wp.webp" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>注：这是一个学期的最后一场比赛，也是检验一个学期学习re成果的时候了，这次算是发挥出自己最大的能力了，自己得分在队伍中也算是占较大比重了。另外，向re新手强推hackme刷题网站，能提升不少能力。这次比赛喜提一等奖，好像是第三名，继续加油。</p>
+<h2 id="签到">签到：</h2>
+<p>Ida打开就看到flag<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181380811.png" alt="" loading="lazy"></p>
+<h2 id="zzzz3333333">Zzzz3333333</h2>
+<p>Ida打开查找关键代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181400324.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181406817.png" alt="" loading="lazy"><br>
+找到一个判断函数，数了数38个判断条件，又有38个未知数，未知数就是flag，想到用z3py约束求解器，写脚本求解，脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181470963.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181476257.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181480916.png" alt="" loading="lazy"><br>
+实际出现一点小问题，有一些乱码可能某个数改错了出现了多解，增加判断条件输出不同的解，找正确的那个。</p>
+<h2 id="奇怪的exe">奇怪的exe</h2>
+<p>下载文件，发现是python写的exe文件。先用pyinstxtractor解包，找到一个名字为3的可疑文件:<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181632590.png" alt="" loading="lazy"><br>
+16进制编辑器打开发现里面有输入flag等字眼，改名为pyc文件，然后拿去反编译，提示错误，再看16进制编辑页面：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181638380.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181669038.png" alt="" loading="lazy"><br>
+发现magic number错误，用对应的python版本编译一个文件，查看其magic number如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181675215.png" alt="" loading="lazy"><br>
+将第一行加到3.py上，再用uncompyle6反编译，得到源码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181681573.png" alt="" loading="lazy"><br>
+很容易逆，先异或求s，再对应每三位还原，得到base64加密后的flag，解密得到flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181758415.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181764017.png" alt="" loading="lazy"></p>
+<h2 id="ez_code">ez_code</h2>
+<p>下载文件发现是python字节码，翻译字节码得到如下代码：</p>
+<pre><code>flag=input()
+print(flag)
+if len(flag)!=36:
+    print('wrong length!')
+a=[]
+t=0
+for i in flag:
+    if t&amp;1==1:             #偶数
+        a.append(ord(i)+128)
+    else:
+        a.append(ord(i))
+    t=t+1
+b=a[0]&gt;&gt;5              #f-&gt;3
+for i in range(len(a)):
+    if i==len(a)-1:
+        a[i]=(a[i]*8)&amp;255|b
+    else:
+        a[i]=(a[i]*8)&amp;255|(a[i+1]&gt;&gt;5)
+num=[]
+for i in range(2,129):       ##################
+    t=False
+    for j in range(2,i):
+        if i%j==0:
+            t=True
+    if not t:
+        num.append(i)
+for i in range(len(num)):
+    print(num[i])
+c=[0]*len(a)
+for i in range(len(a)):       #36
+    x1=(a[i]&gt;&gt;4)^(num[i%31]&amp;15)
+    x2=(a[i]&amp;15)^(num[i%31]&gt;&gt;4)
+    c[i]=x2*16+x1
+d=[227,169,227,45,232,33,126,162,195,9,239,187,245,180,69,164,123,185,93,0,198,58,246,149,211,156,218,166,65,41,86,173,121,41,125,167]
+#print(len(d))
+e=1
+for i in range(len(d)):
+    if d[i]!=c[i]:
+        e=0              #####
+if e==1:
+    print('you are right!')
+else:
+    print('wrong')
+</code></pre>
+<p>可以先根据d[i]=c[i], c[i]=x2*16+x1爆破a[i]。然后再逆向还原，通过分析发现前面代码的大概意思是将a所有位的二进制码左移3位，所以逆向的话右移三位，在根据判断末尾是否为0对应减去128。脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181820797.png" alt="" loading="lazy"></p>
+<h2 id="time">time</h2>
+<p>先cmd运行文件发现提示：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181894529.png" alt="" loading="lazy"><br>
+所以应该有一些运行时的判断条件，ida打开：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181900633.png" alt="" loading="lazy"><br>
+这就是为什么直接运行会提示not yet，它会先对运行时本地时间进行判断，符合才会进入主函数，主函数如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181908183.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615181914760.png" alt="" loading="lazy"><br>
+先传入参数是一个对时间的式子:<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181920825.png" alt="" loading="lazy"><br>
+计算结果就是0xd563e400，然后按照字节判断是否是字母或者数字，不是的话就循环下一次，是的话放入x_0里，这里发现除了0x00字节，一共是传入了3位dcU。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181970160.png" alt="" loading="lazy"><br>
+接下来是判断flag是否是字母或数字，是的话接着放入x_0地址处，注意这时前面有3个字符的：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181977825.png" alt="" loading="lazy"><br>
+然后生成一个先数字，再小写字母，再大写字母的表，放入table里：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181982262.png" alt="" loading="lazy"><br>
+接着创建一个数组，存放x_0里字符串对应在table的位置，数组名改为array_666：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181988543.png" alt="" loading="lazy"><br>
+下面找到关键函数，点开：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615181994957.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615182041534.png" alt="" loading="lazy"><br>
+大致就是array里对应i加上flag对应在table里的位置，然后对62求余，其中62就是table的长度，求余结果就是table的下标，然后放入字符串里，这里取名为stringggg，其中array比flag长3位，长在前面传入参数那里，这也使得能够逆向求解。<br>
+再回到主函数，最后有两个字符串进行比较，一个就是刚才生成的stringggg，一个是str1：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182047584.png" alt="" loading="lazy"><br>
+Str1是已知的：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182054945.png" alt="" loading="lazy"><br>
+然后就可以每三位每三位的求flag，脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182059803.png" alt="" loading="lazy"><br>
+没有优化脚本，先输入13，12，56就是dcU对应table表里的下标，每次出的3个结果就是下一轮的输入，最后输出完整的flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182067002.png" alt="" loading="lazy"></p>
+<h2 id="pwn1">pwn1</h2>
+<p>ida打开分析代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182108196.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615182116356.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615182120812.png" alt="" loading="lazy"><br>
+代码很短，先直接读入内容然后放入buf变量，然后将buf的最后一位变为0，n为buf的长度，最后比较s和buf的内容，比较长度为n字节。返回值是v4，在调用函数外面v4又给了result，result==123的话打开shell。虽然代码短但信息量还不少。这里可以通过刚开始字节设置0x00来绕过长度判断那里，再溢出覆盖整数v4为123,对应变量在栈中的位置如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182128070.png" alt="" loading="lazy"><br>
+写脚本和运行结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615182133421.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E7%AD%BE%E5%88%B0">签到：</a></li>
+<li><a href="#zzzz3333333">Zzzz3333333</a></li>
+<li><a href="#%E5%A5%87%E6%80%AA%E7%9A%84exe">奇怪的exe</a></li>
+<li><a href="#ez_code">ez_code</a></li>
+<li><a href="#time">time</a></li>
+<li><a href="#pwn1">pwn1</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/cumtctf2020hua-wei-bei-bu-fen-wp1/">
+              <h3 class="post-title">
+                CUMTCTF2020“华为杯”部分WP
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

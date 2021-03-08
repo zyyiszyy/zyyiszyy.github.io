@@ -1,0 +1,204 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CUMTCTF2021寒假赛部分WP | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615224777944">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="CUMTCTF2021寒假赛部分WP | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="RE1
+先根据ida分析逻辑，写出了加密的脚本，下图是加密的逻辑，还不是完全正确，可能还要部位或怎么，但主要逻辑如下，有两层循环每次外层循环，一开始存flag的那块内存就会改变，并且ki改变。外层循环结束得到一个ki，然后存str【ki】，..." />
+    <meta name="keywords" content="WriteUp,CTF" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615224777944" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              CUMTCTF2021寒假赛部分WP
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-01-31
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/pOo1m5_Uo/" class="post-tag">
+                  # WriteUp
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/lrSFwTVcv/" class="post-tag">
+                  # CTF
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/cumtctf-han-jia-sai-bu-fen-wp.webp" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="re1">RE1</h2>
+<p>先根据ida分析逻辑，写出了加密的脚本，下图是加密的逻辑，还不是完全正确，可能还要部位或怎么，但主要逻辑如下，有两层循环每次外层循环，一开始存flag的那块内存就会改变，并且ki改变。外层循环结束得到一个ki，然后存str【ki】，最终比较是否为已知的那串字符串，借此判断flag正误。</p>
+<figure data-type="image" tabindex="1"><img src="https://zyyiszyy.github.io/post-images/1615187267465.png" alt="" loading="lazy"></figure>
+<p>一开始没看出来是base58，硬着头皮逆，一直卡了两三天，因为是左移8位，所以直接flagg【i】*58+ki取低八位就是ascii值，每次确定一个位，先从最后一位开始逆，上一位的ki也是可以求出来。逆脚本中的k一开始以为是多少都不影响结果，因为试了好多次都算出来最后一位是125就是‘}’，但再多算几位就不一样了。最后几乎要放弃这道题的时候试了下如图让每轮初始k=0，结果出来正确结果。可以说在自己都没理解的情况下写出了解题脚本🤣</p>
+<p><img src="https://zyyiszyy.github.io/post-images/1615187280597.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615187287238.png" alt="" loading="lazy"></p>
+<p>后来得到flag才焕然大悟这是个算法，可能base64的变行，叫做base58，要是能一眼看出，直接就可用在线工具求解。</p>
+<figure data-type="image" tabindex="2"><img src="https://zyyiszyy.github.io/post-images/1615187296228.png" alt="" loading="lazy"></figure>
+<h2 id="re2">RE2</h2>
+<p>先随便输入flag如下，flag头是正确的：</p>
+<figure data-type="image" tabindex="3"><img src="https://zyyiszyy.github.io/post-images/1615187359242.png" alt="" loading="lazy"></figure>
+<p>动态调试先看出32位flag：</p>
+<figure data-type="image" tabindex="4"><img src="https://zyyiszyy.github.io/post-images/1615187362936.png" alt="" loading="lazy"></figure>
+<p>走到如图位置发现是一个判断，因为我输入的flag开头CUMTCTF{是正确的，先出现几次相等，未发生跳转，后来出错，跳转输出提示错误。</p>
+<figure data-type="image" tabindex="5"><img src="https://zyyiszyy.github.io/post-images/1615187390149.png" alt="" loading="lazy"></figure>
+<p>这是一开始CUMTCTF{的判断：</p>
+<figure data-type="image" tabindex="6"><img src="https://zyyiszyy.github.io/post-images/1615187393682.png" alt="" loading="lazy"></figure>
+<p>这里出现错误，前面发现C和T出现两次的字母对应的数字也是一样的，由此推测应该是一个字符能对应出一个数字，是个单表查表操作：</p>
+<figure data-type="image" tabindex="7"><img src="https://zyyiszyy.github.io/post-images/1615187487734.png" alt="" loading="lazy"></figure>
+<p>将下面的跳转语句nop掉，方便F9快速观察做表，然后依次输入可见字符列表，查表得到flag。</p>
+<figure data-type="image" tabindex="8"><img src="https://zyyiszyy.github.io/post-images/1615187491921.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#re1">RE1</a></li>
+<li><a href="#re2">RE2</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/hackme-ni-xiang-ti-mu-bu-fen-wp/">
+              <h3 class="post-title">
+                hackme逆向题目部分WP
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

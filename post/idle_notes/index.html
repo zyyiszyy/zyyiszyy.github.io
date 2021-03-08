@@ -1,0 +1,357 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>接触CTF以来的闲散笔记 | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615224777944">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="接触CTF以来的闲散笔记 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="dns刷新：
+ipconfig /flushdns
+
+z3py约束求解：
+先定义变量：a1=BitVec('a1',32)    a2=Int('a2')      #注意这里的变量类型是z3里的，不是python里的，要转化才可用
+创建约..." />
+    <meta name="keywords" content="CTF,Notes" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615224777944" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              接触CTF以来的闲散笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-07
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/lrSFwTVcv/" class="post-tag">
+                  # CTF
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/cQHF3_fNo/" class="post-tag">
+                  # Notes
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/idle_notes.webp" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="dns刷新">dns刷新：</h3>
+<pre><code>ipconfig /flushdns
+</code></pre>
+<h3 id="z3py约束求解">z3py约束求解：</h3>
+<pre><code>先定义变量：a1=BitVec('a1',32)    a2=Int('a2')      #注意这里的变量类型是z3里的，不是python里的，要转化才可用
+创建约束求解器：solver=Solver()                          #如果有位运算就要bitvec
+添加约束条件：solver.add(a&gt;1)
+判断解是否存在：if solver.check()==sat:   #不存在为unsat
+输出解：print(solver.model())
+取出解的某项的值：solver.model()[a1]
+位变量bitvec转化python整数：solver.model()[a1].as_long()
+约束可以逻辑运算：Or,And,Not
+示例脚本有保存
+</code></pre>
+<h3 id="ropgadget或等rop链">ROPgadget或等rop链：</h3>
+<pre><code>ROPgadget --binary 文件路径 --ropchain
+</code></pre>
+<h3 id="kali的checksec使用">kali的checksec使用：</h3>
+<pre><code>checksec --file=文件路径
+</code></pre>
+<h3 id="ubuntu打开命令行">Ubuntu打开命令行：</h3>
+<pre><code>ctrl+alt+T
+</code></pre>
+<h3 id="gdb的一些命令">gdb的一些命令：</h3>
+<pre><code>r `python -c 'print &quot;A&quot;*'268 + &quot;B&quot;*4+&quot;C&quot;*4`
+p/x $esp          查看esp寄存器的值
+x/x $esp          查看寄存器的值并显示其地址
+</code></pre>
+<h3 id="python2里写中文">python2里写中文：</h3>
+<pre><code>加上：#-*-coding:utf-8-*-
+</code></pre>
+<h3 id="usrbinpython">#!/usr/bin/python</h3>
+<pre><code>脚本语言的第一行，目的就是指出，你想要你的这个文件中的代码用什么可执行程序去运行它。
+</code></pre>
+<h3 id="提示xe6什么的错误">提示'\xe6'什么的错误：</h3>
+<pre><code>脚本前面加：#_*_coding:utf8_*_
+</code></pre>
+<h3 id="查看各个端口和对应使用的进程uid">查看各个端口和对应使用的进程uid：</h3>
+<pre><code>netstat -ano
+</code></pre>
+<h3 id="字符串转字节">字符串转字节：</h3>
+<pre><code>bytes(m,'utf-8')
+str(m,'utf-8')
+from Crypto.Util.number import *
+long_to_bytes(m)
+</code></pre>
+<h3 id="python反编译">python反编译：</h3>
+<pre><code>uncompyle6是一个原生python的跨版本反编译器和fragment反编译器
+uncompyle6 -o babypy.py babypy.pyc
+</code></pre>
+<h3 id="python编译">python编译：</h3>
+<pre><code>&gt;&gt;&gt; import py_compile
+&gt;&gt;&gt; py_compile.compile(r'/Users/zhangyi/Downloads/md5.py')
+</code></pre>
+<h3 id="kali更改时间">kali更改时间：</h3>
+<pre><code>while true; do date -us &quot;2018-01-01 00:00:00&quot;;done
+</code></pre>
+<h3 id="python相关">python相关：</h3>
+<pre><code>不能直接float变16进制，pwntools的p64里只能放16进制，可以用在线工具或写脚本。
+</code></pre>
+<h3 id="python写字符串依次遍历">python写字符串依次遍历：</h3>
+<pre><code>a=‘ada’，b='',for i in range(len(a)):****
+</code></pre>
+<h3 id="竖列变行">竖列变行：</h3>
+<pre><code>选择abc所在的三行，按Ctrl+H（编辑菜单，替换），将 ^p 替换为 &quot; &quot;。
+</code></pre>
+<h3 id="upx脱壳">upx脱壳：</h3>
+<pre><code>cmd运行upx.exe -d 目标路径
+</code></pre>
+<h3 id="ord是ascii变为数字">ord是ASCII变为数字，</h3>
+<pre><code>chr数字变ASCII字符
+</code></pre>
+<h3 id="jar文件为java可执行文件">.jar文件为java可执行文件：</h3>
+<pre><code>打开jar文件方式：cmd：Java -jar 目标路径
+</code></pre>
+<h3 id="vim各个模式切换">vim各个模式切换：</h3>
+<pre><code>i进入编辑模式，esc退出编辑模式进入一般命令模式，：进入命令行模式。wq！保存并退出。
+</code></pre>
+<h3 id="在kali写c代码">在kali写C代码：</h3>
+<pre><code>建立文本.c文件名。命令：gcc test.c编译，在默认目录里生成a.out文件，运行就是代码运行结果。
+</code></pre>
+<h3 id="随机数注意事项">随机数注意事项：</h3>
+<pre><code>windows和linux环境下相同种子伪随机数生成是不同的。
+</code></pre>
+<h3 id="c保留两位小数输出">C++保留两位小数输出：</h3>
+<pre><code>#include &lt;iomanip&gt;   cout &lt;&lt; &quot;a=&quot; &lt;&lt;fixed&lt;&lt; setprecision(2) &lt;&lt; a &lt;&lt;endl; //输出结果为a=0.20
+</code></pre>
+<h3 id="c排序函数和逆向输出字符串">C++排序函数和逆向输出（字符串）：</h3>
+<pre><code>reverse(remain.begin(),remain.end());
+sort（a,a+n）;
+</code></pre>
+<h3 id="c获取数组的长度">C++获取数组的长度：</h3>
+<pre><code>len=sizeof(a)/sizeof(a[0])；
+</code></pre>
+<h3 id="很多aaabbb有关的密码">很多AAABBB有关的密码：</h3>
+<pre><code>培根密码：5个一组。摩斯密码:  .-  组成
+</code></pre>
+<h3 id="rar块的开头">rar块的开头：</h3>
+<pre><code>文件块0x74
+</code></pre>
+<h3 id="密码种类有很多">密码种类有很多：</h3>
+<pre><code>MD5，base64，培根密码，摩斯密码，栅栏密码(W型和传统型)，
+</code></pre>
+<h3 id="常见文件的文件头">常见文件的文件头：</h3>
+<pre><code>https://blog.csdn.net/weixin_44604541/article/details/110082054
+</code></pre>
+<h3 id="rot13在线解密">Rot13在线解密：</h3>
+<pre><code>https://www.jisuan.mobi/puzzm6z1B1HH6yXW.html
+</code></pre>
+<h3 id="md5在线解密">md5在线解密：</h3>
+<pre><code>https://www.somd5.com/
+</code></pre>
+<h3 id="base64在线解码">base64在线解码：</h3>
+<pre><code>https://www.sojson.com/base64.html
+</code></pre>
+<h3 id="pdf转word">pdf转word：</h3>
+<pre><code>https://app.xunjiepdf.com/pdf2word/
+</code></pre>
+<h3 id="mosi密码">mosi密码：</h3>
+<pre><code>http://moersima.00cha.net/
+</code></pre>
+<h3 id="培根密码">培根密码：</h3>
+<pre><code>http://rumkin.com/tools/cipher/baconian.php
+</code></pre>
+<h3 id="栅栏密码w型">栅栏密码（W型）：</h3>
+<pre><code>http://www.atoolbox.net/Tool.php?Id=777
+</code></pre>
+<h3 id="栅栏密码传统">栅栏密码（传统）：</h3>
+<pre><code>http://www.atoolbox.net/Tool.php?Id=855
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#dns%E5%88%B7%E6%96%B0">dns刷新：</a></li>
+<li><a href="#z3py%E7%BA%A6%E6%9D%9F%E6%B1%82%E8%A7%A3">z3py约束求解：</a></li>
+<li><a href="#ropgadget%E6%88%96%E7%AD%89rop%E9%93%BE">ROPgadget或等rop链：</a></li>
+<li><a href="#kali%E7%9A%84checksec%E4%BD%BF%E7%94%A8">kali的checksec使用：</a></li>
+<li><a href="#ubuntu%E6%89%93%E5%BC%80%E5%91%BD%E4%BB%A4%E8%A1%8C">Ubuntu打开命令行：</a></li>
+<li><a href="#gdb%E7%9A%84%E4%B8%80%E4%BA%9B%E5%91%BD%E4%BB%A4">gdb的一些命令：</a></li>
+<li><a href="#python2%E9%87%8C%E5%86%99%E4%B8%AD%E6%96%87">python2里写中文：</a></li>
+<li><a href="#usrbinpython">#!/usr/bin/python</a></li>
+<li><a href="#%E6%8F%90%E7%A4%BAxe6%E4%BB%80%E4%B9%88%E7%9A%84%E9%94%99%E8%AF%AF">提示'\xe6'什么的错误：</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%90%84%E4%B8%AA%E7%AB%AF%E5%8F%A3%E5%92%8C%E5%AF%B9%E5%BA%94%E4%BD%BF%E7%94%A8%E7%9A%84%E8%BF%9B%E7%A8%8Buid">查看各个端口和对应使用的进程uid：</a></li>
+<li><a href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BD%AC%E5%AD%97%E8%8A%82">字符串转字节：</a></li>
+<li><a href="#python%E5%8F%8D%E7%BC%96%E8%AF%91">python反编译：</a></li>
+<li><a href="#python%E7%BC%96%E8%AF%91">python编译：</a></li>
+<li><a href="#kali%E6%9B%B4%E6%94%B9%E6%97%B6%E9%97%B4">kali更改时间：</a></li>
+<li><a href="#python%E7%9B%B8%E5%85%B3">python相关：</a></li>
+<li><a href="#python%E5%86%99%E5%AD%97%E7%AC%A6%E4%B8%B2%E4%BE%9D%E6%AC%A1%E9%81%8D%E5%8E%86">python写字符串依次遍历：</a></li>
+<li><a href="#%E7%AB%96%E5%88%97%E5%8F%98%E8%A1%8C">竖列变行：</a></li>
+<li><a href="#upx%E8%84%B1%E5%A3%B3">upx脱壳：</a></li>
+<li><a href="#ord%E6%98%AFascii%E5%8F%98%E4%B8%BA%E6%95%B0%E5%AD%97">ord是ASCII变为数字，</a></li>
+<li><a href="#jar%E6%96%87%E4%BB%B6%E4%B8%BAjava%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6">.jar文件为java可执行文件：</a></li>
+<li><a href="#vim%E5%90%84%E4%B8%AA%E6%A8%A1%E5%BC%8F%E5%88%87%E6%8D%A2">vim各个模式切换：</a></li>
+<li><a href="#%E5%9C%A8kali%E5%86%99c%E4%BB%A3%E7%A0%81">在kali写C代码：</a></li>
+<li><a href="#%E9%9A%8F%E6%9C%BA%E6%95%B0%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9">随机数注意事项：</a></li>
+<li><a href="#c%E4%BF%9D%E7%95%99%E4%B8%A4%E4%BD%8D%E5%B0%8F%E6%95%B0%E8%BE%93%E5%87%BA">C++保留两位小数输出：</a></li>
+<li><a href="#c%E6%8E%92%E5%BA%8F%E5%87%BD%E6%95%B0%E5%92%8C%E9%80%86%E5%90%91%E8%BE%93%E5%87%BA%E5%AD%97%E7%AC%A6%E4%B8%B2">C++排序函数和逆向输出（字符串）：</a></li>
+<li><a href="#c%E8%8E%B7%E5%8F%96%E6%95%B0%E7%BB%84%E7%9A%84%E9%95%BF%E5%BA%A6">C++获取数组的长度：</a></li>
+<li><a href="#%E5%BE%88%E5%A4%9Aaaabbb%E6%9C%89%E5%85%B3%E7%9A%84%E5%AF%86%E7%A0%81">很多AAABBB有关的密码：</a></li>
+<li><a href="#rar%E5%9D%97%E7%9A%84%E5%BC%80%E5%A4%B4">rar块的开头：</a></li>
+<li><a href="#%E5%AF%86%E7%A0%81%E7%A7%8D%E7%B1%BB%E6%9C%89%E5%BE%88%E5%A4%9A">密码种类有很多：</a></li>
+<li><a href="#%E5%B8%B8%E8%A7%81%E6%96%87%E4%BB%B6%E7%9A%84%E6%96%87%E4%BB%B6%E5%A4%B4">常见文件的文件头：</a></li>
+<li><a href="#rot13%E5%9C%A8%E7%BA%BF%E8%A7%A3%E5%AF%86">Rot13在线解密：</a></li>
+<li><a href="#md5%E5%9C%A8%E7%BA%BF%E8%A7%A3%E5%AF%86">md5在线解密：</a></li>
+<li><a href="#base64%E5%9C%A8%E7%BA%BF%E8%A7%A3%E7%A0%81">base64在线解码：</a></li>
+<li><a href="#pdf%E8%BD%ACword">pdf转word：</a></li>
+<li><a href="#mosi%E5%AF%86%E7%A0%81">mosi密码：</a></li>
+<li><a href="#%E5%9F%B9%E6%A0%B9%E5%AF%86%E7%A0%81">培根密码：</a></li>
+<li><a href="#%E6%A0%85%E6%A0%8F%E5%AF%86%E7%A0%81w%E5%9E%8B">栅栏密码（W型）：</a></li>
+<li><a href="#%E6%A0%85%E6%A0%8F%E5%AF%86%E7%A0%81%E4%BC%A0%E7%BB%9F">栅栏密码（传统）：</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/cumtctf-han-jia-sai-bu-fen-wp/">
+              <h3 class="post-title">
+                CUMTCTF2021寒假赛部分WP
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
