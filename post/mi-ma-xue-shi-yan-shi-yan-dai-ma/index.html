@@ -1,0 +1,911 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>密码学实验实验代码 | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615261820607">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="密码学实验实验代码 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="古典密码 Vignere
+加密代码：
+k=input(&quot;请输入密钥：&quot;)
+m=input(&quot;请输入明文：&quot;)
+c=''
+lk=len(k)
+temp=0
+for i in range(len(m)):..." />
+    <meta name="keywords" content="Course Experiment" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615261820607" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              密码学实验实验代码
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-01-13
+              </span>
+              <span>
+                30 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/reBejoz5_/" class="post-tag">
+                  # Course Experiment
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/mi-ma-xue-shi-yan-shi-yan-dai-ma.webp" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="古典密码-vignere">古典密码 Vignere</h2>
+<p>加密代码：</p>
+<pre><code class="language-python">k=input(&quot;请输入密钥：&quot;)
+m=input(&quot;请输入明文：&quot;)
+c=''
+lk=len(k)
+temp=0
+for i in range(len(m)):
+    if not ((ord(m[i])&gt;=65 and ord(m[i])&lt;=90) or (ord(m[i])&gt;=97 and ord(m[i])&lt;=122)): #字母外不加密
+        c+=m[i]
+    else:
+        if ord(m[i])&gt;=97 and ord(m[i])&lt;=122:          #判断明文大小写，对应密文大小写
+            if ord(k[temp%lk])&gt;=97 and ord(k[temp%lk])&lt;=122:         #判断密钥大小写
+                c+=chr(((ord(m[i])-97)+(ord(k[temp%lk])-97))%26+97)
+                temp+=1
+            else:
+                c+=chr(((ord(m[i])-97)+(ord(k[temp%lk])-65))%26+97)
+                temp+=1
+        else:
+            if ord(k[temp%lk])&gt;=97 and ord(k[temp%lk])&lt;=122:
+                c+=chr(((ord(m[i])-65)+(ord(k[temp%lk])-97))%26+65)
+                temp+=1
+            else:
+                c+=chr(((ord(m[i])-65)+(ord(k[temp%lk])-65))%26+65)
+                temp+=1
+print(&quot;维吉尼亚密码加密结果为：&quot;,c)
+
+</code></pre>
+<p>解密代码：</p>
+<pre><code class="language-python">k=input(&quot;请输入密钥：&quot;)
+c=input(&quot;请输入密文：&quot;)
+m=''
+lk=len(k)
+temp=0
+for i in range(len(c)):
+    if not ((ord(c[i])&gt;=65 and ord(c[i])&lt;=90) or (ord(c[i])&gt;=97 and ord(c[i])&lt;=122)):   #字母外不加密
+        m+=c[i]
+    else:
+        if ord(c[i])&gt;=97 and ord(c[i])&lt;=122:          #判断密文大小写，对应明文大小写
+            if ord(k[temp%lk])&gt;=97 and ord(k[temp%lk])&lt;=122:         #判断密钥大小写
+                m+=chr(((ord(c[i])-97)-(ord(k[temp%lk])-97))%26+97)
+                temp+=1
+            else:
+                m+=chr(((ord(c[i])-97)-(ord(k[temp%lk])-65))%26+97)
+                temp+=1
+        else:
+            if ord(k[temp%lk])&gt;=97 and ord(k[temp%lk])&lt;=122:
+                m+=chr(((ord(c[i])-65)-(ord(k[temp%lk])-97))%26+65)
+                temp+=1
+            else:
+                m+=chr(((ord(c[i])-65)-(ord(k[temp%lk])-65))%26+65)
+                temp+=1
+print(&quot;维吉尼亚密码解密结果为：&quot;,m)
+</code></pre>
+<p>结果展示：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615259738997.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615259745611.png" alt="" loading="lazy"></p>
+<h2 id="古典密码-仿射密码">古典密码 仿射密码</h2>
+<p>加密代码：</p>
+<pre><code class="language-python">m=''
+c=''
+k1=int(input(&quot;请输入k1：&quot;))
+k2=int(input(&quot;请输入k2：&quot;))
+m=input(&quot;请输入明文m：&quot;)
+for i in range(len(m)):
+    if m[i]==' ':
+        c+=' '
+    else:
+        c+=chr((k1*(ord(m[i])-97)+k2)%26+97)
+print(&quot;仿射加密后的密文c为：&quot;,c)
+</code></pre>
+<p>解密代码：</p>
+<pre><code class="language-python">c=''
+m=''
+k1_=int(input(&quot;请输入k1逆：&quot;))
+k2_=int(input(&quot;请输入k2：&quot;))
+c=input(&quot;请输入密文c：&quot;)
+for i in range(len(c)):
+    if c[i]==' ':
+        m+=' '
+    else:
+        m+=chr(((ord(c[i])-97-k2_)*k1_)%26+97)
+print(&quot;仿射解密的明文为：&quot;,m)
+</code></pre>
+<p>仿射密码爆破解密：</p>
+<pre><code class="language-python">a=[1,3,5,7,9,11,15,17,19,21,23,25]
+c='xrgti'
+str=''
+for k2 in range(26):
+    for k1 in a:
+        for ci in range(len(c)):
+                k=chr((((ord(c[ci])-97-k2)*k1)%26)+97)
+                str+=k
+        if len(str)==len(c):
+            print(str,k1,k2)
+            str=''
+</code></pre>
+<p>结果展示：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615260045833.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615260052358.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615260058782.png" alt="" loading="lazy"></p>
+<h2 id="流密码与线性反馈移位寄存器">流密码与线性反馈移位寄存器</h2>
+<p>**线性反馈移位寄存器LFSR：**先找到一个本原多项式，选取初始化向量vi，依照本原多项式去除对应的位进行异或，作为输入，再将对应端作为输出，这样便得到周期位2^n-1的01序列。验证周期时，只需要将LFSR内容和初始值判断相等，相等时满一个周期。<br>
+**简单流密码的实现：**选取初始值后，将明文按照一定的编码方式转换成比特流，依次和上面产生的01序列进行异或，所得为密文比特流。解密时保持LFSR线性移位反馈寄存器不变，初始值向量也不变，再对密文依次异或即为原来的明文比特流，再按同样的编码方式转换成明文即可解密成功。<br>
+LFSR线性反馈移位寄存器：</p>
+<pre><code class="language-python">#选取的本原多项式x^15+x+1         32768-1
+#取初始值0x1               
+LFSR=int('0x1',16)
+print(&quot;移位寄存器的内容：&quot;,bin(LFSR)[2:].zfill(15),end='           ')
+t=50
+while(t):
+    bit_out=LFSR&amp;1
+    print(&quot;移出的位：&quot;,bit_out,end=' ')
+    bit_in=((LFSR&amp;0x4000)&gt;&gt;14)^((LFSR&amp;0x1))
+    print(&quot;移入的位：&quot;,bit_in)
+    LFSR=(LFSR&gt;&gt;1)+(bit_in&lt;&lt;14)
+    print(&quot;移位寄存器的内容：&quot;,bin(LFSR)[2:].zfill(15),end='           ')
+t-=1
+</code></pre>
+<p>LFSR的周期验证:</p>
+<pre><code class="language-python">#选取的本原多项式x^15+x+1         32768-1
+#取初始值0x1                
+LFSR=int('0x1',16)
+#print(&quot;移位寄存器的内容：&quot;,bin(LFSR)[2:].zfill(15),end='           ')
+t=0
+while(1):
+    bit_out=LFSR&amp;1
+    #print(&quot;移出的位：&quot;,bit_out,end=' ')
+    bit_in=((LFSR&amp;0x4000)&gt;&gt;14)^((LFSR&amp;0x1))
+    #print(&quot;移入的位：&quot;,bit_in)
+    LFSR=(LFSR&gt;&gt;1)+(bit_in&lt;&lt;14)
+    t+=1
+    if LFSR==1:
+        print(&quot;移位寄存器的内容：&quot;,bin(LFSR)[2:].zfill(15),end='           ')
+        print(t)
+        break
+</code></pre>
+<p>流密码加密：</p>
+<pre><code class="language-python">#选取的本原多项式x^24+x^7+x^2+x+1      0x800043
+#取初始值0xabcdef                10101011 11001101 11101111
+import re
+def Str_encode(s:str,rule='utf-8'):
+    #返回字符串对应01字符串
+    sc=s.encode(rule)
+    bc=[bin(int(i))[2:].rjust(8,'0') for i in sc ]
+    rtn=''.join(bc)
+    return rtn
+LFSR=int('0xabcdef',16)
+#print(&quot;移位寄存器的内容：&quot;,bin(LFSR),end='           ')
+c=''
+m=Str_encode(input(&quot;请输入明文m：&quot;))
+print('明文转化为01比特流：',m)
+for i in range(len(m)):
+    bit_out=LFSR&amp;1
+    #print(&quot;移出的位：&quot;,bit_out,end=' ')
+    bit_in=((LFSR&amp;0x800000)&gt;&gt;23)^((LFSR&amp;0x40)&gt;&gt;6)^((LFSR&amp;0x2)&gt;&gt;1)^(LFSR&amp;1)
+    #print(&quot;移入的位：&quot;,bit_in)
+    LFSR=(LFSR&gt;&gt;1)+(bit_in&lt;&lt;23)
+    #print(&quot;移位寄存器的内容：&quot;,bin(LFSR),end='           ')
+    c+=chr(bit_out^int(m[i])+48)
+print(&quot;加密后的比特流为：&quot;,(c))
+</code></pre>
+<p>流密码解密：</p>
+<pre><code class="language-python">import re
+def Str_decode(s:str,rule='utf-8'):
+    if len(s)%8!=0:
+        raise SyntaxError('编码不是八的倍数')
+        #至少是字节的倍数才能操作
+    msg=re.sub(r'0x','',hex(int(s,2)))
+    rtn=bytes.fromhex(msg).decode(rule)
+    return rtn
+LFSR=int('0xabcdef',16)
+#print(&quot;移位寄存器的内容：&quot;,bin(LFSR),end='           ')
+c=''
+m=input(&quot;请输入密文比特流c：&quot;)
+for i in range(len(m)):
+    bit_out=LFSR&amp;1
+    #print(&quot;移出的位：&quot;,bit_out,end=' ')
+    bit_in=((LFSR&amp;0x800000)&gt;&gt;23)^((LFSR&amp;0x40)&gt;&gt;6)^((LFSR&amp;0x2)&gt;&gt;1)^(LFSR&amp;1)
+    #print(&quot;移入的位：&quot;,bit_in)
+    LFSR=(LFSR&gt;&gt;1)+(bit_in&lt;&lt;23)
+    #print(&quot;移位寄存器的内容：&quot;,bin(LFSR),end='           ')
+    c+=chr(bit_out^int(m[i])+48)
+print(Str_decode(c))
+</code></pre>
+<p>结果展示：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615260475492.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615260482522.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615260488961.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615260493087.png" alt="" loading="lazy"></p>
+<h2 id="公钥密码-rsa">公钥密码 RSA</h2>
+<p>**密钥生成原理：**1.随机选择两个不相等的质数p和q。<br>
+2.计算p和q的乘积n：n = p×q<br>
+3.计算n的欧拉函数φ(n)。称作L。根据公式φ(n) = (p-1)(q-1)。<br>
+4.随机选择一个整数e，也就是公钥当中用来加密的那个数字条件是1&lt; e &lt; φ(n)，且e与φ(n) 互质。<br>
+5.计算e对于φ(n)的模反元素，也就是密钥当中用来解密的那个数字。<br>
+6.将n和e封装成公钥，n和d封装成私钥。<br>
+**加解密原理：**加密算法为：c≡ m^e mod n;解密算法为：m≡ c^d mod n。<br>
+实验代码：</p>
+<pre><code class="language-python">import random
+from Crypto.Util.number import *
+# 检测大整数是否是素数,如果是素数,就返回True,否则返回False
+# rabin算法
+def rabin_miller(num):
+    s = num - 1
+    t = 0
+    while s % 2 == 0:
+        s = s // 2
+        t += 1
+    for trials in range(5):
+        a = random.randrange(2, num - 1)
+        v = fast_mod(a, s, num)
+        if v != 1:
+            i = 0
+            while v != (num - 1):
+                if i == t - 1:
+                    return False
+                else:
+                    i = i + 1
+                    v = (v ** 2) % num
+    return True
+def is_prime(num):
+    small_primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]
+    # 如果大数是这些小素数的倍数,那么就是合数,返回false
+    for prime in small_primes:
+        if num % prime == 0:
+            return False
+    # 如果这样没有分辨出来,就一定是大整数,那么就调用rabin算法
+    return rabin_miller(num)
+# 得到大整数,默认位数为1024
+def get_prime(key_size):
+    while True:
+        num = random.randrange(2**(key_size-1), 2**key_size)
+        if is_prime(num):
+            return num
+def get_e(size,phi):
+    while True:
+        num = random.randrange(2**(size-1), 2**size)      
+        if gcd(num,phi)==1:
+            return num
+def gcd(a,b):               #欧几里得法求最大公因数
+    if b==0:
+        return a
+    else:
+        return gcd(b, a%b)
+def ext_gcd(a, b): #扩展欧几里得算法    
+    if b == 0:          
+        return 1, 0, a     
+    else:         
+        x, y, gcd = ext_gcd(b, a % b) #递归直至余数等于0     
+        x, y = y, (x - (a // b) * y) #辗转相除法反向推导每层a、b的因子使得gcd(a,b)=ax+by成立         
+        return x, y, gcd
+
+def fast_mod(b, n, m):
+    #快速幂
+    ret = 1
+    tmp = b
+    while n:
+        if n &amp; 0x1:
+            ret = ret * tmp % m
+        tmp = tmp * tmp % m
+        n &gt;&gt;= 1
+    return ret
+def generate_d(ph_n, e):
+    (x, y, r) = ext_gcd(ph_n, e)
+    # y maybe &lt; 0, so convert it
+    if y &lt; 0:
+        #return y % ph_n
+        return y + ph_n  
+    return y
+p=get_prime(512)
+q=get_prime(512)
+print(&quot;大素数P为：&quot;,p)
+print(&quot;大素数Q为：&quot;,q)
+n=p*q
+print(&quot;N为：&quot;,n)
+phi=(p-1)*(q-1)
+e=get_e(512,phi)             #e和phi互素
+print(&quot;选取的e为：&quot;,e)
+d=generate_d(phi,e)     #拓展欧几里得算法求逆
+print(&quot;计算的d为：&quot;,d)
+m=bytes(input(&quot;请输入明文：&quot;),'utf-8')
+print(m)
+c=fast_mod(bytes_to_long(m),e,n)
+print(&quot;对应的密文为：&quot;,(c))
+m=fast_mod(c,d,n)
+print(&quot;解密的明文为：&quot;,str(long_to_bytes(m),&quot;utf-8&quot;))
+#hello world!
+</code></pre>
+<p>结果展示：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615260876516.png" alt="" loading="lazy"></p>
+<h2 id="分组密码-aes">分组密码 AES</h2>
+<p>加密流程图：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615260956579.png" alt="" loading="lazy"><br>
+实验代码：</p>
+<pre><code class="language-python">#128位密钥，十轮
+sbox=( 0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76,
+            0xca,0x82,0xc9,0x7d,0xfa,0x59,0x47,0xf0,0xad,0xd4,0xa2,0xaf,0x9c,0xa4,0x72,0xc0,
+            0xb7,0xfd,0x93,0x26,0x36,0x3f,0xf7,0xcc,0x34,0xa5,0xe5,0xf1,0x71,0xd8,0x31,0x15,
+            0x04,0xc7,0x23,0xc3,0x18,0x96,0x05,0x9a,0x07,0x12,0x80,0xe2,0xeb,0x27,0xb2,0x75,
+            0x09,0x83,0x2c,0x1a,0x1b,0x6e,0x5a,0xa0,0x52,0x3b,0xd6,0xb3,0x29,0xe3,0x2f,0x84,
+            0x53,0xd1,0x00,0xed,0x20,0xfc,0xb1,0x5b,0x6a,0xcb,0xbe,0x39,0x4a,0x4c,0x58,0xcf,
+            0xd0,0xef,0xaa,0xfb,0x43,0x4d,0x33,0x85,0x45,0xf9,0x02,0x7f,0x50,0x3c,0x9f,0xa8,
+            0x51,0xa3,0x40,0x8f,0x92,0x9d,0x38,0xf5,0xbc,0xb6,0xda,0x21,0x10,0xff,0xf3,0xd2,
+            0xcd,0x0c,0x13,0xec,0x5f,0x97,0x44,0x17,0xc4,0xa7,0x7e,0x3d,0x64,0x5d,0x19,0x73,
+            0x60,0x81,0x4f,0xdc,0x22,0x2a,0x90,0x88,0x46,0xee,0xb8,0x14,0xde,0x5e,0x0b,0xdb,
+            0xe0,0x32,0x3a,0x0a,0x49,0x06,0x24,0x5c,0xc2,0xd3,0xac,0x62,0x91,0x95,0xe4,0x79,
+            0xe7,0xc8,0x37,0x6d,0x8d,0xd5,0x4e,0xa9,0x6c,0x56,0xf4,0xea,0x65,0x7a,0xae,0x08,
+            0xba,0x78,0x25,0x2e,0x1c,0xa6,0xb4,0xc6,0xe8,0xdd,0x74,0x1f,0x4b,0xbd,0x8b,0x8a,
+            0x70,0x3e,0xb5,0x66,0x48,0x03,0xf6,0x0e,0x61,0x35,0x57,0xb9,0x86,0xc1,0x1d,0x9e,
+            0xe1,0xf8,0x98,0x11,0x69,0xd9,0x8e,0x94,0x9b,0x1e,0x87,0xe9,0xce,0x55,0x28,0xdf,
+            0x8c,0xa1,0x89,0x0d,0xbf,0xe6,0x42,0x68,0x41,0x99,0x2d,0x0f,0xb0,0x54,0xbb,0x16 )
+#xtime process    与2相乘  若最高位b7=0，最简，若b7=1，和0b100011011异或
+def xtime(x):
+    if((x&lt;&lt;1)&amp;0x100):
+        return (((x&lt;&lt;1)^0x11b))
+    return x&lt;&lt;1
+    
+#MixColumns: Process the entire block   列混合
+def MixColumns():
+    tmp=[0 for t in range(4)]
+    xt=[0 for q in range(4)]
+    n=0       #4次循环
+    for _ in range(4):
+        xt[0]=xtime(blk[n])               #每列xtime运算，乘0x2
+        xt[1]=xtime(blk[n+1])
+        xt[2]=xtime(blk[n+2])
+        xt[3]=xtime(blk[n+3])
+        tmp[0]=xt[0]^xt[1]^blk[n+1]^blk[n+2]^blk[n+3]
+        tmp[1]=blk[n]^xt[1]^xt[2]^blk[n+2]^blk[n+3]
+        tmp[2]=blk[n]^blk[n+1]^xt[2]^xt[3]^blk[n+3]
+        tmp[3]=xt[0]^blk[n]^blk[n+1]^blk[n+2]^xt[3]
+        blk[n]=tmp[0]                    #仍用blk存结果
+        blk[n+1]=tmp[1]
+        blk[n+2]=tmp[2]
+        blk[n+3]=tmp[3]
+        n=n+4
+#ShiftRows:Shifts the entire block  行移位
+def ShiftRows():
+    #第二行左移一位
+    t=blk[1]
+    blk[1]=blk[5]
+    blk[5]=blk[9]
+    blk[9]=blk[13]
+    blk[13]=t
+    #第三行左移两位
+    t=blk[2]
+    blk[2]=blk[10]
+    blk[10]=t
+    t=blk[6]
+    blk[6]=blk[14]
+    blk[14]=t
+    #第四行右移一位
+    t=blk[15]
+    blk[15]=blk[11]
+    blk[11]=blk[7]
+    blk[7]=blk[3]
+    blk[3]=t
+#SubBytes  字节代换
+def SubBytes():
+    for x in range(16):
+        blk[x]=sbox[blk[x]]
+#AddRoundKey  轮密钥加
+def AddRoundKey(key):
+    x=0
+    k=[0 for m in range(16)]
+    for c in range(4):
+        for r in range(4):
+            k[x]=key[r][c]
+            x=x+1
+    for y in range(16):
+        blk[y]^=int(k[y])
+        
+# Schedule a secret key for use.
+def ScheduleKey(w,Nk):
+    Rcon=[0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1b,0x36]
+    for r in range(4):
+        for c in range(4):
+            w[0][r][c]=key[r+c*4]
+    for i in range(1,10+1):#问题1
+        for j in range(Nk):
+            t=[0 for x in range(4)]
+            for r in range(4):
+                if j :
+                    t[r]=w[i][r][j-1]
+                else:
+                    t[r]=w[i-1][r][3]
+            if j==0:
+                temp=t[0]
+                for r in range(3):
+                    t[r]=sbox[t[(r+1)%4]]
+                t[3]=sbox[temp]
+                t[0]^=int(Rcon[i-1])
+            for r in range(4):
+                w[i][r][j]=w[i-1][r][j]^t[r]
+#加密函数
+def AesEncrypt():
+    outkey=[]
+    outkey=[[[0 for  col in range(4)] for row in range(4)] for s in range(11)]
+    ScheduleKey(outkey,4)
+    AddRoundKey(outkey[0])
+    for x in range(1,10):
+        SubBytes()
+        ShiftRows()
+        MixColumns()
+        AddRoundKey(outkey[x])
+    SubBytes()
+    ShiftRows()                                 #最后一轮没有列混合
+    AddRoundKey(outkey[10])
+    c=&quot;&quot;
+    for i in range(16):
+        xxl=hex(blk[i])
+        if len(xxl)==3:                  #如0x05，要输出‘05’而不是‘5’
+            c+='0'+xxl[2:]
+        else:
+            c+=xxl[2:]
+    print(&quot;AES加密的密文为:&quot;,c)
+    return blk
+    
+def StringToListN(string):
+    s=[0 for x in range(16)]    #列表解析，创建16元素0的列表
+    for x in range(len(string)):
+        s[x]=int(ord(string[x]))
+    return s
+
+if __name__==&quot;__main__&quot;:
+    m=input(&quot;请输入明文字符串:&quot;)
+    blk=StringToListN(m)
+    k=input(&quot;请输入秘钥:&quot;)
+    key=StringToListN(k)
+AesEncrypt()
+</code></pre>
+<p>ECB电子密码本模式，主要是增加一个明文分组，每次处理一组：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615261161526.png" alt="" loading="lazy"><br>
+CBC密码分组链接模式，上一个分组的密文和下一组明文异或成为下一组的输入，依次直到所有明文分组加密完毕：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615261236667.png" alt="" loading="lazy"></p>
+<h2 id="hash-算法md5">HASH 算法md5</h2>
+<p>实验代码：</p>
+<pre><code class="language-python">import math
+#定义初始向量abcd,转换成32位2进制
+A0 = '67452301'
+B0 = 'efcdab89'
+C0 = '98badcfe'
+D0 = '10325476'
+A0 = bin(int(A0, 16)).replace('0b', '')
+B0 = bin(int(B0, 16)).replace('0b', '')
+C0 = bin(int(C0, 16)).replace('0b', '')
+D0 = bin(int(D0, 16)).replace('0b', '')
+A0 = '0' + A0
+D0 = '000' + D0
+
+#定义第1-64个式子的第i个32比特常数
+y = {}
+for i in range(0, 64):
+    y[i] = hex(int(2**32*abs(math.sin(i+1)))).replace('0x', '')    # 转成64位
+    y[i] = bin(int(y[i], 16)).replace('0b', '')     # 将16进制转换成2进制且补足32位
+    if len(y[i]) &lt; 32:
+        for t in range(0, 32-len(y[i])):
+            y[i] = '0' + y[i]
+#实现x,y的逐比特与
+def and1(x, y):
+    z = ''
+    for i in range(0, len(x)):
+        if x[i:i+1] == '1' and y[i:i+1] == '1':
+            z = z + '1'
+        else:
+            z = z + '0'
+    return z
+ 
+# 实现x,y的逐比特或
+def or1(x, y):
+    z = ''
+    for i in range(0, len(x)):
+        if x[i:i+1] == '0' and y[i:i+1] == '0':
+            z = z + '0'
+        else:
+            z = z + '1'
+    return z
+ 
+# 实现x,y的逐比特异或
+def xor(x, y):
+    z = ''
+    for i in range(0, len(x)):
+        if x[i:i + 1] == y[i:i + 1]:
+            z = z + '0'
+        else:
+            z = z + '1'
+    return z
+ 
+# 实现x的逐比特逻辑反
+def reverse(x):
+    z = ''
+    for i in range(0, len(x)):
+        if x[i:i + 1] == '1':
+            z = z + '0'
+        else:
+            z = z + '1'
+    return z
+ 
+#x的循环左移
+def shift(x, i):
+    z = ''
+    for t in range(0, len(x) - i):
+        z = z + x[t + i:t + i + 1]
+    for y in range(0, i):
+        z = z + x[y:y + 1]
+    return z
+
+#整数模2的三十二次方加法
+def add(x, y):
+    z = ''
+    jinwei = 0
+    for t in range(1, len(x)):
+        if int(x[len(x) - t]) + int(y[len(y) - t]) + jinwei &gt; 1:
+            z = str((int(x[len(x) - t]) + int(y[len(y) - t]) + jinwei) % 2) + z
+            jinwei = 1
+        else:
+            z = str((int(x[len(x) - t]) + int(y[len(y) - t]) + jinwei) % 2) + z
+            jinwei = 0
+    if int(x[0]) + int(y[0]) + jinwei == 2 or int(x[0]) + int(y[0]) + jinwei == 0:
+        z = '0' + z
+    else:
+        z = '1' + z
+    return z
+
+# 定义f,g,h,i函数
+def ffunc(x, y, z):
+    t = and1(x, y)
+    t1 = reverse(x)
+    t2 = and1(t1, z)
+    return or1(t, t2)
+def gfunc(x, y, z):
+    t = and1(x, z)
+    t1 = reverse(z)
+    t2 = and1(y, t1)
+    return or1(t, t2)
+def hfunc(x, y, z):
+    t1 = xor(x, y)
+    t2 = xor(t1, z)
+    return t2
+def ifunc(x, y, z):
+    t = reverse(z)
+    t1 = or1(x, t)
+    return xor(y, t1)
+#填充算法
+def fill(text):
+    text1 = ''
+    for i in text:
+        t = str(ord(i))
+        t = bin(int(t, 10)).replace(&quot;0b&quot;, &quot;&quot;)
+        t = str(t)
+        if len(t) &lt; 8:
+            for num in range(8 - len(t)):
+                t = '0' + t
+        text1 = text1 + t
+    length = len(text1)
+    length1 = 512 - len(text1) - 65
+    text1 = text1 + '1'
+    for i in range(length1):
+        text1 = text1 + '0'
+    text2 = bin(length).replace('0b', '')
+    # 填充后面64位
+    if len(text2) &lt; 8:
+        for i in range(8 - len(text2)):
+            text2 = '0' + text2
+    length2 = 64 - len(text2)
+    for t in range(length2):
+        text2 = text2 + '0'
+    return text1 + text2
+# 将最后得到的ABCD逆序输出
+def reverse_order(a):
+    new_a = a[24:32] + a[16:24] + a[8:16] + a[0:8]
+    return new_a
+#最后开始写算法:
+# 输入要加密的明文
+password = input(&quot;加密前:&quot;)
+# 填充算法
+x = fill(password)
+# 处理数据,注意大端序和小端序
+M0 = x[0:32]
+M0 = M0[24:32]+M0[16:24]+M0[8:16]+M0[0:8]
+M1 = x[32:64]
+M1 = M1[24:32]+M1[16:24]+M1[8:16]+M1[0:8]
+M2 = x[64:96]
+M2 = M2[24:32]+M2[16:24]+M2[8:16]+M2[0:8]
+M3 = x[96:128]
+M3 = M3[24:32]+M3[16:24]+M3[8:16]+M3[0:8]
+M4 = x[128:160]
+M4 = M4[24:32]+M4[16:24]+M4[8:16]+M4[0:8]
+M5 = x[160:192]
+M5 = M5[24:32]+M5[16:24]+M5[8:16]+M5[0:8]
+M6 = x[192:224]
+M6 = M6[24:32]+M6[16:24]+M6[8:16]+M6[0:8]
+M7 = x[224:256]
+M7 = M7[24:32]+M7[16:24]+M7[8:16]+M7[0:8]
+M8 = x[256:288]
+M8 = M8[24:32]+M8[16:24]+M8[8:16]+M8[0:8]
+M9 = x[288:320]
+M9 = M9[24:32]+M9[16:24]+M9[8:16]+M9[0:8]
+M10 = x[320:352]
+M10 = M10[24:32]+M10[16:24]+M10[8:16]+M10[0:8]
+M11 = x[352:384]
+M11 = M11[24:32]+M11[16:24]+M11[8:16]+M11[0:8]
+M12 = x[384:416]
+M12 = M12[24:32]+M12[16:24]+M12[8:16]+M12[0:8]
+M13 = x[416:448]
+M13 = M13[24:32]+M13[16:24]+M13[8:16]+M13[0:8]
+M14 = x[448:480]
+M14 = M14[24:32]+M14[16:24]+M14[8:16]+M14[0:8]
+M15 = x[480:512]
+M15 = M15[24:32]+M15[16:24]+M15[8:16]+M15[0:8]
+
+#主函数 
+# md5第一步
+A = A0
+B = B0
+C = C0
+D = D0
+ 
+# md5第二步
+AA = A
+BB = B
+CC = C
+DD = D
+ 
+# md5第三步
+# 第一轮
+A = add(B, shift(add(A, add(add(ffunc(B, C, D), M0), y[0])), 7))
+D = add(A, shift(add(D, add(add(ffunc(A, B, C), M1), y[1])), 12))
+C = add(D, shift(add(C, add(add(ffunc(D, A, B), M2), y[2])), 17))
+B = add(C, shift(add(B, add(add(ffunc(C, D, A), M3), y[3])), 22))
+ 
+A = add(B, shift(add(A, add(add(ffunc(B, C, D), M4), y[4])), 7))
+D = add(A, shift(add(D, add(add(ffunc(A, B, C), M5), y[5])), 12))
+C = add(D, shift(add(C, add(add(ffunc(D, A, B), M6), y[6])), 17))
+B = add(C, shift(add(B, add(add(ffunc(C, D, A), M7), y[7])), 22))
+ 
+A = add(B, shift(add(A, add(add(ffunc(B, C, D), M8), y[8])), 7))
+D = add(A, shift(add(D, add(add(ffunc(A, B, C), M9), y[9])), 12))
+C = add(D, shift(add(C, add(add(ffunc(D, A, B), M10), y[10])), 17))
+B = add(C, shift(add(B, add(add(ffunc(C, D, A), M11), y[11])), 22))
+ 
+A = add(B, shift(add(A, add(add(ffunc(B, C, D), M12), y[12])), 7))
+D = add(A, shift(add(D, add(add(ffunc(A, B, C), M13), y[13])), 12))
+C = add(D, shift(add(C, add(add(ffunc(D, A, B), M14), y[14])), 17))
+B = add(C, shift(add(B, add(add(ffunc(C, D, A), M15), y[15])), 22))
+ 
+# 第二轮
+A = add(B, shift(add(A, add(add(gfunc(B, C, D), M1), y[16])), 5))
+D = add(A, shift(add(D, add(add(gfunc(A, B, C), M6), y[17])), 9))
+C = add(D, shift(add(C, add(add(gfunc(D, A, B), M11), y[18])), 14))
+B = add(C, shift(add(B, add(add(gfunc(C, D, A), M0), y[19])), 20))
+ 
+A = add(B, shift(add(A, add(add(gfunc(B, C, D), M5), y[20])), 5))
+D = add(A, shift(add(D, add(add(gfunc(A, B, C), M10), y[21])), 9))
+C = add(D, shift(add(C, add(add(gfunc(D, A, B), M15), y[22])), 14))
+B = add(C, shift(add(B, add(add(gfunc(C, D, A), M4), y[23])), 20))
+ 
+A = add(B, shift(add(A, add(add(gfunc(B, C, D), M9), y[24])), 5))
+D = add(A, shift(add(D, add(add(gfunc(A, B, C), M14), y[25])), 9))
+C = add(D, shift(add(C, add(add(gfunc(D, A, B), M3), y[26])), 14))
+B = add(C, shift(add(B, add(add(gfunc(C, D, A), M8), y[27])), 20))
+ 
+A = add(B, shift(add(A, add(add(gfunc(B, C, D), M13), y[28])), 5))
+D = add(A, shift(add(D, add(add(gfunc(A, B, C), M2), y[29])), 9))
+C = add(D, shift(add(C, add(add(gfunc(D, A, B), M7), y[30])), 14))
+B = add(C, shift(add(B, add(add(gfunc(C, D, A), M12), y[31])), 20))
+ 
+# 第三轮
+A = add(B, shift(add(A, add(add(hfunc(B, C, D), M5), y[32])), 4))
+D = add(A, shift(add(D, add(add(hfunc(A, B, C), M8), y[33])), 11))
+C = add(D, shift(add(C, add(add(hfunc(D, A, B), M11), y[34])), 16))
+B = add(C, shift(add(B, add(add(hfunc(C, D, A), M14), y[35])), 23))
+ 
+A = add(B, shift(add(A, add(add(hfunc(B, C, D), M1), y[36])), 4))
+D = add(A, shift(add(D, add(add(hfunc(A, B, C), M4), y[37])), 11))
+C = add(D, shift(add(C, add(add(hfunc(D, A, B), M7), y[38])), 16))
+B = add(C, shift(add(B, add(add(hfunc(C, D, A), M10), y[39])), 23))
+ 
+A = add(B, shift(add(A, add(add(hfunc(B, C, D), M13), y[40])), 4))
+D = add(A, shift(add(D, add(add(hfunc(A, B, C), M0), y[41])), 11))
+C = add(D, shift(add(C, add(add(hfunc(D, A, B), M3), y[42])), 16))
+B = add(C, shift(add(B, add(add(hfunc(C, D, A), M6), y[43])), 23))
+ 
+A = add(B, shift(add(A, add(add(hfunc(B, C, D), M9), y[44])), 4))
+D = add(A, shift(add(D, add(add(hfunc(A, B, C), M12), y[45])), 11))
+C = add(D, shift(add(C, add(add(hfunc(D, A, B), M15), y[46])), 16))
+B = add(C, shift(add(B, add(add(hfunc(C, D, A), M2), y[47])), 23))
+ 
+# 第四轮
+A = add(B, shift(add(A, add(add(ifunc(B, C, D), M0), y[48])), 6))
+D = add(A, shift(add(D, add(add(ifunc(A, B, C), M7), y[49])), 10))
+C = add(D, shift(add(C, add(add(ifunc(D, A, B), M14), y[50])), 15))
+B = add(C, shift(add(B, add(add(ifunc(C, D, A), M5), y[51])), 21))
+ 
+A = add(B, shift(add(A, add(add(ifunc(B, C, D), M12), y[52])), 6))
+D = add(A, shift(add(D, add(add(ifunc(A, B, C), M3), y[53])), 10))
+C = add(D, shift(add(C, add(add(ifunc(D, A, B), M10), y[54])), 15))
+B = add(C, shift(add(B, add(add(ifunc(C, D, A), M1), y[55])), 21))
+ 
+A = add(B, shift(add(A, add(add(ifunc(B, C, D), M8), y[56])), 6))
+D = add(A, shift(add(D, add(add(ifunc(A, B, C), M15), y[57])), 10))
+C = add(D, shift(add(C, add(add(ifunc(D, A, B), M6), y[58])), 15))
+B = add(C, shift(add(B, add(add(ifunc(C, D, A), M13), y[59])), 21))
+ 
+A = add(B, shift(add(A, add(add(ifunc(B, C, D), M4), y[60])), 6))
+D = add(A, shift(add(D, add(add(ifunc(A, B, C), M11), y[61])), 10))
+C = add(D, shift(add(C, add(add(ifunc(D, A, B), M2), y[62])), 15))
+B = add(C, shift(add(B, add(add(ifunc(C, D, A), M9), y[63])), 21))
+ 
+# 第五步
+A = add(A, AA)
+B = add(B, BB)
+C = add(C, CC)
+D = add(D, DD)
+ 
+# 输出得到的密文
+answer = reverse_order(A) + reverse_order(B) + reverse_order(C) + reverse_order(D)
+print(hex(int(answer, 2)))
+</code></pre>
+<p>实验结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615261397816.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%8F%A4%E5%85%B8%E5%AF%86%E7%A0%81-vignere">古典密码 Vignere</a></li>
+<li><a href="#%E5%8F%A4%E5%85%B8%E5%AF%86%E7%A0%81-%E4%BB%BF%E5%B0%84%E5%AF%86%E7%A0%81">古典密码 仿射密码</a></li>
+<li><a href="#%E6%B5%81%E5%AF%86%E7%A0%81%E4%B8%8E%E7%BA%BF%E6%80%A7%E5%8F%8D%E9%A6%88%E7%A7%BB%E4%BD%8D%E5%AF%84%E5%AD%98%E5%99%A8">流密码与线性反馈移位寄存器</a></li>
+<li><a href="#%E5%85%AC%E9%92%A5%E5%AF%86%E7%A0%81-rsa">公钥密码 RSA</a></li>
+<li><a href="#%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81-aes">分组密码 AES</a></li>
+<li><a href="#hash-%E7%AE%97%E6%B3%95md5">HASH 算法md5</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/hackme-ni-xiang-ti-mu-bu-fen-wp/">
+              <h3 class="post-title">
+                hackme逆向题目部分WP
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

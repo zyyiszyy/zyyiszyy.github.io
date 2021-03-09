@@ -1,0 +1,228 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CUMTCTF2020“华为杯”部分WP | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615261820607">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="CUMTCTF2020“华为杯”部分WP | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="注：这是参加的第二次ctf比赛，比赛前在攻防世界上刷了一些re方向的题目，算是初步对re有了些感觉吧。这次比赛最大的收获是掌握了pwn的简单栈溢出和整数溢出，大致了解了pwn方向的题目是什么样子。在自己和队友的共同努力下，这次比赛拿到了二等..." />
+    <meta name="keywords" content="WriteUp,CTF" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615261820607" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              CUMTCTF2020“华为杯”部分WP
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-10-23
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/pOo1m5_Uo/" class="post-tag">
+                  # WriteUp
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/lrSFwTVcv/" class="post-tag">
+                  # CTF
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/cumtctf2020hua-wei-bei-bu-fen-wp1.webp" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>注：这是参加的第二次ctf比赛，比赛前在攻防世界上刷了一些re方向的题目，算是初步对re有了些感觉吧。这次比赛最大的收获是掌握了pwn的简单栈溢出和整数溢出，大致了解了pwn方向的题目是什么样子。在自己和队友的共同努力下，这次比赛拿到了二等奖，算是自己近段时间的付出得到了一些鼓励吧，接下来再接再厉！</p>
+<h2 id="hello_world">Hello_world</h2>
+<p>先查看程序类型，发现是 64 位 windows 下运行的程序。</p>
+<figure data-type="image" tabindex="1"><img src="https://zyyiszyy.github.io/post-images/1615186327993.png" alt="" loading="lazy"></figure>
+<p>先运行一下程序，了解大致情况。</p>
+<figure data-type="image" tabindex="2"><img src="https://zyyiszyy.github.io/post-images/1615186390266.png" alt="" loading="lazy"></figure>
+<p>使用 64 位 ida 打开，查看字符串：</p>
+<figure data-type="image" tabindex="3"><img src="https://zyyiszyy.github.io/post-images/1615186656612.png" alt="" loading="lazy"></figure>
+<p>发现’you got it’，猜测是判断字符串正误。点进去找到变量， 交叉引用找到调用它的函数，tab 键找到 C 伪代码如下：</p>
+<figure data-type="image" tabindex="4"><img src="https://zyyiszyy.github.io/post-images/1615186661666.png" alt="" loading="lazy"></figure>
+<p>运行以下脚本得到 flag。</p>
+<figure data-type="image" tabindex="5"><img src="https://zyyiszyy.github.io/post-images/1615186682600.png" alt="" loading="lazy"></figure>
+<h2 id="non_name">Non_name</h2>
+<p>先查看程序类型，发现是 64 位 windows 下可执行程序。运行程序，查看运行的情况，发现 math 字眼：</p>
+<figure data-type="image" tabindex="6"><img src="https://zyyiszyy.github.io/post-images/1615186739500.png" alt="" loading="lazy"></figure>
+<p>用 ida64 打开，查看字符串，提示很明显。</p>
+<figure data-type="image" tabindex="7"><img src="https://zyyiszyy.github.io/post-images/1615186750285.png" alt="" loading="lazy"></figure>
+<p>如下找到关键代码，str1 和 str2 已知，分别 12 个元素和 4 个元素，看懂后实际上就是列一个四元一次方程组。</p>
+<figure data-type="image" tabindex="8"><img src="https://zyyiszyy.github.io/post-images/1615186757883.png" alt="" loading="lazy"></figure>
+<p>先 python 变十进制，懒着再写脚本，直接在线工具求解：</p>
+<p><img src="https://zyyiszyy.github.io/post-images/1615186798468.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615186802740.png" alt="" loading="lazy"></p>
+<p>最后按照提示，分别 hex()再改下格式成功提交。</p>
+<h2 id="login">Login</h2>
+<p>先查看程序类型，是 64 位 ELF 程序。放在 kali 里面运行一下。</p>
+<figure data-type="image" tabindex="9"><img src="https://zyyiszyy.github.io/post-images/1615186943018.png" alt="" loading="lazy"></figure>
+<p>Ida64 打开，查看字符串。</p>
+<figure data-type="image" tabindex="10"><img src="https://zyyiszyy.github.io/post-images/1615186938166.png" alt="" loading="lazy"></figure>
+<p>先看到 login succeed，进入看一下，发现是/bin/sh 调用 shell。</p>
+<figure data-type="image" tabindex="11"><img src="https://zyyiszyy.github.io/post-images/1615186933153.png" alt="" loading="lazy"></figure>
+<p>拿小本本记下其地址：0x 4009E7</p>
+<figure data-type="image" tabindex="12"><img src="https://zyyiszyy.github.io/post-images/1615186920623.png" alt="" loading="lazy"></figure>
+<p>然后进入输入用户名和密码的代码。</p>
+<figure data-type="image" tabindex="13"><img src="https://zyyiszyy.github.io/post-images/1615186952420.png" alt="" loading="lazy"></figure>
+<p>发现输入 256 个字符，至此怀疑是栈溢出。</p>
+<figure data-type="image" tabindex="14"><img src="https://zyyiszyy.github.io/post-images/1615186983488.png" alt="" loading="lazy"></figure>
+<p>查看栈的确是栈溢出的类型，通过用户名输入 0x28 的数据和登录成功的返回地址，写的 exp 如下两种：</p>
+<p><img src="https://zyyiszyy.github.io/post-images/1615186987844.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615186990857.png" alt="" loading="lazy"></p>
+<p>运行 exp，可打开 shell，cat flag：</p>
+<figure data-type="image" tabindex="15"><img src="https://zyyiszyy.github.io/post-images/1615186993979.png" alt="" loading="lazy"></figure>
+<h2 id="login_plus">Login_plus</h2>
+<p>查看软件类型，发现是 64 位的 ELF 程序。发现很眼熟，和上题表面上多了个 id。</p>
+<figure data-type="image" tabindex="16"><img src="https://zyyiszyy.github.io/post-images/1615187074246.png" alt="" loading="lazy"></figure>
+<p>进入 ida64 查看字符串，发现很多都一样，也有/bin/sh，但从这里看多了一个 id。</p>
+<p><img src="https://zyyiszyy.github.io/post-images/1615187078447.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615187089034.png" alt="" loading="lazy"></p>
+<p>这时查看谁调用的 login 函数，又发现一段代码，逻辑也很容易看懂。</p>
+<figure data-type="image" tabindex="17"><img src="https://zyyiszyy.github.io/post-images/1615187093349.png" alt="" loading="lazy"></figure>
+<p>这时细心观察可以发现，原本的id是输入到int_64的v7，经过函数返回值是v7，然后返回到int类型的v5里，这时想到整数溢出。两个都是无符号型，int可以表示的范围：-2147483648<sub>2147483647，如果int大于上界，2147483648相当于-2147483648，2147483649相当于-2147483648，依次递推。int_64可以表示的范围：-9223372036854775808</sub>9223372036854775807。</p>
+<p>思路是：直接让v7不通过else语句，就不会因为密码错误改变v7的值，从而返回的是输入的v7，然后继续通过判断语句，到达输入成功的函数，打开shell获取flag。</p>
+<p>要想满足以上条件，需要v7(int_64)为真且!v5(int)为真，这里可以输入4294967296，先进入if语句，输出非管理员语句，然后直接返回自身到v5，这时因为整数溢出相当为0，v5为真成立，得到shell。</p>
+<figure data-type="image" tabindex="18"><img src="https://zyyiszyy.github.io/post-images/1615187097213.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#hello_world">Hello_world</a></li>
+<li><a href="#non_name">Non_name</a></li>
+<li><a href="#login">Login</a></li>
+<li><a href="#login_plus">Login_plus</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
