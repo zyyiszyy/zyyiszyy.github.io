@@ -1,0 +1,224 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>&#34;玩玩破解&#34;学习笔记 | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615307861752">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="&#34;玩玩破解&#34;学习笔记 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="吾爱破解论坛大佬yyhd发布玩玩破解系列，让菜鸡我受益匪浅，在此记录一些知识点，方便以后查阅。注意：这里面的示例不是通用的，加密解密是对抗的过程，所谓“魔高一尺，道高一丈”，加密的方法各种各样，这些示例有助于新手们的入门和练习。
+爆破有错误..." />
+    <meta name="keywords" content="Reverse,Notes" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615307861752" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              &#34;玩玩破解&#34;学习笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-09
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/niYg57IIi/" class="post-tag">
+                  # Reverse
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/cQHF3_fNo/" class="post-tag">
+                  # Notes
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/wan-wan-po-jie-xue-xi-bi-ji.webp" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>吾爱破解论坛大佬yyhd发布玩玩破解系列，让菜鸡我受益匪浅，在此记录一些知识点，方便以后查阅。注意：这里面的示例不是通用的，加密解密是对抗的过程，所谓“魔高一尺，道高一丈”，加密的方法各种各样，这些示例有助于新手们的入门和练习。</p>
+<h2 id="爆破有错误提示的软件upx壳">爆破有错误提示的软件（upx壳）</h2>
+<p>首先用PEID查壳软件查壳，发现加了upx壳。</p>
+<h4 id="第一种方法脱壳后爆破">第一种方法脱壳后爆破</h4>
+<p><code>upx -d 文件</code><br>
+脱壳后，OD打开，右键打开插件“中文搜索引擎”，选择智能搜索。双击错误提示，找到上面关键的一个跳转：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615299845142.png" alt="" loading="lazy"><br>
+将je改为jne或者jmp，然后右键选择“复制到文件”，右键“保存文件”。<br>
+测试爆破成功：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615300053036.png" alt="" loading="lazy"></p>
+<h4 id="第二种方法不脱壳直接爆破">第二种方法不脱壳直接爆破</h4>
+<p>直接OD打开，运行，然后ctrl+G跳转401000。这次原本不能用的中文搜索引擎就可以正常使用了。然后同样方式找到关键跳转，然后更改。这时不能直接复制到文件了，需要用到打补丁小工具Inline Patch，将对应的地址的字节码改掉，添加后生成即可。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615300510249.png" alt="" loading="lazy"></p>
+<h2 id="爆破没有错误提示的软件">爆破没有错误提示的软件</h2>
+<h4 id="下内存断点">下内存断点</h4>
+<p>用常规的方法不能直接搜到字符串，但运行发现有错误提示，猜测加了一些什么防御字符串搜索的代码。这时，我们需要打开内存页面，右键查找，ASCII栏搜索“登陆失败”。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615303677016.png" alt="" loading="lazy"><br>
+记下其地址，然后进入cpu界面，在内存板块搜索该地址。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615303694151.png" alt="" loading="lazy"><br>
+选中一段内存右键下内存访问断点。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615303787318.png" alt="" loading="lazy"><br>
+运行软件，输入错误数据，点击确定，这时就到达了断点。接下来删除断点，F8单步运行，每次专注ret之后的地方，找到以下可疑跳转：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615304360064.png" alt="" loading="lazy"><br>
+很容易发现jmp直接跳过了这段代码，jmp下一句还有个跳过来的，经过短暂寻找，是在jmp上面代码跳过来的。意思大概是如果用户名密码正确就运行jmp这行代码，跳转输出“登录成功”；不正确就跳到jmp下面一行代码，输出“登陆失败”。<br>
+此题直接将判断错误时的跳转nop掉就可：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615304650146.png" alt="" loading="lazy"></p>
+<h4 id="下messageboxa函数断点">下MessageBoxA函数断点</h4>
+<p>命令行输入bp MessageBoxA，然后运行，输入数据后到达断点，快捷键ctrl+F9进入CM领空，在右下角栈板块在“返回到”字样按回车，跳转到函数执行完的地方，本题第二个返回到就是关键代码处。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615306028838.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E7%88%86%E7%A0%B4%E6%9C%89%E9%94%99%E8%AF%AF%E6%8F%90%E7%A4%BA%E7%9A%84%E8%BD%AF%E4%BB%B6upx%E5%A3%B3">爆破有错误提示的软件（upx壳）</a><br>
+*
+<ul>
+<li><a href="#%E7%AC%AC%E4%B8%80%E7%A7%8D%E6%96%B9%E6%B3%95%E8%84%B1%E5%A3%B3%E5%90%8E%E7%88%86%E7%A0%B4">第一种方法脱壳后爆破</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E7%A7%8D%E6%96%B9%E6%B3%95%E4%B8%8D%E8%84%B1%E5%A3%B3%E7%9B%B4%E6%8E%A5%E7%88%86%E7%A0%B4">第二种方法不脱壳直接爆破</a></li>
+</ul>
+</li>
+<li><a href="#%E7%88%86%E7%A0%B4%E6%B2%A1%E6%9C%89%E9%94%99%E8%AF%AF%E6%8F%90%E7%A4%BA%E7%9A%84%E8%BD%AF%E4%BB%B6">爆破没有错误提示的软件</a><br>
+*
+<ul>
+<li><a href="#%E4%B8%8B%E5%86%85%E5%AD%98%E6%96%AD%E7%82%B9">下内存断点</a></li>
+<li><a href="#%E4%B8%8Bmessageboxa%E5%87%BD%E6%95%B0%E6%96%AD%E7%82%B9">下MessageBoxA函数断点</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/xue-xi-git-de-yi-xie-jian-dan-shi-yong-fang-fa/">
+              <h3 class="post-title">
+                使用Git遇到的一些问题
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

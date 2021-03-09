@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>接触CTF以来的闲散笔记 | zyyire</title>
-<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615272540762">
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615307861752">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="接触CTF以来的闲散笔记 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
@@ -11,12 +11,15 @@
 
 
 
-    <meta name="description" content="dns刷新：
+    <meta name="description" content="re分析常用的系统函数
+GetwindowsTextA //读取输入的内容
+MessageBoxA  //弹信息窗
+
+dns刷新：
 ipconfig /flushdns
 
 z3py约束求解：
-先定义变量：a1=BitVec('a1',32)    a2=Int('a2')      #注意这里的变量类型是z3里的，不是python里的，要转化才可用
-创建约..." />
+先定义变量：a1=BitVec('a1',32)..." />
     <meta name="keywords" content="CTF,Notes" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -26,7 +29,7 @@ z3py约束求解：
       <div class="main-content">
         <div class="site-header">
   <a href="https://zyyiszyy.github.io">
-  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615272540762" alt="">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615307861752" alt="">
   </a>
   <h1 class="site-title">
     zyyire
@@ -103,7 +106,11 @@ z3py约束求解：
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <h3 id="dns刷新">dns刷新：</h3>
+                <h3 id="re分析常用的系统函数">re分析常用的系统函数</h3>
+<pre><code>GetwindowsTextA //读取输入的内容
+MessageBoxA  //弹信息窗
+</code></pre>
+<h3 id="dns刷新">dns刷新：</h3>
 <pre><code>ipconfig /flushdns
 </code></pre>
 <h3 id="z3py约束求解">z3py约束求解：</h3>
@@ -241,6 +248,7 @@ sort（a,a+n）;
 <ul>
 <li>
 <ul>
+<li><a href="#re%E5%88%86%E6%9E%90%E5%B8%B8%E7%94%A8%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0">re分析常用的系统函数</a></li>
 <li><a href="#dns%E5%88%B7%E6%96%B0">dns刷新：</a></li>
 <li><a href="#z3py%E7%BA%A6%E6%9D%9F%E6%B1%82%E8%A7%A3">z3py约束求解：</a></li>
 <li><a href="#ropgadget%E6%88%96%E7%AD%89rop%E9%93%BE">ROPgadget或等rop链：</a></li>

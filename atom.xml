@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zyyiszyy.github.io</id>
     <title>zyyire</title>
-    <updated>2021-03-09T06:49:05.070Z</updated>
+    <updated>2021-03-09T16:49:56.818Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zyyiszyy.github.io"/>
     <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
@@ -10,6 +10,43 @@
     <logo>https://zyyiszyy.github.io/images/avatar.png</logo>
     <icon>https://zyyiszyy.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, zyyire</rights>
+    <entry>
+        <title type="html"><![CDATA["玩玩破解"学习笔记]]></title>
+        <id>https://zyyiszyy.github.io/post/wan-wan-po-jie-xue-xi-bi-ji/</id>
+        <link href="https://zyyiszyy.github.io/post/wan-wan-po-jie-xue-xi-bi-ji/">
+        </link>
+        <updated>2021-03-09T14:12:48.000Z</updated>
+        <content type="html"><![CDATA[<p>吾爱破解论坛大佬yyhd发布玩玩破解系列，让菜鸡我受益匪浅，在此记录一些知识点，方便以后查阅。注意：这里面的示例不是通用的，加密解密是对抗的过程，所谓“魔高一尺，道高一丈”，加密的方法各种各样，这些示例有助于新手们的入门和练习。</p>
+<h2 id="爆破有错误提示的软件upx壳">爆破有错误提示的软件（upx壳）</h2>
+<p>首先用PEID查壳软件查壳，发现加了upx壳。</p>
+<h4 id="第一种方法脱壳后爆破">第一种方法脱壳后爆破</h4>
+<p><code>upx -d 文件</code><br>
+脱壳后，OD打开，右键打开插件“中文搜索引擎”，选择智能搜索。双击错误提示，找到上面关键的一个跳转：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615299845142.png" alt="" loading="lazy"><br>
+将je改为jne或者jmp，然后右键选择“复制到文件”，右键“保存文件”。<br>
+测试爆破成功：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615300053036.png" alt="" loading="lazy"></p>
+<h4 id="第二种方法不脱壳直接爆破">第二种方法不脱壳直接爆破</h4>
+<p>直接OD打开，运行，然后ctrl+G跳转401000。这次原本不能用的中文搜索引擎就可以正常使用了。然后同样方式找到关键跳转，然后更改。这时不能直接复制到文件了，需要用到打补丁小工具Inline Patch，将对应的地址的字节码改掉，添加后生成即可。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615300510249.png" alt="" loading="lazy"></p>
+<h2 id="爆破没有错误提示的软件">爆破没有错误提示的软件</h2>
+<h4 id="下内存断点">下内存断点</h4>
+<p>用常规的方法不能直接搜到字符串，但运行发现有错误提示，猜测加了一些什么防御字符串搜索的代码。这时，我们需要打开内存页面，右键查找，ASCII栏搜索“登陆失败”。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615303677016.png" alt="" loading="lazy"><br>
+记下其地址，然后进入cpu界面，在内存板块搜索该地址。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615303694151.png" alt="" loading="lazy"><br>
+选中一段内存右键下内存访问断点。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615303787318.png" alt="" loading="lazy"><br>
+运行软件，输入错误数据，点击确定，这时就到达了断点。接下来删除断点，F8单步运行，每次专注ret之后的地方，找到以下可疑跳转：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615304360064.png" alt="" loading="lazy"><br>
+很容易发现jmp直接跳过了这段代码，jmp下一句还有个跳过来的，经过短暂寻找，是在jmp上面代码跳过来的。意思大概是如果用户名密码正确就运行jmp这行代码，跳转输出“登录成功”；不正确就跳到jmp下面一行代码，输出“登陆失败”。<br>
+此题直接将判断错误时的跳转nop掉就可：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615304650146.png" alt="" loading="lazy"></p>
+<h4 id="下messageboxa函数断点">下MessageBoxA函数断点</h4>
+<p>命令行输入bp MessageBoxA，然后运行，输入数据后到达断点，快捷键ctrl+F9进入CM领空，在右下角栈板块在“返回到”字样按回车，跳转到函数执行完的地方，本题第二个返回到就是关键代码处。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615306028838.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[使用Git遇到的一些问题]]></title>
         <id>https://zyyiszyy.github.io/post/xue-xi-git-de-yi-xie-jian-dan-shi-yong-fang-fa/</id>
@@ -51,7 +88,11 @@ git config --global user.email &quot;xxxxx@qq.com&quot;     //配置信息<br>
         <link href="https://zyyiszyy.github.io/post/idle_notes/">
         </link>
         <updated>2021-03-07T08:03:43.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="dns刷新">dns刷新：</h3>
+        <content type="html"><![CDATA[<h3 id="re分析常用的系统函数">re分析常用的系统函数</h3>
+<pre><code>GetwindowsTextA //读取输入的内容
+MessageBoxA  //弹信息窗
+</code></pre>
+<h3 id="dns刷新">dns刷新：</h3>
 <pre><code>ipconfig /flushdns
 </code></pre>
 <h3 id="z3py约束求解">z3py约束求解：</h3>
