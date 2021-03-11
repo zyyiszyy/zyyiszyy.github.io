@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zyyiszyy.github.io</id>
     <title>zyyire</title>
-    <updated>2021-03-11T15:36:22.369Z</updated>
+    <updated>2021-03-11T15:40:09.333Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zyyiszyy.github.io"/>
     <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
@@ -16,7 +16,8 @@
         <link href="https://zyyiszyy.github.io/post/wan-wan-po-jie-xue-xi-bi-ji/">
         </link>
         <updated>2021-03-09T14:12:48.000Z</updated>
-        <content type="html"><![CDATA[<p>吾爱破解论坛大佬yyhd发布玩玩破解系列，让菜鸡我受益匪浅，在此记录一些知识点，方便以后查阅。注意：这里面的示例不是通用的，加密解密是对抗的过程，所谓“魔高一尺，道高一丈”，加密的方法各种各样，这些示例有助于新手们的入门和练习。</p>
+        <content type="html"><![CDATA[<p>吾爱破解论坛大佬yyhd发布玩玩破解系列，让菜鸡我受益匪浅，在此记录一些知识点，方便以后查阅。注意：这里面的示例不是通用的，加密解密是对抗的过程，所谓“魔高一尺，道高一丈”，加密的方法各种各样，这些示例有助于新手们的入门和练习。<br>
+大佬帖子：<a href="https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=1358649">https://www.52pojie.cn/forum.php?mod=viewthread&amp;tid=1358649</a></p>
 <h2 id="爆破字符串能搜到错误提示的程序">爆破字符串能搜到错误提示的程序</h2>
 <p>首先用PEID查壳软件查壳，发现加了upx壳。</p>
 <h4 id="脱壳后爆破">脱壳后爆破</h4>
