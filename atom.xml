@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zyyiszyy.github.io</id>
     <title>zyyire</title>
-    <updated>2021-03-09T16:49:56.818Z</updated>
+    <updated>2021-03-11T09:39:45.004Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zyyiszyy.github.io"/>
     <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
@@ -17,19 +17,19 @@
         </link>
         <updated>2021-03-09T14:12:48.000Z</updated>
         <content type="html"><![CDATA[<p>吾爱破解论坛大佬yyhd发布玩玩破解系列，让菜鸡我受益匪浅，在此记录一些知识点，方便以后查阅。注意：这里面的示例不是通用的，加密解密是对抗的过程，所谓“魔高一尺，道高一丈”，加密的方法各种各样，这些示例有助于新手们的入门和练习。</p>
-<h2 id="爆破有错误提示的软件upx壳">爆破有错误提示的软件（upx壳）</h2>
+<h2 id="爆破字符串能搜到错误提示的程序">爆破字符串能搜到错误提示的程序</h2>
 <p>首先用PEID查壳软件查壳，发现加了upx壳。</p>
-<h4 id="第一种方法脱壳后爆破">第一种方法脱壳后爆破</h4>
+<h4 id="脱壳后爆破">脱壳后爆破</h4>
 <p><code>upx -d 文件</code><br>
 脱壳后，OD打开，右键打开插件“中文搜索引擎”，选择智能搜索。双击错误提示，找到上面关键的一个跳转：<br>
 <img src="https://zyyiszyy.github.io/post-images/1615299845142.png" alt="" loading="lazy"><br>
 将je改为jne或者jmp，然后右键选择“复制到文件”，右键“保存文件”。<br>
 测试爆破成功：<br>
 <img src="https://zyyiszyy.github.io/post-images/1615300053036.png" alt="" loading="lazy"></p>
-<h4 id="第二种方法不脱壳直接爆破">第二种方法不脱壳直接爆破</h4>
+<h4 id="不脱壳直接爆破">不脱壳直接爆破</h4>
 <p>直接OD打开，运行，然后ctrl+G跳转401000。这次原本不能用的中文搜索引擎就可以正常使用了。然后同样方式找到关键跳转，然后更改。这时不能直接复制到文件了，需要用到打补丁小工具Inline Patch，将对应的地址的字节码改掉，添加后生成即可。<br>
 <img src="https://zyyiszyy.github.io/post-images/1615300510249.png" alt="" loading="lazy"></p>
-<h2 id="爆破没有错误提示的软件">爆破没有错误提示的软件</h2>
+<h2 id="爆破搜不到错误提示的程序有错误提示字符串搜索搜不到">爆破搜不到错误提示的程序（有错误提示字符串搜索搜不到）</h2>
 <h4 id="下内存断点">下内存断点</h4>
 <p>用常规的方法不能直接搜到字符串，但运行发现有错误提示，猜测加了一些什么防御字符串搜索的代码。这时，我们需要打开内存页面，右键查找，ASCII栏搜索“登陆失败”。<br>
 <img src="https://zyyiszyy.github.io/post-images/1615303677016.png" alt="" loading="lazy"><br>
@@ -45,6 +45,15 @@
 <h4 id="下messageboxa函数断点">下MessageBoxA函数断点</h4>
 <p>命令行输入bp MessageBoxA，然后运行，输入数据后到达断点，快捷键ctrl+F9进入CM领空，在右下角栈板块在“返回到”字样按回车，跳转到函数执行完的地方，本题第二个返回到就是关键代码处。<br>
 <img src="https://zyyiszyy.github.io/post-images/1615306028838.png" alt="" loading="lazy"></p>
+<h2 id="爆破没有错误提示的程序">爆破没有错误提示的程序</h2>
+<p>之前思路是从结果反向找，这道题结果没有信息，只有成功时提示信息但是线索中断，所以正向找线索突破。</p>
+<h4 id="下getwindowtexta函数断点">下GetWindowTextA函数断点</h4>
+<p>首先运行程序，输入内容但先不要点击登录，然后命令行下bp断点，点击登录。此时发现程序断的地方不在程序领空，所以按alt+F12，这以后就F8慢慢一步一步走，遇到别的领空就跳出来，知道运行到如下地方：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615454155791.png" alt="" loading="lazy"><br>
+可以看到52010008等标志性字眼，这是易语言编写程序的窗口ID，可以理解为身份标号，这里就是弹出成功窗口的地方。本题将图示的关键跳转nop掉<br>
+<img src="https://zyyiszyy.github.io/post-images/1615454453764.png" alt="" loading="lazy"><br>
+爆破成功<br>
+<img src="https://zyyiszyy.github.io/post-images/1615455068395.png" alt="" loading="lazy"></p>
 ]]></content>
     </entry>
     <entry>
@@ -89,7 +98,7 @@ git config --global user.email &quot;xxxxx@qq.com&quot;     //配置信息<br>
         </link>
         <updated>2021-03-07T08:03:43.000Z</updated>
         <content type="html"><![CDATA[<h3 id="re分析常用的系统函数">re分析常用的系统函数</h3>
-<pre><code>GetwindowsTextA //读取输入的内容
+<pre><code>GetWindowTextA //读取输入的内容
 MessageBoxA  //弹信息窗
 </code></pre>
 <h3 id="dns刷新">dns刷新：</h3>
