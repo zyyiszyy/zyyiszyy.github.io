@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>&#34;玩玩破解&#34;学习笔记 | zyyire</title>
-<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615455582912">
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615476973222">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="&#34;玩玩破解&#34;学习笔记 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
@@ -22,7 +22,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://zyyiszyy.github.io">
-  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615455582912" alt="">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615476973222" alt="">
   </a>
   <h1 class="site-title">
     zyyire
@@ -137,6 +137,15 @@
 <img src="https://zyyiszyy.github.io/post-images/1615454453764.png" alt="" loading="lazy"><br>
 爆破成功<br>
 <img src="https://zyyiszyy.github.io/post-images/1615455068395.png" alt="" loading="lazy"></p>
+<h4 id="易语言窗口替换">易语言窗口替换</h4>
+<p>先查找命令push 10001，这里只有一个。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615476668879.png" alt="" loading="lazy"><br>
+查找结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615476691999.png" alt="" loading="lazy"><br>
+这个52010008就是新的窗口id，也就是成功时弹出的那个窗口。再查找二进制字串<code>FF 25</code>，查找一开始的窗口的位置，发现一堆jmp：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615476857686.png" alt="" loading="lazy"><br>
+52010001就是一开始的窗口id，将其改为52010008，运行就是登录成功时的窗口：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615476969720.png" alt="" loading="lazy"></p>
 
               </div>
               <div class="toc-container">
@@ -161,6 +170,7 @@
 *
 <ul>
 <li><a href="#%E4%B8%8Bgetwindowtexta%E5%87%BD%E6%95%B0%E6%96%AD%E7%82%B9">下GetWindowTextA函数断点</a></li>
+<li><a href="#%E6%98%93%E8%AF%AD%E8%A8%80%E7%AA%97%E5%8F%A3%E6%9B%BF%E6%8D%A2">易语言窗口替换</a></li>
 </ul>
 </li>
 </ul>

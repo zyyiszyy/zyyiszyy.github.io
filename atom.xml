@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zyyiszyy.github.io</id>
     <title>zyyire</title>
-    <updated>2021-03-11T09:39:45.004Z</updated>
+    <updated>2021-03-11T15:36:22.369Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zyyiszyy.github.io"/>
     <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
@@ -54,6 +54,15 @@
 <img src="https://zyyiszyy.github.io/post-images/1615454453764.png" alt="" loading="lazy"><br>
 爆破成功<br>
 <img src="https://zyyiszyy.github.io/post-images/1615455068395.png" alt="" loading="lazy"></p>
+<h4 id="易语言窗口替换">易语言窗口替换</h4>
+<p>先查找命令push 10001，这里只有一个。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615476668879.png" alt="" loading="lazy"><br>
+查找结果如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615476691999.png" alt="" loading="lazy"><br>
+这个52010008就是新的窗口id，也就是成功时弹出的那个窗口。再查找二进制字串<code>FF 25</code>，查找一开始的窗口的位置，发现一堆jmp：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615476857686.png" alt="" loading="lazy"><br>
+52010001就是一开始的窗口id，将其改为52010008，运行就是登录成功时的窗口：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615476969720.png" alt="" loading="lazy"></p>
 ]]></content>
     </entry>
     <entry>
@@ -97,9 +106,21 @@ git config --global user.email &quot;xxxxx@qq.com&quot;     //配置信息<br>
         <link href="https://zyyiszyy.github.io/post/idle_notes/">
         </link>
         <updated>2021-03-07T08:03:43.000Z</updated>
-        <content type="html"><![CDATA[<h3 id="re分析常用的系统函数">re分析常用的系统函数</h3>
+        <content type="html"><![CDATA[<h3 id="re分析常用的api函数">re分析常用的API函数</h3>
 <pre><code>GetWindowTextA //读取输入的内容
 MessageBoxA  //弹信息窗
+SendMessage //发送鼠标左键的消息函数
+GetDlgItemInt //获取信息并转化为整数
+Istrcmp  //整数字符串比较
+SetWindowsTextA  //窗口名或组件出现已注册未注册字眼
+</code></pre>
+<h3 id="易语言程序窗口id替换及其他知识点">易语言程序窗口ID替换及其他知识点</h3>
+<pre><code>查找二进制字符串，搜索hex：FF 25
+新窗口ID：520XXXXX
+搜索其他窗口方法：可以查找命令push 10001。
+</code></pre>
+<h3 id="如何判断程序是否是易语言写的">如何判断程序是否是易语言写的</h3>
+<pre><code>401000地址处汇编xor eax,eax就是，此方法不能百分百保证。
 </code></pre>
 <h3 id="dns刷新">dns刷新：</h3>
 <pre><code>ipconfig /flushdns
