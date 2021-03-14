@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>&#34;玩玩破解&#34;学习笔记 | zyyire</title>
-<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615657211412">
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615734388874">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="&#34;玩玩破解&#34;学习笔记 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
@@ -22,7 +22,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://zyyiszyy.github.io">
-  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615657211412" alt="">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615734388874" alt="">
   </a>
   <h1 class="site-title">
     zyyire
@@ -82,7 +82,7 @@
                 2021-03-09
               </span>
               <span>
-                7 min read
+                8 min read
               </span>
               
                 <a href="https://zyyiszyy.github.io/tag/niYg57IIi/" class="post-tag">
@@ -192,6 +192,33 @@ F8返回几次，找到如下位置：<br>
 <img src="https://zyyiszyy.github.io/post-images/1615655189366.png" alt="" loading="lazy"><br>
 注：为什么这个路径还不清楚，只知道如下信息，貌似如果是32位的操作系统，是“HKEY_LOCAL_MACHINE\SOFTWARE”如果是64位，在注册表就是“HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node”。<br>
 <img src="https://zyyiszyy.github.io/post-images/1615655323966.png" alt="" loading="lazy"></p>
+<h2 id="第一难-破解acid-burn">第一难 破解Acid burn</h2>
+<h4 id="去nag">去NAG</h4>
+<p><em>NAG窗口可以通过搜索窗口上的字符串或者对ShowWindow下断点，这里使用字符串搜索方法解决。</em><br>
+搜索字符串找到如下位置：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615728164755.png" alt="" loading="lazy"><br>
+在此下断点，运行，然后F8运行到返回后如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615728257803.png" alt="" loading="lazy"><br>
+上面这个就是关键跳转，跳过这个call，条件跳转改为jmp即破解成功：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615728325169.png" alt="" loading="lazy"><br>
+另外一种下ShowWindow断点没做出来，倒是做下一步破解的时候下MessageBoxA断点找到了方法，具体见下一步。</p>
+<h4 id="破解用户名密码登录">破解用户名密码登录</h4>
+<p><em>搜字符串或者对MessageBoxA下断，F8到关键代码位置，这里使用搜字符串法解决。</em><br>
+有两个判断，一个是输入不能少于4个字符，一个是判断是不是真码。<br>
+搜索字符串有两个sorry，正好对应两个地方，分别下断点，一次输入少于4个字符，一次输入大于4个字符的假码，会断在两个地方，分别是：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615728653006.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615728656943.png" alt="" loading="lazy"><br>
+第一个把jge改为jmp，第二个把jnz给nop掉。<br>
+<em>下函数断点</em><br>
+命令bp MessageBoxA，然后运行程序，输入用户名密码，直到停在断点，这时断点在user.dll里，快捷键alt+F9转到程序领空，这时在一个call突然又断了：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615730634334.png" alt="" loading="lazy"><br>
+检查发现时错误弹窗这时候弹出来了，关掉弹窗运行到CM领空。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615730739088.png" alt="" loading="lazy"><br>
+这时找这个函数刚开始的push，如图，消息框里是从哪里调用过这个弹窗函数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615730846279.png" alt="" loading="lazy"><br>
+右键消息框，一个一个返回到调用，其中有两个就是关键函数。另外：第一个去NAG消息框也能找到。</p>
+<h4 id="破解密码登录">破解密码登录</h4>
+<p>字符串法和MessageBoxA法两种同第二步。</p>
 
               </div>
               <div class="toc-container">
@@ -239,6 +266,14 @@ F8返回几次，找到如下位置：<br>
 <li><a href="#%E9%92%88%E5%AF%B9%E6%8C%89%E9%92%AE%E4%B8%8B%E5%87%BD%E6%95%B0%E6%96%AD%E7%82%B9">针对按钮下函数断点</a></li>
 <li><a href="#%E9%92%88%E5%AF%B9%E6%B3%A8%E5%86%8C%E8%A1%A8%E4%B8%8B%E5%87%BD%E6%95%B0%E6%96%AD%E7%82%B9">针对注册表下函数断点</a></li>
 <li><a href="#%E5%8A%A0%E6%B3%A8%E5%86%8C%E8%A1%A8%E9%A1%B9">加注册表项</a></li>
+</ul>
+</li>
+<li><a href="#%E7%AC%AC%E4%B8%80%E9%9A%BE-%E7%A0%B4%E8%A7%A3acid-burn">第一难 破解Acid burn</a><br>
+*
+<ul>
+<li><a href="#%E5%8E%BBnag">去NAG</a></li>
+<li><a href="#%E7%A0%B4%E8%A7%A3%E7%94%A8%E6%88%B7%E5%90%8D%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95">破解用户名密码登录</a></li>
+<li><a href="#%E7%A0%B4%E8%A7%A3%E5%AF%86%E7%A0%81%E7%99%BB%E5%BD%95">破解密码登录</a></li>
 </ul>
 </li>
 </ul>

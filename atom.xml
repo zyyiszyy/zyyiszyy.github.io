@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zyyiszyy.github.io</id>
     <title>zyyire</title>
-    <updated>2021-03-13T17:43:16.450Z</updated>
+    <updated>2021-03-14T15:06:39.919Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zyyiszyy.github.io"/>
     <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
@@ -109,6 +109,33 @@ F8返回几次，找到如下位置：<br>
 <img src="https://zyyiszyy.github.io/post-images/1615655189366.png" alt="" loading="lazy"><br>
 注：为什么这个路径还不清楚，只知道如下信息，貌似如果是32位的操作系统，是“HKEY_LOCAL_MACHINE\SOFTWARE”如果是64位，在注册表就是“HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node”。<br>
 <img src="https://zyyiszyy.github.io/post-images/1615655323966.png" alt="" loading="lazy"></p>
+<h2 id="第一难-破解acid-burn">第一难 破解Acid burn</h2>
+<h4 id="去nag">去NAG</h4>
+<p><em>NAG窗口可以通过搜索窗口上的字符串或者对ShowWindow下断点，这里使用字符串搜索方法解决。</em><br>
+搜索字符串找到如下位置：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615728164755.png" alt="" loading="lazy"><br>
+在此下断点，运行，然后F8运行到返回后如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615728257803.png" alt="" loading="lazy"><br>
+上面这个就是关键跳转，跳过这个call，条件跳转改为jmp即破解成功：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615728325169.png" alt="" loading="lazy"><br>
+另外一种下ShowWindow断点没做出来，倒是做下一步破解的时候下MessageBoxA断点找到了方法，具体见下一步。</p>
+<h4 id="破解用户名密码登录">破解用户名密码登录</h4>
+<p><em>搜字符串或者对MessageBoxA下断，F8到关键代码位置，这里使用搜字符串法解决。</em><br>
+有两个判断，一个是输入不能少于4个字符，一个是判断是不是真码。<br>
+搜索字符串有两个sorry，正好对应两个地方，分别下断点，一次输入少于4个字符，一次输入大于4个字符的假码，会断在两个地方，分别是：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615728653006.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1615728656943.png" alt="" loading="lazy"><br>
+第一个把jge改为jmp，第二个把jnz给nop掉。<br>
+<em>下函数断点</em><br>
+命令bp MessageBoxA，然后运行程序，输入用户名密码，直到停在断点，这时断点在user.dll里，快捷键alt+F9转到程序领空，这时在一个call突然又断了：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615730634334.png" alt="" loading="lazy"><br>
+检查发现时错误弹窗这时候弹出来了，关掉弹窗运行到CM领空。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615730739088.png" alt="" loading="lazy"><br>
+这时找这个函数刚开始的push，如图，消息框里是从哪里调用过这个弹窗函数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615730846279.png" alt="" loading="lazy"><br>
+右键消息框，一个一个返回到调用，其中有两个就是关键函数。另外：第一个去NAG消息框也能找到。</p>
+<h4 id="破解密码登录">破解密码登录</h4>
+<p>字符串法和MessageBoxA法两种同第二步。</p>
 ]]></content>
     </entry>
     <entry>
@@ -153,7 +180,8 @@ git config --global user.email &quot;xxxxx@qq.com&quot;     //配置信息<br>
         </link>
         <updated>2021-03-07T08:03:43.000Z</updated>
         <content type="html"><![CDATA[<h3 id="re分析常用的api函数">re分析常用的API函数</h3>
-<pre><code>GetWindowTextA //读取输入的内容
+<pre><code>对API函数下断点是一个普遍的破解真理。
+GetWindowTextA //读取输入的内容
 MessageBoxA  //弹信息窗
 SendMessage //发送鼠标左键的消息函数
 GetDlgItemInt //获取信息并转化为整数
@@ -162,6 +190,14 @@ SetWindowsTextA  //窗口名或组件出现已注册未注册字眼
 EnableWindow  //解锁灰色按钮
 RegOpenKeyExA  //打开注册表里的一个项(x32)
 RegQueryValueExA  //读取这个项里面的键值(x32)
+CreateToolhelp32Snapshot  //读取进程函数
+ShowWindow  //调用NAG窗口的函数
+filelength
+GetFileSize
+FindFirstFile   //都是获取文件的尺寸
+</code></pre>
+<h3 id="易语言搜索按钮事件">易语言搜索按钮事件</h3>
+<pre><code>先不点击按钮，查找二进制字串，搜索hex：FF55FC5F5E，下断点，点击按钮。
 </code></pre>
 <h3 id="易语言程序窗口id替换及其他知识点">易语言程序窗口ID替换及其他知识点</h3>
 <pre><code>查找二进制字符串，搜索hex：FF 25
@@ -184,6 +220,9 @@ RegQueryValueExA  //读取这个项里面的键值(x32)
 位变量bitvec转化python整数：solver.model()[a1].as_long()
 约束可以逻辑运算：Or,And,Not
 示例脚本有保存
+</code></pre>
+<h3 id="打开注册表命令">打开注册表命令</h3>
+<pre><code>regedit
 </code></pre>
 <h3 id="ropgadget或等rop链">ROPgadget或等rop链：</h3>
 <pre><code>ROPgadget --binary 文件路径 --ropchain
