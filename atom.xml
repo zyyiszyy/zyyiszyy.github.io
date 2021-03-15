@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zyyiszyy.github.io</id>
     <title>zyyire</title>
-    <updated>2021-03-14T15:06:39.919Z</updated>
+    <updated>2021-03-15T14:34:00.379Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zyyiszyy.github.io"/>
     <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
@@ -10,6 +10,21 @@
     <logo>https://zyyiszyy.github.io/images/avatar.png</logo>
     <icon>https://zyyiszyy.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, zyyire</rights>
+    <entry>
+        <title type="html"><![CDATA[SQLMAP使用方法和常用命令]]></title>
+        <id>https://zyyiszyy.github.io/post/sqlmap-shi-yong-fang-fa-he-chang-yong-ming-ling/</id>
+        <link href="https://zyyiszyy.github.io/post/sqlmap-shi-yong-fang-fa-he-chang-yong-ming-ling/">
+        </link>
+        <updated>2021-03-15T14:18:45.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="sqlmap入门">sqlmap入门</h1>
+<h3 id="判断是否存在sql注入">判断是否存在sql注入</h3>
+<p><code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1</code><br>
+注意：多个参数时url加“”<br>
+<img src="https://zyyiszyy.github.io/post-images/1615818542642.png" alt="" loading="lazy"></p>
+<h3 id="判断文本中请求是否存在注入">判断文本中请求是否存在注入</h3>
+<p><code>sqlmap.py -r desktop/1.txt</code></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA["玩玩破解"学习笔记]]></title>
         <id>https://zyyiszyy.github.io/post/wan-wan-po-jie-xue-xi-bi-ji/</id>

@@ -2,23 +2,22 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>关于 | zyyire</title>
+<title>SQLMAP使用方法和常用命令 | zyyire</title>
 <link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615818832875">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="关于 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="SQLMAP使用方法和常用命令 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="
-吾之名为暗焰魔法师，被漆黑烈焰吞噬殆尽吧！
+    <meta name="description" content="sqlmap入门
+判断是否存在sql注入
+sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1
+注意：多个参数时url加“”
 
-👨‍💻 名字： zyy
-🚹 性别： 帅气的男孩子
-✨ 平时： 吃饭，打游戏，睡觉（x）吃饭，学习，睡觉（√）
-🐧  QQ： 1411407449
-🙇 职业： 学生-&gt;在向更高的..." />
+判断文本中请求是否存在注入
+sqlmap.py..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -81,11 +80,11 @@
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              关于
+              SQLMAP使用方法和常用命令
             </h2>
             <div class="post-info">
               <span>
-                2021-03-07
+                2021-03-15
               </span>
               <span>
                 1 min read
@@ -93,27 +92,42 @@
               
             </div>
             
-              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/about.webp" alt="">
-            
             <div class="post-content-wrapper">
               <div class="post-content">
-                <blockquote>
-<p>吾之名为暗焰魔法师，被漆黑烈焰吞噬殆尽吧！</p>
-</blockquote>
-<p>👨‍💻 名字： zyy</p>
-<p>🚹 性别： 帅气的男孩子</p>
-<p>✨ 平时： 吃饭，打游戏，睡觉（x）吃饭，学习，睡觉（√）</p>
-<p>🐧  QQ： 1411407449</p>
-<p>🙇 职业： 学生-&gt;在向更高的目标迈进</p>
+                <h1 id="sqlmap入门">sqlmap入门</h1>
+<h3 id="判断是否存在sql注入">判断是否存在sql注入</h3>
+<p><code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1</code><br>
+注意：多个参数时url加“”<br>
+<img src="https://zyyiszyy.github.io/post-images/1615818542642.png" alt="" loading="lazy"></p>
+<h3 id="判断文本中请求是否存在注入">判断文本中请求是否存在注入</h3>
+<p><code>sqlmap.py -r desktop/1.txt</code></p>
 
               </div>
               <div class="toc-container">
-                
+                <ul class="markdownIt-TOC">
+<li><a href="#sqlmap%E5%85%A5%E9%97%A8">sqlmap入门</a><br>
+*
+<ul>
+<li><a href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8sql%E6%B3%A8%E5%85%A5">判断是否存在sql注入</a></li>
+<li><a href="#%E5%88%A4%E6%96%AD%E6%96%87%E6%9C%AC%E4%B8%AD%E8%AF%B7%E6%B1%82%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E6%B3%A8%E5%85%A5">判断文本中请求是否存在注入</a></li>
+</ul>
+</li>
+</ul>
+
               </div>
             </div>
           </article>
         </div>
 
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/wan-wan-po-jie-xue-xi-bi-ji/">
+              <h3 class="post-title">
+                &#34;玩玩破解&#34;学习笔记
+              </h3>
+            </a>
+          </div>
         
 
         
