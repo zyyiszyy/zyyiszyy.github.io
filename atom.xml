@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zyyiszyy.github.io</id>
     <title>zyyire</title>
-    <updated>2021-03-15T15:24:14.018Z</updated>
+    <updated>2021-03-15T15:25:31.495Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zyyiszyy.github.io"/>
     <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
@@ -51,8 +51,8 @@ WEB数据包文件中加载HTTP请求，这样一般不设置其他参数。</p>
 <img src="https://zyyiszyy.github.io/post-images/1615820000712.png" alt="" loading="lazy"></p>
 <h3 id="获取当前网站数据库的用户名称">获取当前网站数据库的用户名称</h3>
 <p><code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1 --current-user</code><br>
-<img src="https://zyyiszyy.github.io/post-images/1615820071721.png" alt="" loading="lazy"><br>
-#sqlmap进阶</p>
+<img src="https://zyyiszyy.github.io/post-images/1615820071721.png" alt="" loading="lazy"></p>
+<h1 id="sqlmap进阶">sqlmap进阶</h1>
 <h3 id="探测等级">探测等级</h3>
 <p>一共五个测试等级，默认是1，等级越高速度越慢。HTTP cookie在level为2时就会测试；HTTP User-Agent/Referer头在level为3时就会测试；当level为5时，自动破解cookie，XFF等头部注入。总之，不确定哪个Payload或参数为注入点时，为保证全面性，建议用高的level值。<br>
 <code>--level 5</code></p>

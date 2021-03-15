@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>SQLMAP使用方法和常用命令 | zyyire</title>
-<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615821780344">
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1615821927116">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="SQLMAP使用方法和常用命令 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
@@ -24,7 +24,7 @@ sqlmap.py -u http://127.0.0.1/..." />
       <div class="main-content">
         <div class="site-header">
   <a href="https://zyyiszyy.github.io">
-  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615821780344" alt="">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1615821927116" alt="">
   </a>
   <h1 class="site-title">
     zyyire
@@ -136,8 +136,8 @@ WEB数据包文件中加载HTTP请求，这样一般不设置其他参数。</p>
 <img src="https://zyyiszyy.github.io/post-images/1615820000712.png" alt="" loading="lazy"></p>
 <h3 id="获取当前网站数据库的用户名称">获取当前网站数据库的用户名称</h3>
 <p><code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1 --current-user</code><br>
-<img src="https://zyyiszyy.github.io/post-images/1615820071721.png" alt="" loading="lazy"><br>
-#sqlmap进阶</p>
+<img src="https://zyyiszyy.github.io/post-images/1615820071721.png" alt="" loading="lazy"></p>
+<h1 id="sqlmap进阶">sqlmap进阶</h1>
 <h3 id="探测等级">探测等级</h3>
 <p>一共五个测试等级，默认是1，等级越高速度越慢。HTTP cookie在level为2时就会测试；HTTP User-Agent/Referer头在level为3时就会测试；当level为5时，自动破解cookie，XFF等头部注入。总之，不确定哪个Payload或参数为注入点时，为保证全面性，建议用高的level值。<br>
 <code>--level 5</code></p>
@@ -180,6 +180,11 @@ WEB数据包文件中加载HTTP请求，这样一般不设置其他参数。</p>
 <li><a href="#%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%E5%BA%93%E7%94%A8%E6%88%B7%E7%9A%84%E5%AF%86%E7%A0%81">获取数据库用户的密码</a></li>
 <li><a href="#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%BD%91%E7%AB%99%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%90%8D%E7%A7%B0">获取当前网站数据库的名称</a></li>
 <li><a href="#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%BD%91%E7%AB%99%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E7%94%A8%E6%88%B7%E5%90%8D%E7%A7%B0">获取当前网站数据库的用户名称</a></li>
+</ul>
+</li>
+<li><a href="#sqlmap%E8%BF%9B%E9%98%B6">sqlmap进阶</a><br>
+*
+<ul>
 <li><a href="#%E6%8E%A2%E6%B5%8B%E7%AD%89%E7%BA%A7">探测等级</a></li>
 <li><a href="#%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E6%98%AF%E5%90%A6%E4%B8%BA%E7%AE%A1%E7%90%86%E5%91%98%E6%9D%83%E9%99%90">当前用户是否为管理员权限</a></li>
 <li><a href="#%E5%88%97%E5%87%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86%E5%91%98%E8%A7%92%E8%89%B2">列出数据库管理员角色</a></li>
