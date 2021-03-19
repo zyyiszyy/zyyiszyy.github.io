@@ -2,21 +2,18 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>使用Git遇到的一些问题 | zyyire</title>
+<title>通过XXE - PHP Audit Basic学习外部实体注入漏洞 | zyyire</title>
 <link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1616164364318">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="使用Git遇到的一些问题 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="通过XXE - PHP Audit Basic学习外部实体注入漏洞 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="git提交的步骤
-git add .  //添加文件到本地仓库
-git commit -m &quot;first commit&quot;  //添加描述信息
-git remote add origin main  //连接远程仓库
-gi..." />
-    <meta name="keywords" content="Notes" />
+    <meta name="description" content="XXE知识点
+XXE全称XML外部实体注入漏洞（XML External Entity），XML用于标记电子文件十七具有结构性的标记语言，主要负责数据传输和存储，相似的html主要用于显示。XML文档结构包括xml声明、DTD文档类型定义、..." />
+    <meta name="keywords" content="Web,Course Learning,Notes" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
   </head>
@@ -84,15 +81,23 @@ gi..." />
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              使用Git遇到的一些问题
+              通过XXE - PHP Audit Basic学习外部实体注入漏洞
             </h2>
             <div class="post-info">
               <span>
-                2021-03-08
+                2021-03-18
               </span>
               <span>
-                2 min read
+                1 min read
               </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/ZZSvZaOTy/" class="post-tag">
+                  # Web
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/atAY2QDOI/" class="post-tag">
+                  # Course Learning
+                </a>
               
                 <a href="https://zyyiszyy.github.io/tag/cQHF3_fNo/" class="post-tag">
                   # Notes
@@ -100,47 +105,52 @@ gi..." />
               
             </div>
             
-              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/xue-xi-git-de-yi-xie-jian-dan-shi-yong-fang-fa.webp" alt="">
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/tong-guo-xxe-php-audit-basic-xue-xi-wai-bu-shi-ti-zhu-ru-lou-dong.webp" alt="">
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <h2 id="git提交的步骤">git提交的步骤</h2>
-<pre><code>git add .  //添加文件到本地仓库
-git commit -m &quot;first commit&quot;  //添加描述信息
-git remote add origin main  //连接远程仓库
-git push -u origin main  //把本地仓库的文件推送到远程仓库
+                <h1 id="xxe知识点">XXE知识点</h1>
+<p>XXE全称<strong>XML外部实体注入漏洞（XML External Entity）</strong>，XML用于标记电子文件十七具有结构性的标记语言，主要负责数据传输和存储，相似的html主要用于显示。XML文档结构包括xml声明、<strong>DTD文档类型定义</strong>、文档元素。<br>
+<strong>XXE漏洞的危害：</strong></p>
+<ul>
+<li>读取系统文件</li>
+<li>执行系统命令</li>
+<li>探测内网端口</li>
+<li>攻击内部网络<br>
+<strong>XML语法结构：</strong><br>
+内部声明DTD格式：<!DOCTYPE 根元素 【元素声明】><br>
+引用外部DTD格式：<!DOCTYPE 根元素 SYSTEM "文件名"><br>
+内部声明实体格式：<!ENTITY 实体名称 "实体的值"><br>
+引用外部实体格式：<!ENTITY 实体名称 SYSTEM "URI"><br>
+<strong>XXE漏洞代码语句：</strong></li>
+</ul>
+<pre><code>file_get_contents   //获取客户端输入内容
+new DOMDocument()  //初始化XML解析器
+loadXML($xmlfile)  //加载客户端输入的XML内容
+simplexml_import_dom($dom)  //获取XML文档节点，成功则返回SimpleXMLElement对象，失败返回False
 </code></pre>
-<h2 id="提交出现以下错误">提交出现以下错误</h2>
-<p><img src="https://zyyiszyy.github.io/post-images/1615219179296.png" alt="" loading="lazy"><br>
-推送之前加入：<br>
-<code>git pull origin main</code></p>
-<h2 id="若还是失败提示以下错误">若还是失败，提示以下错误</h2>
-<p><img src="https://zyyiszyy.github.io/post-images/1615219289494.png" alt="" loading="lazy"><br>
-例如更新博客时，可尝试强制push：<br>
-<code>git push -f origin main</code><br>
-此方法不要随便用，因为强制push会覆盖掉远程的所有代码。</p>
-<h2 id="初始使用git远程上传文件设置">初始使用git远程上传文件设置</h2>
-<p>1、ssh-keygen -t rsa -C &quot;xxxxx@qq.com&quot;  //生成ssh密钥<br>
-2、进文件id——rsa.pub，复制密钥到github<br>
-3、ssh -T git@github.com   //检测是否配置成功，成功提示Hi xxxx......<br>
-4、git config --global user.name &quot;username&quot;<br>
-git config --global user.email &quot;xxxxx@qq.com&quot;     //配置信息<br>
-5、git init   //git初始化<br>
-6、git commit -m &quot;first commit&quot;   //添加描述信息<br>
-7、git remote add origin git@github.com:zyyiszyy/zyyiszyy.github.io.git  //连接远程仓库，失败的话先 git remote rm origin<br>
-8、git pull --rebase origin main  //拉取远程库<br>
-9、git push -u origin main  //把本地仓库的文件推送到远程仓库<br>
-10、若还是失败，考虑强制：git push -f origin main   用之前要慎重考虑！！！</p>
+<p><strong>XXE漏洞修复建议：</strong></p>
+<ul>
+<li>禁止使用外部实体，如：libxml_disable_entity_loader(true)。</li>
+<li>过滤用户提交的XML数据。</li>
+</ul>
+<h1 id="xxe-php-audit-basic题目">XXE - PHP Audit Basic题目</h1>
+<p>搭建环境Windows10</p>
+<h2 id="domdocumentphp">DOMDocument.php</h2>
+<h2 id="simplexmlelementphp">SimpleXMLElement.php</h2>
+<h2 id="simplexml_load_stringphp">simplexml_load_string.php</h2>
+<h2 id="blindxxephp">BlindXXE.php</h2>
 
               </div>
               <div class="toc-container">
                 <ul class="markdownIt-TOC">
-<li>
+<li><a href="#xxe%E7%9F%A5%E8%AF%86%E7%82%B9">XXE知识点</a></li>
+<li><a href="#xxe-php-audit-basic%E9%A2%98%E7%9B%AE">XXE - PHP Audit Basic题目</a>
 <ul>
-<li><a href="#git%E6%8F%90%E4%BA%A4%E7%9A%84%E6%AD%A5%E9%AA%A4">git提交的步骤</a></li>
-<li><a href="#%E6%8F%90%E4%BA%A4%E5%87%BA%E7%8E%B0%E4%BB%A5%E4%B8%8B%E9%94%99%E8%AF%AF">提交出现以下错误</a></li>
-<li><a href="#%E8%8B%A5%E8%BF%98%E6%98%AF%E5%A4%B1%E8%B4%A5%E6%8F%90%E7%A4%BA%E4%BB%A5%E4%B8%8B%E9%94%99%E8%AF%AF">若还是失败，提示以下错误</a></li>
-<li><a href="#%E5%88%9D%E5%A7%8B%E4%BD%BF%E7%94%A8git%E8%BF%9C%E7%A8%8B%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E8%AE%BE%E7%BD%AE">初始使用git远程上传文件设置</a></li>
+<li><a href="#domdocumentphp">DOMDocument.php</a></li>
+<li><a href="#simplexmlelementphp">SimpleXMLElement.php</a></li>
+<li><a href="#simplexml_load_stringphp">simplexml_load_string.php</a></li>
+<li><a href="#blindxxephp">BlindXXE.php</a></li>
 </ul>
 </li>
 </ul>
@@ -153,9 +163,9 @@ git config --global user.email &quot;xxxxx@qq.com&quot;     //配置信息<br>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://zyyiszyy.github.io/post/idle_notes/">
+            <a href="https://zyyiszyy.github.io/post/upload-labs-ti-mu-lian-xi-wen-jian-shang-chuan-lou-dong-1-6-ti/">
               <h3 class="post-title">
-                接触CTF以来的闲散笔记
+                Upload-labs题目学习文件上传漏洞（1-11题）
               </h3>
             </a>
           </div>

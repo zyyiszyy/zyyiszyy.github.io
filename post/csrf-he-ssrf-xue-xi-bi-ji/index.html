@@ -2,21 +2,19 @@
   <head>
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>使用Git遇到的一些问题 | zyyire</title>
+<title>CSRF和SSRF学习笔记 | zyyire</title>
 <link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1616164364318">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
-<link rel="alternate" type="application/atom+xml" title="使用Git遇到的一些问题 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="alternate" type="application/atom+xml" title="CSRF和SSRF学习笔记 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
 
 
 
-    <meta name="description" content="git提交的步骤
-git add .  //添加文件到本地仓库
-git commit -m &quot;first commit&quot;  //添加描述信息
-git remote add origin main  //连接远程仓库
-gi..." />
-    <meta name="keywords" content="Notes" />
+    <meta name="description" content="CSRF漏洞
+漏洞介绍
+CSRF（Cross-site request forgery）跨站请求伪造，又叫做One Click Attack或者Session Riding，通常缩写为CSRF和XSRF，是一种对网站的恶意利用。其不太流行，..." />
+    <meta name="keywords" content="Web,Course Learning,Notes" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
   </head>
@@ -84,15 +82,23 @@ gi..." />
         <div class="post-detail">
           <article class="post">
             <h2 class="post-title">
-              使用Git遇到的一些问题
+              CSRF和SSRF学习笔记
             </h2>
             <div class="post-info">
               <span>
-                2021-03-08
+                2021-03-19
               </span>
               <span>
                 2 min read
               </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/ZZSvZaOTy/" class="post-tag">
+                  # Web
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/atAY2QDOI/" class="post-tag">
+                  # Course Learning
+                </a>
               
                 <a href="https://zyyiszyy.github.io/tag/cQHF3_fNo/" class="post-tag">
                   # Notes
@@ -100,47 +106,53 @@ gi..." />
               
             </div>
             
-              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/xue-xi-git-de-yi-xie-jian-dan-shi-yong-fang-fa.webp" alt="">
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/csrf-he-ssrf-xue-xi-bi-ji.webp" alt="">
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <h2 id="git提交的步骤">git提交的步骤</h2>
-<pre><code>git add .  //添加文件到本地仓库
-git commit -m &quot;first commit&quot;  //添加描述信息
-git remote add origin main  //连接远程仓库
-git push -u origin main  //把本地仓库的文件推送到远程仓库
-</code></pre>
-<h2 id="提交出现以下错误">提交出现以下错误</h2>
-<p><img src="https://zyyiszyy.github.io/post-images/1615219179296.png" alt="" loading="lazy"><br>
-推送之前加入：<br>
-<code>git pull origin main</code></p>
-<h2 id="若还是失败提示以下错误">若还是失败，提示以下错误</h2>
-<p><img src="https://zyyiszyy.github.io/post-images/1615219289494.png" alt="" loading="lazy"><br>
-例如更新博客时，可尝试强制push：<br>
-<code>git push -f origin main</code><br>
-此方法不要随便用，因为强制push会覆盖掉远程的所有代码。</p>
-<h2 id="初始使用git远程上传文件设置">初始使用git远程上传文件设置</h2>
-<p>1、ssh-keygen -t rsa -C &quot;xxxxx@qq.com&quot;  //生成ssh密钥<br>
-2、进文件id——rsa.pub，复制密钥到github<br>
-3、ssh -T git@github.com   //检测是否配置成功，成功提示Hi xxxx......<br>
-4、git config --global user.name &quot;username&quot;<br>
-git config --global user.email &quot;xxxxx@qq.com&quot;     //配置信息<br>
-5、git init   //git初始化<br>
-6、git commit -m &quot;first commit&quot;   //添加描述信息<br>
-7、git remote add origin git@github.com:zyyiszyy/zyyiszyy.github.io.git  //连接远程仓库，失败的话先 git remote rm origin<br>
-8、git pull --rebase origin main  //拉取远程库<br>
-9、git push -u origin main  //把本地仓库的文件推送到远程仓库<br>
-10、若还是失败，考虑强制：git push -f origin main   用之前要慎重考虑！！！</p>
+                <h1 id="csrf漏洞">CSRF漏洞</h1>
+<h2 id="漏洞介绍">漏洞介绍</h2>
+<p>CSRF（Cross-site request forgery）跨站请求伪造，又叫做One Click Attack或者Session Riding，通常缩写为CSRF和XSRF，是一种对网站的恶意利用。其不太流行，所以防范资料较少，难以防范，被认为比XSS更有危险性。</p>
+<h2 id="漏洞原理">漏洞原理</h2>
+<p>攻击者利用目标用户的身份，以目标用户的名义执行一些非法操作，如：发送邮件、发消息、盗取目标用户的账号、购买物品、虚拟货币转账等。经常用来制作蠕虫病毒、刷SEO流量等。</p>
+<h2 id="攻击条件">攻击条件</h2>
+<ul>
+<li>目标用户已经登录了某网站，能够执行网站的某些功能。</li>
+<li>目标用访问了攻击者的URL。</li>
+</ul>
+<h2 id="防御措施">防御措施</h2>
+<ul>
+<li>验证请求的Referer值，如果其是以自己网站开头的域名，则可能请求来自于网站自己。若其域名是其他网站或者空白，就有可能是CSRF攻击，需要将请求过滤掉。</li>
+<li>在请求中插入不能伪造的信息，如在HTTP请求中以参数形式加入一个随机的token，服务器端验证token正确性。</li>
+</ul>
+<h1 id="ssrf漏洞">SSRF漏洞</h1>
+<h2 id="漏洞介绍-2">漏洞介绍</h2>
+<p>SSRF（Server-Side Request Forgery）服务器端请求伪造，是一种由客户端伪造请求，由服务器端发起请求的漏洞。一般情况下，攻击的是内网。</p>
+<h2 id="漏洞原理-2">漏洞原理</h2>
+<p>形成原因大多是由于服务端提供了从其他服务器应用获取数据的功能且没有对目标地址做过滤和限制。如黑客操纵服务端从指定的URL地址获取网页的文本内容，加载指定地址的图片等。SSRF利用存在缺陷的Web应用作为代理攻击远程和本地服务器。</p>
+<h2 id="防御措施-2">防御措施</h2>
+<ul>
+<li>限制请求的端口只能为Web端口，只允许访问HTTP和HTTPS的请求。</li>
+<li>限制不能访问内网的ip。</li>
+<li>屏蔽返回的详细信息。</li>
+</ul>
 
               </div>
               <div class="toc-container">
                 <ul class="markdownIt-TOC">
-<li>
+<li><a href="#csrf%E6%BC%8F%E6%B4%9E">CSRF漏洞</a>
 <ul>
-<li><a href="#git%E6%8F%90%E4%BA%A4%E7%9A%84%E6%AD%A5%E9%AA%A4">git提交的步骤</a></li>
-<li><a href="#%E6%8F%90%E4%BA%A4%E5%87%BA%E7%8E%B0%E4%BB%A5%E4%B8%8B%E9%94%99%E8%AF%AF">提交出现以下错误</a></li>
-<li><a href="#%E8%8B%A5%E8%BF%98%E6%98%AF%E5%A4%B1%E8%B4%A5%E6%8F%90%E7%A4%BA%E4%BB%A5%E4%B8%8B%E9%94%99%E8%AF%AF">若还是失败，提示以下错误</a></li>
-<li><a href="#%E5%88%9D%E5%A7%8B%E4%BD%BF%E7%94%A8git%E8%BF%9C%E7%A8%8B%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E8%AE%BE%E7%BD%AE">初始使用git远程上传文件设置</a></li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E4%BB%8B%E7%BB%8D">漏洞介绍</a></li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86">漏洞原理</a></li>
+<li><a href="#%E6%94%BB%E5%87%BB%E6%9D%A1%E4%BB%B6">攻击条件</a></li>
+<li><a href="#%E9%98%B2%E5%BE%A1%E6%8E%AA%E6%96%BD">防御措施</a></li>
+</ul>
+</li>
+<li><a href="#ssrf%E6%BC%8F%E6%B4%9E">SSRF漏洞</a>
+<ul>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E4%BB%8B%E7%BB%8D-2">漏洞介绍</a></li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86-2">漏洞原理</a></li>
+<li><a href="#%E9%98%B2%E5%BE%A1%E6%8E%AA%E6%96%BD-2">防御措施</a></li>
 </ul>
 </li>
 </ul>
@@ -153,9 +165,9 @@ git config --global user.email &quot;xxxxx@qq.com&quot;     //配置信息<br>
         
           <div class="next-post">
             <div class="next">下一篇</div>
-            <a href="https://zyyiszyy.github.io/post/idle_notes/">
+            <a href="https://zyyiszyy.github.io/post/tong-guo-xxe-php-audit-basic-xue-xi-wai-bu-shi-ti-zhu-ru-lou-dong/">
               <h3 class="post-title">
-                接触CTF以来的闲散笔记
+                通过XXE - PHP Audit Basic学习外部实体注入漏洞
               </h3>
             </a>
           </div>

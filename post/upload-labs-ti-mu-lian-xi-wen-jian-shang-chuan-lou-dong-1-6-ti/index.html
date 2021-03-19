@@ -1,0 +1,253 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Upload-labs题目学习文件上传漏洞（1-11题） | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1616164364318">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Upload-labs题目学习文件上传漏洞（1-11题） | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="**造成文件上传的原因：**服务端代码未对客户端上传的文件进行严格的验证和过滤，造成可以上传任意文件的情况，包括脚本文件asp、aspx、php、jsp等格式。
+文件上传修复建议：
+
+通过白名单的方式判断文件是否合法。
+对上传的文件进行重命..." />
+    <meta name="keywords" content="Web,Course Learning,Notes" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1616164364318" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/1.html" class="menu">
+          CSRF测试
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Upload-labs题目学习文件上传漏洞（1-11题）
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-16
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/ZZSvZaOTy/" class="post-tag">
+                  # Web
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/atAY2QDOI/" class="post-tag">
+                  # Course Learning
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/cQHF3_fNo/" class="post-tag">
+                  # Notes
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/upload-labs-ti-mu-lian-xi-wen-jian-shang-chuan-lou-dong-1-6-ti.webp" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>**造成文件上传的原因：**服务端代码未对客户端上传的文件进行严格的验证和过滤，造成可以上传任意文件的情况，包括脚本文件asp、aspx、php、jsp等格式。<br>
+<strong>文件上传修复建议：</strong></p>
+<ul>
+<li>通过白名单的方式判断文件是否合法。</li>
+<li>对上传的文件进行重命名，如rand(10,99).date(&quot;YmdHis&quot;).&quot;.jpg&quot;。</li>
+</ul>
+<h1 id="关卡1-js检测绕过攻击">关卡1 JS检测绕过攻击</h1>
+<p>这里已提交php文件就提示消息框：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615907146277.png" alt="" loading="lazy"><br>
+判断是前端的验证，首先生成一句话木马文件，改名为webshell.png，然后上传，这时可以通过js验证。同时burpsuite抓包，在burpsuite里改文件后缀，发送文件即上传成功。<br>
+另一种方法：直接禁止JS运行，火狐浏览器地址栏输入about:config，找到javascript.enabled，关闭选项，刷新页面，重新上传文件即可上传成功。</p>
+<h1 id="关卡2-服务端对mime检查">关卡2 服务端对MIME检查</h1>
+<p>查看源代码的判断：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615913754333.png" alt="" loading="lazy"><br>
+属于文件类型绕过攻击，主要判断Content-Type的值，上传php文件时值为：application/octet-stream，上传jpg文件时的值为：image/jpeg。<br>
+本题先上传php文件，抓包，然后将Content-Type改为image/jpeg，就可以绕过成功，通过返回信息查看文件路径进行下一步攻击。</p>
+<h1 id="关卡3-文件后缀绕过攻击">关卡3 文件后缀绕过攻击</h1>
+<p>这道题源码就只是过滤了四个类型，最后改文件名为随机数字：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615907719333.png" alt="" loading="lazy"><br>
+将文件名依次改为php2 php3 php4 php5 phtml pht，上传成功，burpsuite里看文件路径和文件名。</p>
+<h1 id="关卡4-htaccess文件绕过">关卡4 .htaccess文件绕过</h1>
+<p>这次绕过了许多函数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615909304406.png" alt="" loading="lazy"><br>
+但是没有绕过.htaccess，所以可以通过.htaccess绕过方式攻击。先建立文件，内容为：SetHandler applicationx-httpd-php。让所有的文件都解析为php,上传文件，再上传图片马。</p>
+<h1 id="关卡5-php-和-windows环境的叠加特性绕过">关卡5 PHP 和 Windows环境的叠加特性绕过</h1>
+<p>利用PHP 和 Windows环境的叠加特性，以下符号在正则匹配时的相等：<br>
+‘&quot;’=‘.’;‘&gt;’=‘?’;‘&lt;’= ‘*’。<br>
+首先借助burpsuite上传名为4.php:.jpg的空文件，解析后就成了名为4.php的空文件，再将一句话木马改名为“4.&lt;”，上传，然后内容便进入刚才的空文件里生成了4.php。上一题同样适用。</p>
+<h1 id="关卡6-后缀大小写绕过">关卡6 后缀大小写绕过</h1>
+<p>观察源代码，这道题没有进行大小写统一，所以可以进行大小写绕过。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615909612188.png" alt="" loading="lazy"><br>
+更改文件名为shell.phP，上传文件即可成功绕过。</p>
+<h1 id="关卡7-空格绕过">关卡7 空格绕过</h1>
+<p>观察源代码，发现没用去掉空格：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615910745871.png" alt="" loading="lazy"><br>
+所以可以进行空格绕过，在burpsuite中将文件名改为&quot;webshell.php &quot;并查看文件名和路径。</p>
+<h1 id="关卡8-点绕过">关卡8 点绕过</h1>
+<p>观察源代码，没有删除文件名后的点。<br>
+<img src="https://zyyiszyy.github.io/post-images/1615911326907.png" alt="" loading="lazy"><br>
+windows特性，会自动去掉后缀名中最后的”.”,所以改名为“shell.php.”。</p>
+<h1 id="关卡9-data绕过">关卡9 ::$DATA绕过</h1>
+<p>观察源代码，没有去除字符串::<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>A</mi><mi>T</mi><mi>A</mi><mi mathvariant="normal">。</mi><mo>!</mo><mo>[</mo><mo>]</mo><mo>(</mo><mi>h</mi><mi>t</mi><mi>t</mi><mi>p</mi><mi>s</mi><mo>:</mo><mi mathvariant="normal">/</mi><mi mathvariant="normal">/</mi><mi>z</mi><mi>y</mi><mi>y</mi><mi>i</mi><mi>s</mi><mi>z</mi><mi>y</mi><mi>y</mi><mi mathvariant="normal">.</mi><mi>g</mi><mi>i</mi><mi>t</mi><mi>h</mi><mi>u</mi><mi>b</mi><mi mathvariant="normal">.</mi><mi>i</mi><mi>o</mi><mi mathvariant="normal">/</mi><mi>p</mi><mi>o</mi><mi>s</mi><mi>t</mi><mo>−</mo><mi>i</mi><mi>m</mi><mi>a</mi><mi>g</mi><mi>e</mi><mi>s</mi><mi mathvariant="normal">/</mi><mn>1615911947145.</mn><mi>p</mi><mi>n</mi><mi>g</mi><mo>)</mo><mi mathvariant="normal">在</mi><mi>p</mi><mi>h</mi><mi>p</mi><mo>+</mo><mi>w</mi><mi>i</mi><mi>n</mi><mi>d</mi><mi>o</mi><mi>w</mi><mi>s</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">情</mi><mi mathvariant="normal">况</mi><mi mathvariant="normal">下</mi><mi mathvariant="normal">：</mi><mi mathvariant="normal">如</mi><mi mathvariant="normal">果</mi><mi mathvariant="normal">文</mi><mi mathvariant="normal">件</mi><mi mathvariant="normal">名</mi><mo>+</mo><mi mathvariant="normal">&quot;</mi><mo>:</mo><mo>:</mo></mrow><annotation encoding="application/x-tex">DATA。
+![](https://zyyiszyy.github.io/post-images/1615911947145.png)
+在php+windows的情况下：如果文件名+&quot;::</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">A</span><span class="mord cjk_fallback">。</span><span class="mclose">!</span><span class="mopen">[</span><span class="mclose">]</span><span class="mopen">(</span><span class="mord mathdefault">h</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault">p</span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">/</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord">.</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">i</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault">u</span><span class="mord mathdefault">b</span><span class="mord">.</span><span class="mord mathdefault">i</span><span class="mord mathdefault">o</span><span class="mord">/</span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">i</span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord">/</span><span class="mord">1</span><span class="mord">6</span><span class="mord">1</span><span class="mord">5</span><span class="mord">9</span><span class="mord">1</span><span class="mord">1</span><span class="mord">9</span><span class="mord">4</span><span class="mord">7</span><span class="mord">1</span><span class="mord">4</span><span class="mord">5</span><span class="mord">.</span><span class="mord mathdefault">p</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mclose">)</span><span class="mord cjk_fallback">在</span><span class="mord mathdefault">p</span><span class="mord mathdefault">h</span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">s</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">情</span><span class="mord cjk_fallback">况</span><span class="mord cjk_fallback">下</span><span class="mord cjk_fallback">：</span><span class="mord cjk_fallback">如</span><span class="mord cjk_fallback">果</span><span class="mord cjk_fallback">文</span><span class="mord cjk_fallback">件</span><span class="mord cjk_fallback">名</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mrel">:</span></span></span></span>DATA&quot;会把::<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>A</mi><mi>T</mi><mi>A</mi><mi mathvariant="normal">之</mi><mi mathvariant="normal">后</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">据</mi><mi mathvariant="normal">当</mi><mi mathvariant="normal">成</mi><mi mathvariant="normal">文</mi><mi mathvariant="normal">件</mi><mi mathvariant="normal">流</mi><mi mathvariant="normal">处</mi><mi mathvariant="normal">理</mi><mo separator="true">,</mo><mi mathvariant="normal">不</mi><mi mathvariant="normal">会</mi><mi mathvariant="normal">检</mi><mi mathvariant="normal">测</mi><mi mathvariant="normal">后</mi><mi mathvariant="normal">缀</mi><mi mathvariant="normal">名</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">保</mi><mi mathvariant="normal">持</mi><mi mathvariant="normal">&quot;</mi><mo>:</mo><mo>:</mo></mrow><annotation encoding="application/x-tex">DATA之后的数据当成文件流处理,不会检测后缀名，保持&quot;::</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">A</span><span class="mord cjk_fallback">之</span><span class="mord cjk_fallback">后</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">据</span><span class="mord cjk_fallback">当</span><span class="mord cjk_fallback">成</span><span class="mord cjk_fallback">文</span><span class="mord cjk_fallback">件</span><span class="mord cjk_fallback">流</span><span class="mord cjk_fallback">处</span><span class="mord cjk_fallback">理</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord cjk_fallback">不</span><span class="mord cjk_fallback">会</span><span class="mord cjk_fallback">检</span><span class="mord cjk_fallback">测</span><span class="mord cjk_fallback">后</span><span class="mord cjk_fallback">缀</span><span class="mord cjk_fallback">名</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">保</span><span class="mord cjk_fallback">持</span><span class="mord">&quot;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mrel">:</span></span></span></span>DATA&quot;之前的文件名。所以可以借助burpsuite在后缀名加“::$DATA”进行绕过。</p>
+<h1 id="关卡10-点空格点绕过">关卡10 点+空格+点绕过</h1>
+<p>保存文件的时候没有重命名而使用的原始的文件名，源代码如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615912732277.png" alt="" loading="lazy"><br>
+将文件名通过burpsuite改为：”shell.php. .“,经过处理后变成：“shell.php.”，就能成功绕过。</p>
+<h1 id="关卡11-双写绕过">关卡11 双写绕过</h1>
+<p>如果后缀在黑名单里，就将其替换为空，也就是去掉，源代码如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1615913399885.png" alt="" loading="lazy"><br>
+所以可以将后缀写两层，文件名为：&quot;shell.pphphp&quot;。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%85%B3%E5%8D%A11-js%E6%A3%80%E6%B5%8B%E7%BB%95%E8%BF%87%E6%94%BB%E5%87%BB">关卡1 JS检测绕过攻击</a></li>
+<li><a href="#%E5%85%B3%E5%8D%A12-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%AF%B9mime%E6%A3%80%E6%9F%A5">关卡2 服务端对MIME检查</a></li>
+<li><a href="#%E5%85%B3%E5%8D%A13-%E6%96%87%E4%BB%B6%E5%90%8E%E7%BC%80%E7%BB%95%E8%BF%87%E6%94%BB%E5%87%BB">关卡3 文件后缀绕过攻击</a></li>
+<li><a href="#%E5%85%B3%E5%8D%A14-htaccess%E6%96%87%E4%BB%B6%E7%BB%95%E8%BF%87">关卡4 .htaccess文件绕过</a></li>
+<li><a href="#%E5%85%B3%E5%8D%A15-php-%E5%92%8C-windows%E7%8E%AF%E5%A2%83%E7%9A%84%E5%8F%A0%E5%8A%A0%E7%89%B9%E6%80%A7%E7%BB%95%E8%BF%87">关卡5 PHP 和 Windows环境的叠加特性绕过</a></li>
+<li><a href="#%E5%85%B3%E5%8D%A16-%E5%90%8E%E7%BC%80%E5%A4%A7%E5%B0%8F%E5%86%99%E7%BB%95%E8%BF%87">关卡6 后缀大小写绕过</a></li>
+<li><a href="#%E5%85%B3%E5%8D%A17-%E7%A9%BA%E6%A0%BC%E7%BB%95%E8%BF%87">关卡7 空格绕过</a></li>
+<li><a href="#%E5%85%B3%E5%8D%A18-%E7%82%B9%E7%BB%95%E8%BF%87">关卡8 点绕过</a></li>
+<li><a href="#%E5%85%B3%E5%8D%A19-data%E7%BB%95%E8%BF%87">关卡9 ::$DATA绕过</a></li>
+<li><a href="#%E5%85%B3%E5%8D%A110-%E7%82%B9%E7%A9%BA%E6%A0%BC%E7%82%B9%E7%BB%95%E8%BF%87">关卡10 点+空格+点绕过</a></li>
+<li><a href="#%E5%85%B3%E5%8D%A111-%E5%8F%8C%E5%86%99%E7%BB%95%E8%BF%87">关卡11 双写绕过</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/sqlmap-shi-yong-fang-fa-he-chang-yong-ming-ling/">
+              <h3 class="post-title">
+                SQLMAP使用方法和常用命令
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
