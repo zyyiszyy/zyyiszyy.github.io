@@ -1,0 +1,266 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>命令执行、逻辑漏洞和暴力破解学习笔记 | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1617121720046">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="命令执行、逻辑漏洞和暴力破解学习笔记 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="命令执行
+漏洞介绍
+应用程序有时要执行一些系统命令，这就需要一些调用系统命令的函数，如PHP中system、exec、shell_exec、passthru、popen、proc_popen等函数可以执行系统命令。当黑客能够控制这些命令中的..." />
+    <meta name="keywords" content="Web,Course Learning,Notes" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1617121720046" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/1.html" class="menu">
+          CSRF测试
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              命令执行、逻辑漏洞和暴力破解学习笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-20
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/ZZSvZaOTy/" class="post-tag">
+                  # Web
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/atAY2QDOI/" class="post-tag">
+                  # Course Learning
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/cQHF3_fNo/" class="post-tag">
+                  # Notes
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/ming-ling-zhi-xing-luo-ji-lou-dong-he-bao-li-po-jie-xue-xi-bi-ji.webp" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="命令执行">命令执行</h1>
+<h2 id="漏洞介绍">漏洞介绍</h2>
+<p>应用程序有时要执行一些系统命令，这就需要一些调用系统命令的函数，如PHP中system、exec、shell_exec、passthru、popen、proc_popen等函数可以执行系统命令。当黑客能够控制这些命令中的参数时，就可以将恶意的系统命令拼接到正常的系统命令中了，从而造成命令执行攻击。</p>
+<h2 id="管道符介绍">管道符介绍</h2>
+<p><strong>windows系统：</strong><br>
+“|”：直接执行后面的语句。<br>
+“||”：如果前面的执行出错，则执行后面的语句，前面的语句只能为假。如：ping 2||dir。<br>
+“&amp;”：如果前面的语句为假则直接执行后面的语句，前面的语句可真可假。<br>
+“&amp;&amp;”：如果前面的语句为假则直接出错，也不执行后面的语句，前面的语句只能为真。<br>
+<strong>linux系统：</strong><br>
+“；”：执行完前面的再执行后面的。<br>
+“|”：显示后面语句执行的结果。<br>
+“||”：当前面的语句执行出错时，执行后面的语句。<br>
+“&amp;”：如果前面的语句为假则直接执行后面的语句，前面的语句可真可假。<br>
+“&amp;&amp;”：如果前面的语句为假则直接出错，也不执行后面的语句，前面的只能为真。</p>
+<h2 id="修复建议">修复建议</h2>
+<ul>
+<li>尽量不要使用命令执行函数。</li>
+<li>客户端提交的变量进入执行命令的函数前做好过滤和检查。</li>
+<li>在使用动态函数前，确保使用的函数是指定的函数之一。</li>
+<li>对php语言来说，不能完全控制的函数最好不要使用。</li>
+</ul>
+<h1 id="逻辑漏洞">逻辑漏洞</h1>
+<h2 id="漏洞介绍-2">漏洞介绍</h2>
+<p>逻辑漏洞就是利用业务的设计缺陷，获取敏感信息或破坏业务的完整性。一般出现在密码修改、越权访问、密码找回、交易支付等功能处。黑客在挖掘逻辑漏洞的时候有两个重点：业务流程和HTTP/HTTPS请求篡改。</p>
+<h2 id="越权访问介绍">越权访问介绍</h2>
+<ul>
+<li>水平越权：相同级别的用户或同一角色中不同的用户之间，可以越权访问、修改或删除其他用户的信息的非法操作。出现此漏洞往往会造成大批量数据泄露，严重的话会造成用户信息被恶意修改。</li>
+<li>垂直越权：就是不同级别的用户或不同角色之间的用户的越权，如普通用户执行管理员才能执行的功能。</li>
+</ul>
+<h2 id="越权访问攻击防御">越权访问攻击防御</h2>
+<p>攻击产生的主要原因是没有对用户身份做好判断和控制。可以增加session，用户登录成功后，将一些信息放入session中，当用户查看个人信息时，从session中取信息，而不是从get或post请求获取。</p>
+<h1 id="暴力破解攻击">暴力破解攻击</h1>
+<h2 id="攻击介绍">攻击介绍</h2>
+<p>服务端没有做限制，导致攻击者可以通过暴力的手段破解所需的信息，如用户名、密码、验证码等。暴力破解的关键在于字典的大小。</p>
+<h2 id="burpsuite四种攻击模式">burpsuite四种攻击模式</h2>
+<p>Sniper：对变量依次进行破解，多个标记依次进行。<br>
+battering ram：对变量同时进行破解，多个标记同时进行。<br>
+pitchfork：每一个变量标记对应一个字典，取每个字典的对应项。<br>
+cluster bomb：每个变量对应一个字典，并且进行交集破解，尝试各种组合。适用于用户名+密码的破解。</p>
+<h2 id="dvwa攻击示例">DVWA攻击示例</h2>
+<p><strong>low难度</strong><br>
+burp在登录时抓包，然后发送到Intruder，在Position栏选中username和password作为payload：<br>
+<img src="https://zyyiszyy.github.io/post-images/1616244030647.png" alt="" loading="lazy"><br>
+然后在Payload栏设置字典，爆破管理员的密码，猜测username为root或者admin。<br>
+<img src="https://zyyiszyy.github.io/post-images/1616244154077.png" alt="" loading="lazy"><br>
+然后第二个payload设置字典为自带的password：<br>
+<img src="https://zyyiszyy.github.io/post-images/1616244226383.png" alt="" loading="lazy"><br>
+选择攻击模式为Cluster bomb，然后就可以开始暴力破解了，在length里找不一样的返回包，点击查看返回信息和登陆成功的返回页面：<br>
+<img src="https://zyyiszyy.github.io/post-images/1616244334732.png" alt="" loading="lazy"></p>
+<h2 id="修复建议-2">修复建议</h2>
+<ul>
+<li>设置用户登录次数的阈值，超过阈值锁定账号。</li>
+<li>对某个ip设置登录次数的阈值，超过阈值封锁ip。<br>
+其中第二个方法可能存在多个用户使用同一个ip，则会造成其他用户无法登录。</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C">命令执行</a>
+<ul>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E4%BB%8B%E7%BB%8D">漏洞介绍</a></li>
+<li><a href="#%E7%AE%A1%E9%81%93%E7%AC%A6%E4%BB%8B%E7%BB%8D">管道符介绍</a></li>
+<li><a href="#%E4%BF%AE%E5%A4%8D%E5%BB%BA%E8%AE%AE">修复建议</a></li>
+</ul>
+</li>
+<li><a href="#%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E">逻辑漏洞</a>
+<ul>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E4%BB%8B%E7%BB%8D-2">漏洞介绍</a></li>
+<li><a href="#%E8%B6%8A%E6%9D%83%E8%AE%BF%E9%97%AE%E4%BB%8B%E7%BB%8D">越权访问介绍</a></li>
+<li><a href="#%E8%B6%8A%E6%9D%83%E8%AE%BF%E9%97%AE%E6%94%BB%E5%87%BB%E9%98%B2%E5%BE%A1">越权访问攻击防御</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E6%94%BB%E5%87%BB">暴力破解攻击</a>
+<ul>
+<li><a href="#%E6%94%BB%E5%87%BB%E4%BB%8B%E7%BB%8D">攻击介绍</a></li>
+<li><a href="#burpsuite%E5%9B%9B%E7%A7%8D%E6%94%BB%E5%87%BB%E6%A8%A1%E5%BC%8F">burpsuite四种攻击模式</a></li>
+<li><a href="#dvwa%E6%94%BB%E5%87%BB%E7%A4%BA%E4%BE%8B">DVWA攻击示例</a></li>
+<li><a href="#%E4%BF%AE%E5%A4%8D%E5%BB%BA%E8%AE%AE-2">修复建议</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/csrf-he-ssrf-xue-xi-bi-ji/">
+              <h3 class="post-title">
+                CSRF和SSRF学习笔记
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

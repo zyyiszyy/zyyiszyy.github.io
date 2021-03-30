@@ -1,0 +1,247 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>渗透测试工具Metasploit学习笔记 | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1617121720046">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="渗透测试工具Metasploit学习笔记 | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Metasploit框架（Metasploit Framework，MSF）是一个开源工具，旨在方便渗透测试，它是由Ruby程序语言编写的模板化框架，具有很好的拓展性，便于渗透测试人员开发、使用定制的工具模板。
+专业术语
+Auxiliari..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1617121720046" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/1.html" class="menu">
+          CSRF测试
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              渗透测试工具Metasploit学习笔记
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-24
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>Metasploit框架（Metasploit Framework，MSF）是一个开源工具，旨在方便渗透测试，它是由Ruby程序语言编写的模板化框架，具有很好的拓展性，便于渗透测试人员开发、使用定制的工具模板。</p>
+<h1 id="专业术语">专业术语</h1>
+<p><strong>Auxiliaries（辅助模块）：</strong><br>
+执行扫描、嗅探、指纹识别等相关功能辅助渗透测试。<br>
+<strong>Exploit（漏洞利用模块）：</strong><br>
+渗透测试者利用一个系统、应用或者服务中的安全漏洞进行攻击的模块。<br>
+<strong>Payload（攻击载荷模块）：</strong><br>
+我们期望目标系统在被渗透攻击之后完成实际攻击功能的代码，渗透成功后，用于在目标系统运行任意命令或执行特定代码，在MSF中可以自由地选择、传送和植入。可能是简单的在目标系统执行一些命令，如添加用户账号等。<br>
+<strong>Post（后期渗透模块）：</strong><br>
+该模块主要在渗透测试取得目标系统的控制权后，进行一系列的后渗透攻击动作，如获取敏感信息、实施跳板攻击等。<br>
+<strong>Encoders（编码工具模块）：</strong><br>
+负责渗透测试的免杀，防止被杀毒软件、防火墙、IDS等安全软件检测出来。</p>
+<h1 id="渗透测试攻击步骤">渗透测试攻击步骤</h1>
+<ul>
+<li>扫描目标机系统，寻找可用漏洞。</li>
+<li>选择并配置漏洞利用模块。</li>
+<li>选择并配置攻击载荷模块。</li>
+<li>选择一个编码技术，绕过杀毒软件的查杀。</li>
+<li>进行渗透攻击。</li>
+</ul>
+<h1 id="主机扫描">主机扫描</h1>
+<p>其主要目标是尽可能多的发现目标机器的信息，获取的信息越多，渗透攻击成功的可能性越大。主要关注目标机器的IP地址、可用服务、开放端口等。<br>
+启动MSF命令：<code>msfconsole</code></p>
+<h2 id="使用辅助模块进行服务扫描">使用辅助模块进行服务扫描</h2>
+<p>扫描主机上运行的服务时，有多种扫描技术可供选择，如VNC、FTP、SMB等，执行特定类型的扫描就可以发现服务。查找扫描的模块：<code>search scanner</code></p>
+<h2 id="使用辅助模块进行端口扫描">使用辅助模块进行端口扫描</h2>
+<p>搜索可用的端口模块，输入命令：<code>search portscan</code><br>
+以tcp扫描为例，使用指令：<code>use auxiliary/scanner/portscan/tcp</code><br>
+然后查看参数，标为yes是必填参数，有些参数已经默认填好了：<code>show options</code><br>
+设置参数，其中setg/unsetg是设置/删除全局参数：<code>set RHOSTS 192.168.183.129</code><br>
+开始运行：<code>run</code></p>
+<h2 id="使用nmap扫描">使用nmap扫描</h2>
+<p>直接在msf命令提示符下输入<code>msf &gt; nmap</code><br>
+用法和普通的nmap一样，举例获取目标主机的系统：<code>namp -O -Pn 192.168.183.129</code></p>
+<h1 id="漏洞利用">漏洞利用</h1>
+<p>收集到目标信息后，根据操作系统、运行中的端口和服务等，选择正确的exploit和合适的payload，如在某主机上运行着Samba服务，直接搜索samba相关的漏洞利用模块：<code>search samba</code><br>
+然后选择合适的exp模块，最好选择被利用成功容易的并且最新的exp，使用命令<code>use exploit/multi/samba/usermap_script</code><br>
+这时msf变为：msf exploit（usermap_script）<br>
+查看攻击载荷模块：<code>show payloads</code><br>
+选择攻击载荷模块：<code>set payload cmd/unix/reverse</code><br>
+接下来查看设置选项并设置攻击载荷模块，指令略。<br>
+发动攻击：<code>exploit</code>或<code>run</code><br>
+攻击成功后msf变为：meterpreter &gt;</p>
+<h1 id="后渗透攻击信息收集">后渗透攻击：信息收集</h1>
+<p>Meterpreter是Metasploit中的一个强大的后渗透攻击工具，后期渗透模块多达200多个，有如下优势：</p>
+<ul>
+<li>纯内存工作模式，不需要对磁盘进行任何写入操作。</li>
+<li>使用加密通信协议，可同时和几个通道进行通信。</li>
+<li>在被攻击进程内工作，不需要创建新的进程。</li>
+<li>易于在多进程间迁移。</li>
+<li>平台通用。</li>
+</ul>
+<h2 id="进程迁移">进程迁移</h2>
+<p>刚获取shell时，shell是很脆弱的，如攻击者可能利用浏览器漏洞攻陷主机，而浏览器可能被用户关闭，所以第一步要移动shell。</p>
+<ul>
+<li><code>ps</code>查看目标机器当前运行的进程</li>
+<li><code>getpid</code>可查看Meterpreter shell的进程号</li>
+<li>手动迁移，选择一个稳定的进程，输入命令：<code>migrate PID</code></li>
+<li>自动迁移，系统会自动寻找合适的进程并迁移：<code>run post/windows/manage/migrate</code></li>
+<li>若要关闭某进程，如迁移后原shell进程仍运行，输入：<code>kill PID</code></li>
+</ul>
+<h2 id="系统命令">系统命令</h2>
+<p>查看目标机的系统信息：<code>sysinfo</code><br>
+查看目标机是否运行在虚拟机上：<code>run post/windows/gather/checkvm</code><br>
+查看目标机是否运行及运行的时间：<code>idletime</code><br>
+查看目标及完整网络设置：<code>route</code></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD">专业术语</a></li>
+<li><a href="#%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E6%94%BB%E5%87%BB%E6%AD%A5%E9%AA%A4">渗透测试攻击步骤</a></li>
+<li><a href="#%E4%B8%BB%E6%9C%BA%E6%89%AB%E6%8F%8F">主机扫描</a>
+<ul>
+<li><a href="#%E4%BD%BF%E7%94%A8%E8%BE%85%E5%8A%A9%E6%A8%A1%E5%9D%97%E8%BF%9B%E8%A1%8C%E6%9C%8D%E5%8A%A1%E6%89%AB%E6%8F%8F">使用辅助模块进行服务扫描</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E8%BE%85%E5%8A%A9%E6%A8%A1%E5%9D%97%E8%BF%9B%E8%A1%8C%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F">使用辅助模块进行端口扫描</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8nmap%E6%89%AB%E6%8F%8F">使用nmap扫描</a></li>
+</ul>
+</li>
+<li><a href="#%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8">漏洞利用</a></li>
+<li><a href="#%E5%90%8E%E6%B8%97%E9%80%8F%E6%94%BB%E5%87%BB%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86">后渗透攻击：信息收集</a>
+<ul>
+<li><a href="#%E8%BF%9B%E7%A8%8B%E8%BF%81%E7%A7%BB">进程迁移</a></li>
+<li><a href="#%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4">系统命令</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

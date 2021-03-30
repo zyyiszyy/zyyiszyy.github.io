@@ -1,0 +1,249 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CUMTCTF2021新春赛部分WP | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1617121720046">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="CUMTCTF2021新春赛部分WP | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="这次比赛re题目一共6道做了5道，拿了4个一血一个2血。这次题目学弟出的比较简单，并且一些大佬要复习考研就没参加，我才能拿几个一血，总体还行吧，也算认真打了。这次比赛接触了RISC-V架构、RISC精简指令集和intel 128位拓展指令，..." />
+    <meta name="keywords" content="WriteUp,CTF" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1617121720046" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/1.html" class="menu">
+          CSRF测试
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              CUMTCTF2021新春赛部分WP
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-03-30
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/pOo1m5_Uo/" class="post-tag">
+                  # WriteUp
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/lrSFwTVcv/" class="post-tag">
+                  # CTF
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/cumtctf2021-xin-chun-sai-bu-fen-wp.png" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>这次比赛re题目一共6道做了5道，拿了4个一血一个2血。这次题目学弟出的比较简单，并且一些大佬要复习考研就没参加，我才能拿几个一血，总体还行吧，也算认真打了。这次比赛接触了RISC-V架构、RISC精简指令集和intel 128位拓展指令，并且接触了一个新的工具ghidra。</p>
+<h1 id="rookie">Rookie</h1>
+<p>64位ida打开，查看字符串<br>
+<img src="https://zyyiszyy.github.io/post-images/1617117638578.png" alt="" loading="lazy"><br>
+双击字符串“you win”，x交叉引用进入引用字符串的代码区，tab键进入反编译的C语言代码，这里就是关键代码区：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617117674591.png" alt="" loading="lazy"><br>
+这里很容易看到do循环里面的逻辑，把buf1中内容的依次异或一个数，这个数从0开始每次递增1。脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617117705593.png" alt="" loading="lazy"><br>
+突破点在这个函数，看懂它是base64加密就容易做了：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617118019047.png" alt="" loading="lazy"><br>
+在线解码得到flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617120994150.png" alt="" loading="lazy"></p>
+<h1 id="fake">Fake</h1>
+<p>查看文件语言，发现是.net编译成的exe，使用reflector反编译，获得源代码如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121065482.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1617121067735.png" alt="" loading="lazy"><br>
+查看resource里面有个假flag，一会儿需要用到：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121103045.png" alt="" loading="lazy"><br>
+大致逻辑是先让输入的flag和假flag进入加密函数，然后返回结果和second数组比较，相等就判断正确，这里主要逆向加密函数，关键在第三个循环用到了输入的flag，逆向的话用secend数组异或回去就可以了，脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121130040.png" alt="" loading="lazy"></p>
+<h1 id="equation">Equation</h1>
+<p>这道题用到了一个Ghidra反汇编工具，查看反汇编的代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121164508.png" alt="" loading="lazy"><br>
+发现26个未知数，26个方程，使用z3py约束器求解，脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121217846.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121239557.png" alt="" loading="lazy"></p>
+<h1 id="dante">Dante</h1>
+<p>先看了一下源代码，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121262665.png" alt="" loading="lazy"><br>
+大致就是前面一些操作给v12数组赋值，然后中间两个循环，外层循环200986次，内层循环35次，中间还用到了随机数随机数种子，种子和时间有关。这里的时间其实可以去掉，因为两个时间相减抵消掉，相当于每次内循环种子递增1，种子决定随机数的值。代码最后输出两串东西，这里猜测是输出flag。<br>
+我的做法是改汇编代码，把时间函数去掉，让他递增一然后让他输出flag，改动的几个地方：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121338604.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1617121343493.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1617121346392.png" alt="" loading="lazy"><br>
+看汇编可能看不懂什么，再看一下改动后反编译的C代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121369139.png" alt="" loading="lazy"><br>
+直接将改后的程序运行，输出正确结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121391923.png" alt="" loading="lazy"></p>
+<h1 id="debugme">Debugme</h1>
+<p>这道题前一天晚上是upx壳，这次查壳没查到，估计是要手动脱壳，先打算ida找大跳转<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121427827.png" alt="" loading="lazy"><br>
+失败了几次，干脆直接x64dbg运行看看，运行几步之后发现停在了一个地方<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121447847.png" alt="" loading="lazy"><br>
+打算跳过去这个断点试试，突然想可能这下面就是解密后的，先dump下来，ida打开试试，打开字符串，发现原本不能用的交叉引用可以用了，进入输出提示要动调的函数，flag就在这里面。<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121471745.png" alt="" loading="lazy"><br>
+后来发现这题目其实是有反动调的，可能并不是加了壳，因为一开始ida打开就显示函数，我的x64dbg自带反动调插件ScyllaHide，直接省事了，后面的异或其实正常做是动调过程看出来，我是dump出来用ida静态看出来的。解密脚本比较简单，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121497088.png" alt="" loading="lazy"></p>
+<h1 id="pwn3">Pwn3</h1>
+<p>直接用命令执行漏洞，用到了管道符||，如果前面执行出错则执行后面的语句，输入3||cat flag即获得flag。<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121528718.png" alt="" loading="lazy"></p>
+<h1 id="easy_xor">Easy_XOR</h1>
+<p>先base64解密密文：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121559625.png" alt="" loading="lazy"><br>
+再与BXS*10异或，前面不可打印字符可能网页转码有bug，这里取巧就直接先从后面的解密，加上flag头得到flag。脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121583933.png" alt="" loading="lazy"></p>
+<h1 id="i-wanna-cumtctf">i wanna CUMTCTF</h1>
+<p>本来想玩一下找找思路，结果直接玩出来的。<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121634610.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#rookie">Rookie</a></li>
+<li><a href="#fake">Fake</a></li>
+<li><a href="#equation">Equation</a></li>
+<li><a href="#dante">Dante</a></li>
+<li><a href="#debugme">Debugme</a></li>
+<li><a href="#pwn3">Pwn3</a></li>
+<li><a href="#easy_xor">Easy_XOR</a></li>
+<li><a href="#i-wanna-cumtctf">i wanna CUMTCTF</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/ming-ling-zhi-xing-luo-ji-lou-dong-he-bao-li-po-jie-xue-xi-bi-ji/">
+              <h3 class="post-title">
+                命令执行、逻辑漏洞和暴力破解学习笔记
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zyyiszyy.github.io</id>
     <title>zyyire</title>
-    <updated>2021-03-19T14:34:56.341Z</updated>
+    <updated>2021-03-30T16:29:28.054Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zyyiszyy.github.io"/>
     <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
@@ -10,6 +10,137 @@
     <logo>https://zyyiszyy.github.io/images/avatar.png</logo>
     <icon>https://zyyiszyy.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, zyyire</rights>
+    <entry>
+        <title type="html"><![CDATA[CUMTCTF2021新春赛部分WP]]></title>
+        <id>https://zyyiszyy.github.io/post/cumtctf2021-xin-chun-sai-bu-fen-wp/</id>
+        <link href="https://zyyiszyy.github.io/post/cumtctf2021-xin-chun-sai-bu-fen-wp/">
+        </link>
+        <updated>2021-03-30T15:11:48.000Z</updated>
+        <content type="html"><![CDATA[<p>这次比赛re题目一共6道做了5道，拿了4个一血一个2血。这次题目学弟出的比较简单，并且一些大佬要复习考研就没参加，我才能拿几个一血，总体还行吧，也算认真打了。这次比赛接触了RISC-V架构、RISC精简指令集和intel 128位拓展指令，并且接触了一个新的工具ghidra。</p>
+<h1 id="rookie">Rookie</h1>
+<p>64位ida打开，查看字符串<br>
+<img src="https://zyyiszyy.github.io/post-images/1617117638578.png" alt="" loading="lazy"><br>
+双击字符串“you win”，x交叉引用进入引用字符串的代码区，tab键进入反编译的C语言代码，这里就是关键代码区：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617117674591.png" alt="" loading="lazy"><br>
+这里很容易看到do循环里面的逻辑，把buf1中内容的依次异或一个数，这个数从0开始每次递增1。脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617117705593.png" alt="" loading="lazy"><br>
+突破点在这个函数，看懂它是base64加密就容易做了：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617118019047.png" alt="" loading="lazy"><br>
+在线解码得到flag：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617120994150.png" alt="" loading="lazy"></p>
+<h1 id="fake">Fake</h1>
+<p>查看文件语言，发现是.net编译成的exe，使用reflector反编译，获得源代码如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121065482.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1617121067735.png" alt="" loading="lazy"><br>
+查看resource里面有个假flag，一会儿需要用到：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121103045.png" alt="" loading="lazy"><br>
+大致逻辑是先让输入的flag和假flag进入加密函数，然后返回结果和second数组比较，相等就判断正确，这里主要逆向加密函数，关键在第三个循环用到了输入的flag，逆向的话用secend数组异或回去就可以了，脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121130040.png" alt="" loading="lazy"></p>
+<h1 id="equation">Equation</h1>
+<p>这道题用到了一个Ghidra反汇编工具，查看反汇编的代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121164508.png" alt="" loading="lazy"><br>
+发现26个未知数，26个方程，使用z3py约束器求解，脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121217846.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121239557.png" alt="" loading="lazy"></p>
+<h1 id="dante">Dante</h1>
+<p>先看了一下源代码，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121262665.png" alt="" loading="lazy"><br>
+大致就是前面一些操作给v12数组赋值，然后中间两个循环，外层循环200986次，内层循环35次，中间还用到了随机数随机数种子，种子和时间有关。这里的时间其实可以去掉，因为两个时间相减抵消掉，相当于每次内循环种子递增1，种子决定随机数的值。代码最后输出两串东西，这里猜测是输出flag。<br>
+我的做法是改汇编代码，把时间函数去掉，让他递增一然后让他输出flag，改动的几个地方：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121338604.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1617121343493.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1617121346392.png" alt="" loading="lazy"><br>
+看汇编可能看不懂什么，再看一下改动后反编译的C代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121369139.png" alt="" loading="lazy"><br>
+直接将改后的程序运行，输出正确结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121391923.png" alt="" loading="lazy"></p>
+<h1 id="debugme">Debugme</h1>
+<p>这道题前一天晚上是upx壳，这次查壳没查到，估计是要手动脱壳，先打算ida找大跳转<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121427827.png" alt="" loading="lazy"><br>
+失败了几次，干脆直接x64dbg运行看看，运行几步之后发现停在了一个地方<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121447847.png" alt="" loading="lazy"><br>
+打算跳过去这个断点试试，突然想可能这下面就是解密后的，先dump下来，ida打开试试，打开字符串，发现原本不能用的交叉引用可以用了，进入输出提示要动调的函数，flag就在这里面。<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121471745.png" alt="" loading="lazy"><br>
+后来发现这题目其实是有反动调的，可能并不是加了壳，因为一开始ida打开就显示函数，我的x64dbg自带反动调插件ScyllaHide，直接省事了，后面的异或其实正常做是动调过程看出来，我是dump出来用ida静态看出来的。解密脚本比较简单，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121497088.png" alt="" loading="lazy"></p>
+<h1 id="pwn3">Pwn3</h1>
+<p>直接用命令执行漏洞，用到了管道符||，如果前面执行出错则执行后面的语句，输入3||cat flag即获得flag。<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121528718.png" alt="" loading="lazy"></p>
+<h1 id="easy_xor">Easy_XOR</h1>
+<p>先base64解密密文：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121559625.png" alt="" loading="lazy"><br>
+再与BXS*10异或，前面不可打印字符可能网页转码有bug，这里取巧就直接先从后面的解密，加上flag头得到flag。脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121583933.png" alt="" loading="lazy"></p>
+<h1 id="i-wanna-cumtctf">i wanna CUMTCTF</h1>
+<p>本来想玩一下找找思路，结果直接玩出来的。<br>
+<img src="https://zyyiszyy.github.io/post-images/1617121634610.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[命令执行、逻辑漏洞和暴力破解学习笔记]]></title>
+        <id>https://zyyiszyy.github.io/post/ming-ling-zhi-xing-luo-ji-lou-dong-he-bao-li-po-jie-xue-xi-bi-ji/</id>
+        <link href="https://zyyiszyy.github.io/post/ming-ling-zhi-xing-luo-ji-lou-dong-he-bao-li-po-jie-xue-xi-bi-ji/">
+        </link>
+        <updated>2021-03-20T09:08:40.000Z</updated>
+        <content type="html"><![CDATA[<h1 id="命令执行">命令执行</h1>
+<h2 id="漏洞介绍">漏洞介绍</h2>
+<p>应用程序有时要执行一些系统命令，这就需要一些调用系统命令的函数，如PHP中system、exec、shell_exec、passthru、popen、proc_popen等函数可以执行系统命令。当黑客能够控制这些命令中的参数时，就可以将恶意的系统命令拼接到正常的系统命令中了，从而造成命令执行攻击。</p>
+<h2 id="管道符介绍">管道符介绍</h2>
+<p><strong>windows系统：</strong><br>
+“|”：直接执行后面的语句。<br>
+“||”：如果前面的执行出错，则执行后面的语句，前面的语句只能为假。如：ping 2||dir。<br>
+“&amp;”：如果前面的语句为假则直接执行后面的语句，前面的语句可真可假。<br>
+“&amp;&amp;”：如果前面的语句为假则直接出错，也不执行后面的语句，前面的语句只能为真。<br>
+<strong>linux系统：</strong><br>
+“；”：执行完前面的再执行后面的。<br>
+“|”：显示后面语句执行的结果。<br>
+“||”：当前面的语句执行出错时，执行后面的语句。<br>
+“&amp;”：如果前面的语句为假则直接执行后面的语句，前面的语句可真可假。<br>
+“&amp;&amp;”：如果前面的语句为假则直接出错，也不执行后面的语句，前面的只能为真。</p>
+<h2 id="修复建议">修复建议</h2>
+<ul>
+<li>尽量不要使用命令执行函数。</li>
+<li>客户端提交的变量进入执行命令的函数前做好过滤和检查。</li>
+<li>在使用动态函数前，确保使用的函数是指定的函数之一。</li>
+<li>对php语言来说，不能完全控制的函数最好不要使用。</li>
+</ul>
+<h1 id="逻辑漏洞">逻辑漏洞</h1>
+<h2 id="漏洞介绍-2">漏洞介绍</h2>
+<p>逻辑漏洞就是利用业务的设计缺陷，获取敏感信息或破坏业务的完整性。一般出现在密码修改、越权访问、密码找回、交易支付等功能处。黑客在挖掘逻辑漏洞的时候有两个重点：业务流程和HTTP/HTTPS请求篡改。</p>
+<h2 id="越权访问介绍">越权访问介绍</h2>
+<ul>
+<li>水平越权：相同级别的用户或同一角色中不同的用户之间，可以越权访问、修改或删除其他用户的信息的非法操作。出现此漏洞往往会造成大批量数据泄露，严重的话会造成用户信息被恶意修改。</li>
+<li>垂直越权：就是不同级别的用户或不同角色之间的用户的越权，如普通用户执行管理员才能执行的功能。</li>
+</ul>
+<h2 id="越权访问攻击防御">越权访问攻击防御</h2>
+<p>攻击产生的主要原因是没有对用户身份做好判断和控制。可以增加session，用户登录成功后，将一些信息放入session中，当用户查看个人信息时，从session中取信息，而不是从get或post请求获取。</p>
+<h1 id="暴力破解攻击">暴力破解攻击</h1>
+<h2 id="攻击介绍">攻击介绍</h2>
+<p>服务端没有做限制，导致攻击者可以通过暴力的手段破解所需的信息，如用户名、密码、验证码等。暴力破解的关键在于字典的大小。</p>
+<h2 id="burpsuite四种攻击模式">burpsuite四种攻击模式</h2>
+<p>Sniper：对变量依次进行破解，多个标记依次进行。<br>
+battering ram：对变量同时进行破解，多个标记同时进行。<br>
+pitchfork：每一个变量标记对应一个字典，取每个字典的对应项。<br>
+cluster bomb：每个变量对应一个字典，并且进行交集破解，尝试各种组合。适用于用户名+密码的破解。</p>
+<h2 id="dvwa攻击示例">DVWA攻击示例</h2>
+<p><strong>low难度</strong><br>
+burp在登录时抓包，然后发送到Intruder，在Position栏选中username和password作为payload：<br>
+<img src="https://zyyiszyy.github.io/post-images/1616244030647.png" alt="" loading="lazy"><br>
+然后在Payload栏设置字典，爆破管理员的密码，猜测username为root或者admin。<br>
+<img src="https://zyyiszyy.github.io/post-images/1616244154077.png" alt="" loading="lazy"><br>
+然后第二个payload设置字典为自带的password：<br>
+<img src="https://zyyiszyy.github.io/post-images/1616244226383.png" alt="" loading="lazy"><br>
+选择攻击模式为Cluster bomb，然后就可以开始暴力破解了，在length里找不一样的返回包，点击查看返回信息和登陆成功的返回页面：<br>
+<img src="https://zyyiszyy.github.io/post-images/1616244334732.png" alt="" loading="lazy"></p>
+<h2 id="修复建议-2">修复建议</h2>
+<ul>
+<li>设置用户登录次数的阈值，超过阈值锁定账号。</li>
+<li>对某个ip设置登录次数的阈值，超过阈值封锁ip。<br>
+其中第二个方法可能存在多个用户使用同一个ip，则会造成其他用户无法登录。</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[CSRF和SSRF学习笔记]]></title>
         <id>https://zyyiszyy.github.io/post/csrf-he-ssrf-xue-xi-bi-ji/</id>
@@ -26,6 +157,26 @@
 <li>目标用户已经登录了某网站，能够执行网站的某些功能。</li>
 <li>目标用访问了攻击者的URL。</li>
 </ul>
+<h2 id="dvwa题目练习">DVWA题目练习</h2>
+<p><strong>low难度</strong><br>
+先输入要改的密码，确认密码，然后点击change，这时抓包。<br>
+<img src="https://zyyiszyy.github.io/post-images/1616166274066.png" alt="" loading="lazy"><br>
+这里根据抓的包构造链接<code>http://127.0.0.1/DVWA-master/vulnerabilities/csrf/?password_current=password&amp;password_new=zyyire&amp;password_conf=zyyire&amp;Change=Change</code>因为假设用户已经登录这个网站，所以token不需要。再写一个html页面：<br>
+<img src="https://zyyiszyy.github.io/post-images/1616166484815.png" alt="" loading="lazy"><br>
+我把这个页面放在了博客里：<br>
+<img src="https://zyyiszyy.github.io/post-images/1616166563446.png" alt="" loading="lazy"><br>
+假设有人登录上了dvwa，这时又访问了我的博客，打开这个页面，又看到这个链接：<br>
+<img src="https://zyyiszyy.github.io/post-images/1616167140737.png" alt="" loading="lazy"><br>
+点击之后，显示密码已经更改：<br>
+<img src="https://zyyiszyy.github.io/post-images/1616167181428.png" alt="" loading="lazy"><br>
+或者在抓包的时候，右键点击Engagement Tools，然后点击Generate CSRF PoC，直接复制生成的HTML就可。<br>
+<img src="https://zyyiszyy.github.io/post-images/1616167346312.png" alt="" loading="lazy"><br>
+<strong>medium难度</strong><br>
+增加了HTTP_Referer头的判断，目的是判断是否域名来自主机，但并不能验证是否来自同源的访问。可以改文件名137.0.0.1.html就可以绕过。<br>
+<strong>hign难度</strong><br>
+增加了token，是一个随机数，算是一种保护。这里要想办法获得目标的cookie，然后再获取其token，还涉及到跨域访问的问题。所以采用其他的方式获取token才能实施攻击。<br>
+<strong>impossible难度</strong><br>
+增加了旧密码的验证，增加了token验证，不知道旧密码根本无法攻击。</p>
 <h2 id="防御措施">防御措施</h2>
 <ul>
 <li>验证请求的Referer值，如果其是以自己网站开头的域名，则可能请求来自于网站自己。若其域名是其他网站或者空白，就有可能是CSRF攻击，需要将请求过滤掉。</li>
@@ -33,13 +184,13 @@
 </ul>
 <h1 id="ssrf漏洞">SSRF漏洞</h1>
 <h2 id="漏洞介绍-2">漏洞介绍</h2>
-<p>SSRF（Server-Side Request Forgery）服务器端请求伪造，是一种由客户端伪造请求，由服务器端发起请求的漏洞。一般情况下，攻击的是内网。</p>
+<p>SSRF（Server-Side Request Forgery）服务器端请求伪造，是一种由客户端伪造请求，由服务器端发起请求的漏洞。一般情况下，SSRF攻击的目标是从外网无法访问的内部系统。（正是因为它是由服务端发起的，所以它能够请求到与它相连而与外网隔离的内部系统）</p>
 <h2 id="漏洞原理-2">漏洞原理</h2>
 <p>形成原因大多是由于服务端提供了从其他服务器应用获取数据的功能且没有对目标地址做过滤和限制。如黑客操纵服务端从指定的URL地址获取网页的文本内容，加载指定地址的图片等。SSRF利用存在缺陷的Web应用作为代理攻击远程和本地服务器。</p>
 <h2 id="防御措施-2">防御措施</h2>
 <ul>
 <li>限制请求的端口只能为Web端口，只允许访问HTTP和HTTPS的请求。</li>
-<li>限制不能访问内网的ip。</li>
+<li>设置url白名单或限制不能访问内网的ip。</li>
 <li>屏蔽返回的详细信息。</li>
 </ul>
 ]]></content>
@@ -50,27 +201,27 @@
         <link href="https://zyyiszyy.github.io/post/tong-guo-xxe-php-audit-basic-xue-xi-wai-bu-shi-ti-zhu-ru-lou-dong/">
         </link>
         <updated>2021-03-18T09:38:16.000Z</updated>
-        <content type="html"><![CDATA[<h1 id="xxe知识点">XXE知识点</h1>
-<p>XXE全称<strong>XML外部实体注入漏洞（XML External Entity）</strong>，XML用于标记电子文件十七具有结构性的标记语言，主要负责数据传输和存储，相似的html主要用于显示。XML文档结构包括xml声明、<strong>DTD文档类型定义</strong>、文档元素。<br>
-<strong>XXE漏洞的危害：</strong></p>
+        <content type="html"><![CDATA[<h1 id="xxe介绍">XXE介绍</h1>
+<p>XXE全称<strong>XML外部实体注入漏洞（XML External Entity）</strong>，XML用于标记电子文件十七具有结构性的标记语言，主要负责数据传输和存储，相似的html主要用于显示。XML文档结构包括xml声明、<strong>DTD文档类型定义</strong>、文档元素。</p>
+<h1 id="xxe漏洞的危害">XXE漏洞的危害：</h1>
 <ul>
 <li>读取系统文件</li>
 <li>执行系统命令</li>
 <li>探测内网端口</li>
-<li>攻击内部网络<br>
-<strong>XML语法结构：</strong><br>
-内部声明DTD格式：<!DOCTYPE 根元素 【元素声明】><br>
+<li>攻击内部网络</li>
+</ul>
+<h1 id="xml语法结构">XML语法结构：</h1>
+<p>内部声明DTD格式：<!DOCTYPE 根元素 【元素声明】><br>
 引用外部DTD格式：<!DOCTYPE 根元素 SYSTEM "文件名"><br>
 内部声明实体格式：<!ENTITY 实体名称 "实体的值"><br>
-引用外部实体格式：<!ENTITY 实体名称 SYSTEM "URI"><br>
-<strong>XXE漏洞代码语句：</strong></li>
-</ul>
+引用外部实体格式：<!ENTITY 实体名称 SYSTEM "URI"></p>
+<h1 id="xxe漏洞代码语句">XXE漏洞代码语句：</h1>
 <pre><code>file_get_contents   //获取客户端输入内容
 new DOMDocument()  //初始化XML解析器
 loadXML($xmlfile)  //加载客户端输入的XML内容
 simplexml_import_dom($dom)  //获取XML文档节点，成功则返回SimpleXMLElement对象，失败返回False
 </code></pre>
-<p><strong>XXE漏洞修复建议：</strong></p>
+<h1 id="xxe漏洞修复建议">XXE漏洞修复建议：</h1>
 <ul>
 <li>禁止使用外部实体，如：libxml_disable_entity_loader(true)。</li>
 <li>过滤用户提交的XML数据。</li>
@@ -584,904 +735,6 @@ sort（a,a+n）;
 <figure data-type="image" tabindex="7"><img src="https://zyyiszyy.github.io/post-images/1615187487734.png" alt="" loading="lazy"></figure>
 <p>将下面的跳转语句nop掉，方便F9快速观察做表，然后依次输入可见字符列表，查表得到flag。</p>
 <figure data-type="image" tabindex="8"><img src="https://zyyiszyy.github.io/post-images/1615187491921.png" alt="" loading="lazy"></figure>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[密码学实验实验代码]]></title>
-        <id>https://zyyiszyy.github.io/post/mi-ma-xue-shi-yan-shi-yan-dai-ma/</id>
-        <link href="https://zyyiszyy.github.io/post/mi-ma-xue-shi-yan-shi-yan-dai-ma/">
-        </link>
-        <updated>2021-01-13T11:32:47.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="古典密码-vignere">古典密码 Vignere</h2>
-<p>加密代码：</p>
-<pre><code class="language-python">k=input(&quot;请输入密钥：&quot;)
-m=input(&quot;请输入明文：&quot;)
-c=''
-lk=len(k)
-temp=0
-for i in range(len(m)):
-    if not ((ord(m[i])&gt;=65 and ord(m[i])&lt;=90) or (ord(m[i])&gt;=97 and ord(m[i])&lt;=122)): #字母外不加密
-        c+=m[i]
-    else:
-        if ord(m[i])&gt;=97 and ord(m[i])&lt;=122:          #判断明文大小写，对应密文大小写
-            if ord(k[temp%lk])&gt;=97 and ord(k[temp%lk])&lt;=122:         #判断密钥大小写
-                c+=chr(((ord(m[i])-97)+(ord(k[temp%lk])-97))%26+97)
-                temp+=1
-            else:
-                c+=chr(((ord(m[i])-97)+(ord(k[temp%lk])-65))%26+97)
-                temp+=1
-        else:
-            if ord(k[temp%lk])&gt;=97 and ord(k[temp%lk])&lt;=122:
-                c+=chr(((ord(m[i])-65)+(ord(k[temp%lk])-97))%26+65)
-                temp+=1
-            else:
-                c+=chr(((ord(m[i])-65)+(ord(k[temp%lk])-65))%26+65)
-                temp+=1
-print(&quot;维吉尼亚密码加密结果为：&quot;,c)
-
-</code></pre>
-<p>解密代码：</p>
-<pre><code class="language-python">k=input(&quot;请输入密钥：&quot;)
-c=input(&quot;请输入密文：&quot;)
-m=''
-lk=len(k)
-temp=0
-for i in range(len(c)):
-    if not ((ord(c[i])&gt;=65 and ord(c[i])&lt;=90) or (ord(c[i])&gt;=97 and ord(c[i])&lt;=122)):   #字母外不加密
-        m+=c[i]
-    else:
-        if ord(c[i])&gt;=97 and ord(c[i])&lt;=122:          #判断密文大小写，对应明文大小写
-            if ord(k[temp%lk])&gt;=97 and ord(k[temp%lk])&lt;=122:         #判断密钥大小写
-                m+=chr(((ord(c[i])-97)-(ord(k[temp%lk])-97))%26+97)
-                temp+=1
-            else:
-                m+=chr(((ord(c[i])-97)-(ord(k[temp%lk])-65))%26+97)
-                temp+=1
-        else:
-            if ord(k[temp%lk])&gt;=97 and ord(k[temp%lk])&lt;=122:
-                m+=chr(((ord(c[i])-65)-(ord(k[temp%lk])-97))%26+65)
-                temp+=1
-            else:
-                m+=chr(((ord(c[i])-65)-(ord(k[temp%lk])-65))%26+65)
-                temp+=1
-print(&quot;维吉尼亚密码解密结果为：&quot;,m)
-</code></pre>
-<p>结果展示：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615259738997.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615259745611.png" alt="" loading="lazy"></p>
-<h2 id="古典密码-仿射密码">古典密码 仿射密码</h2>
-<p>加密代码：</p>
-<pre><code class="language-python">m=''
-c=''
-k1=int(input(&quot;请输入k1：&quot;))
-k2=int(input(&quot;请输入k2：&quot;))
-m=input(&quot;请输入明文m：&quot;)
-for i in range(len(m)):
-    if m[i]==' ':
-        c+=' '
-    else:
-        c+=chr((k1*(ord(m[i])-97)+k2)%26+97)
-print(&quot;仿射加密后的密文c为：&quot;,c)
-</code></pre>
-<p>解密代码：</p>
-<pre><code class="language-python">c=''
-m=''
-k1_=int(input(&quot;请输入k1逆：&quot;))
-k2_=int(input(&quot;请输入k2：&quot;))
-c=input(&quot;请输入密文c：&quot;)
-for i in range(len(c)):
-    if c[i]==' ':
-        m+=' '
-    else:
-        m+=chr(((ord(c[i])-97-k2_)*k1_)%26+97)
-print(&quot;仿射解密的明文为：&quot;,m)
-</code></pre>
-<p>仿射密码爆破解密：</p>
-<pre><code class="language-python">a=[1,3,5,7,9,11,15,17,19,21,23,25]
-c='xrgti'
-str=''
-for k2 in range(26):
-    for k1 in a:
-        for ci in range(len(c)):
-                k=chr((((ord(c[ci])-97-k2)*k1)%26)+97)
-                str+=k
-        if len(str)==len(c):
-            print(str,k1,k2)
-            str=''
-</code></pre>
-<p>结果展示：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615260045833.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615260052358.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615260058782.png" alt="" loading="lazy"></p>
-<h2 id="流密码与线性反馈移位寄存器">流密码与线性反馈移位寄存器</h2>
-<p>**线性反馈移位寄存器LFSR：**先找到一个本原多项式，选取初始化向量vi，依照本原多项式去除对应的位进行异或，作为输入，再将对应端作为输出，这样便得到周期位2^n-1的01序列。验证周期时，只需要将LFSR内容和初始值判断相等，相等时满一个周期。<br>
-**简单流密码的实现：**选取初始值后，将明文按照一定的编码方式转换成比特流，依次和上面产生的01序列进行异或，所得为密文比特流。解密时保持LFSR线性移位反馈寄存器不变，初始值向量也不变，再对密文依次异或即为原来的明文比特流，再按同样的编码方式转换成明文即可解密成功。<br>
-LFSR线性反馈移位寄存器：</p>
-<pre><code class="language-python">#选取的本原多项式x^15+x+1         32768-1
-#取初始值0x1               
-LFSR=int('0x1',16)
-print(&quot;移位寄存器的内容：&quot;,bin(LFSR)[2:].zfill(15),end='           ')
-t=50
-while(t):
-    bit_out=LFSR&amp;1
-    print(&quot;移出的位：&quot;,bit_out,end=' ')
-    bit_in=((LFSR&amp;0x4000)&gt;&gt;14)^((LFSR&amp;0x1))
-    print(&quot;移入的位：&quot;,bit_in)
-    LFSR=(LFSR&gt;&gt;1)+(bit_in&lt;&lt;14)
-    print(&quot;移位寄存器的内容：&quot;,bin(LFSR)[2:].zfill(15),end='           ')
-t-=1
-</code></pre>
-<p>LFSR的周期验证:</p>
-<pre><code class="language-python">#选取的本原多项式x^15+x+1         32768-1
-#取初始值0x1                
-LFSR=int('0x1',16)
-#print(&quot;移位寄存器的内容：&quot;,bin(LFSR)[2:].zfill(15),end='           ')
-t=0
-while(1):
-    bit_out=LFSR&amp;1
-    #print(&quot;移出的位：&quot;,bit_out,end=' ')
-    bit_in=((LFSR&amp;0x4000)&gt;&gt;14)^((LFSR&amp;0x1))
-    #print(&quot;移入的位：&quot;,bit_in)
-    LFSR=(LFSR&gt;&gt;1)+(bit_in&lt;&lt;14)
-    t+=1
-    if LFSR==1:
-        print(&quot;移位寄存器的内容：&quot;,bin(LFSR)[2:].zfill(15),end='           ')
-        print(t)
-        break
-</code></pre>
-<p>流密码加密：</p>
-<pre><code class="language-python">#选取的本原多项式x^24+x^7+x^2+x+1      0x800043
-#取初始值0xabcdef                10101011 11001101 11101111
-import re
-def Str_encode(s:str,rule='utf-8'):
-    #返回字符串对应01字符串
-    sc=s.encode(rule)
-    bc=[bin(int(i))[2:].rjust(8,'0') for i in sc ]
-    rtn=''.join(bc)
-    return rtn
-LFSR=int('0xabcdef',16)
-#print(&quot;移位寄存器的内容：&quot;,bin(LFSR),end='           ')
-c=''
-m=Str_encode(input(&quot;请输入明文m：&quot;))
-print('明文转化为01比特流：',m)
-for i in range(len(m)):
-    bit_out=LFSR&amp;1
-    #print(&quot;移出的位：&quot;,bit_out,end=' ')
-    bit_in=((LFSR&amp;0x800000)&gt;&gt;23)^((LFSR&amp;0x40)&gt;&gt;6)^((LFSR&amp;0x2)&gt;&gt;1)^(LFSR&amp;1)
-    #print(&quot;移入的位：&quot;,bit_in)
-    LFSR=(LFSR&gt;&gt;1)+(bit_in&lt;&lt;23)
-    #print(&quot;移位寄存器的内容：&quot;,bin(LFSR),end='           ')
-    c+=chr(bit_out^int(m[i])+48)
-print(&quot;加密后的比特流为：&quot;,(c))
-</code></pre>
-<p>流密码解密：</p>
-<pre><code class="language-python">import re
-def Str_decode(s:str,rule='utf-8'):
-    if len(s)%8!=0:
-        raise SyntaxError('编码不是八的倍数')
-        #至少是字节的倍数才能操作
-    msg=re.sub(r'0x','',hex(int(s,2)))
-    rtn=bytes.fromhex(msg).decode(rule)
-    return rtn
-LFSR=int('0xabcdef',16)
-#print(&quot;移位寄存器的内容：&quot;,bin(LFSR),end='           ')
-c=''
-m=input(&quot;请输入密文比特流c：&quot;)
-for i in range(len(m)):
-    bit_out=LFSR&amp;1
-    #print(&quot;移出的位：&quot;,bit_out,end=' ')
-    bit_in=((LFSR&amp;0x800000)&gt;&gt;23)^((LFSR&amp;0x40)&gt;&gt;6)^((LFSR&amp;0x2)&gt;&gt;1)^(LFSR&amp;1)
-    #print(&quot;移入的位：&quot;,bit_in)
-    LFSR=(LFSR&gt;&gt;1)+(bit_in&lt;&lt;23)
-    #print(&quot;移位寄存器的内容：&quot;,bin(LFSR),end='           ')
-    c+=chr(bit_out^int(m[i])+48)
-print(Str_decode(c))
-</code></pre>
-<p>结果展示：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615260475492.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615260482522.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615260488961.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615260493087.png" alt="" loading="lazy"></p>
-<h2 id="公钥密码-rsa">公钥密码 RSA</h2>
-<p>**密钥生成原理：**1.随机选择两个不相等的质数p和q。<br>
-2.计算p和q的乘积n：n = p×q<br>
-3.计算n的欧拉函数φ(n)。称作L。根据公式φ(n) = (p-1)(q-1)。<br>
-4.随机选择一个整数e，也就是公钥当中用来加密的那个数字条件是1&lt; e &lt; φ(n)，且e与φ(n) 互质。<br>
-5.计算e对于φ(n)的模反元素，也就是密钥当中用来解密的那个数字。<br>
-6.将n和e封装成公钥，n和d封装成私钥。<br>
-**加解密原理：**加密算法为：c≡ m^e mod n;解密算法为：m≡ c^d mod n。<br>
-实验代码：</p>
-<pre><code class="language-python">import random
-from Crypto.Util.number import *
-# 检测大整数是否是素数,如果是素数,就返回True,否则返回False
-# rabin算法
-def rabin_miller(num):
-    s = num - 1
-    t = 0
-    while s % 2 == 0:
-        s = s // 2
-        t += 1
-    for trials in range(5):
-        a = random.randrange(2, num - 1)
-        v = fast_mod(a, s, num)
-        if v != 1:
-            i = 0
-            while v != (num - 1):
-                if i == t - 1:
-                    return False
-                else:
-                    i = i + 1
-                    v = (v ** 2) % num
-    return True
-def is_prime(num):
-    small_primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397, 401, 409, 419, 421, 431, 433, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503, 509, 521, 523, 541, 547, 557, 563, 569, 571, 577, 587, 593, 599, 601, 607, 613, 617, 619, 631, 641, 643, 647, 653, 659, 661, 673, 677, 683, 691, 701, 709, 719, 727, 733, 739, 743, 751, 757, 761, 769, 773, 787, 797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]
-    # 如果大数是这些小素数的倍数,那么就是合数,返回false
-    for prime in small_primes:
-        if num % prime == 0:
-            return False
-    # 如果这样没有分辨出来,就一定是大整数,那么就调用rabin算法
-    return rabin_miller(num)
-# 得到大整数,默认位数为1024
-def get_prime(key_size):
-    while True:
-        num = random.randrange(2**(key_size-1), 2**key_size)
-        if is_prime(num):
-            return num
-def get_e(size,phi):
-    while True:
-        num = random.randrange(2**(size-1), 2**size)      
-        if gcd(num,phi)==1:
-            return num
-def gcd(a,b):               #欧几里得法求最大公因数
-    if b==0:
-        return a
-    else:
-        return gcd(b, a%b)
-def ext_gcd(a, b): #扩展欧几里得算法    
-    if b == 0:          
-        return 1, 0, a     
-    else:         
-        x, y, gcd = ext_gcd(b, a % b) #递归直至余数等于0     
-        x, y = y, (x - (a // b) * y) #辗转相除法反向推导每层a、b的因子使得gcd(a,b)=ax+by成立         
-        return x, y, gcd
-
-def fast_mod(b, n, m):
-    #快速幂
-    ret = 1
-    tmp = b
-    while n:
-        if n &amp; 0x1:
-            ret = ret * tmp % m
-        tmp = tmp * tmp % m
-        n &gt;&gt;= 1
-    return ret
-def generate_d(ph_n, e):
-    (x, y, r) = ext_gcd(ph_n, e)
-    # y maybe &lt; 0, so convert it
-    if y &lt; 0:
-        #return y % ph_n
-        return y + ph_n  
-    return y
-p=get_prime(512)
-q=get_prime(512)
-print(&quot;大素数P为：&quot;,p)
-print(&quot;大素数Q为：&quot;,q)
-n=p*q
-print(&quot;N为：&quot;,n)
-phi=(p-1)*(q-1)
-e=get_e(512,phi)             #e和phi互素
-print(&quot;选取的e为：&quot;,e)
-d=generate_d(phi,e)     #拓展欧几里得算法求逆
-print(&quot;计算的d为：&quot;,d)
-m=bytes(input(&quot;请输入明文：&quot;),'utf-8')
-print(m)
-c=fast_mod(bytes_to_long(m),e,n)
-print(&quot;对应的密文为：&quot;,(c))
-m=fast_mod(c,d,n)
-print(&quot;解密的明文为：&quot;,str(long_to_bytes(m),&quot;utf-8&quot;))
-#hello world!
-</code></pre>
-<p>结果展示：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615260876516.png" alt="" loading="lazy"></p>
-<h2 id="分组密码-aes">分组密码 AES</h2>
-<p>加密流程图：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615260956579.png" alt="" loading="lazy"><br>
-实验代码：</p>
-<pre><code class="language-python">#128位密钥，十轮
-sbox=( 0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76,
-            0xca,0x82,0xc9,0x7d,0xfa,0x59,0x47,0xf0,0xad,0xd4,0xa2,0xaf,0x9c,0xa4,0x72,0xc0,
-            0xb7,0xfd,0x93,0x26,0x36,0x3f,0xf7,0xcc,0x34,0xa5,0xe5,0xf1,0x71,0xd8,0x31,0x15,
-            0x04,0xc7,0x23,0xc3,0x18,0x96,0x05,0x9a,0x07,0x12,0x80,0xe2,0xeb,0x27,0xb2,0x75,
-            0x09,0x83,0x2c,0x1a,0x1b,0x6e,0x5a,0xa0,0x52,0x3b,0xd6,0xb3,0x29,0xe3,0x2f,0x84,
-            0x53,0xd1,0x00,0xed,0x20,0xfc,0xb1,0x5b,0x6a,0xcb,0xbe,0x39,0x4a,0x4c,0x58,0xcf,
-            0xd0,0xef,0xaa,0xfb,0x43,0x4d,0x33,0x85,0x45,0xf9,0x02,0x7f,0x50,0x3c,0x9f,0xa8,
-            0x51,0xa3,0x40,0x8f,0x92,0x9d,0x38,0xf5,0xbc,0xb6,0xda,0x21,0x10,0xff,0xf3,0xd2,
-            0xcd,0x0c,0x13,0xec,0x5f,0x97,0x44,0x17,0xc4,0xa7,0x7e,0x3d,0x64,0x5d,0x19,0x73,
-            0x60,0x81,0x4f,0xdc,0x22,0x2a,0x90,0x88,0x46,0xee,0xb8,0x14,0xde,0x5e,0x0b,0xdb,
-            0xe0,0x32,0x3a,0x0a,0x49,0x06,0x24,0x5c,0xc2,0xd3,0xac,0x62,0x91,0x95,0xe4,0x79,
-            0xe7,0xc8,0x37,0x6d,0x8d,0xd5,0x4e,0xa9,0x6c,0x56,0xf4,0xea,0x65,0x7a,0xae,0x08,
-            0xba,0x78,0x25,0x2e,0x1c,0xa6,0xb4,0xc6,0xe8,0xdd,0x74,0x1f,0x4b,0xbd,0x8b,0x8a,
-            0x70,0x3e,0xb5,0x66,0x48,0x03,0xf6,0x0e,0x61,0x35,0x57,0xb9,0x86,0xc1,0x1d,0x9e,
-            0xe1,0xf8,0x98,0x11,0x69,0xd9,0x8e,0x94,0x9b,0x1e,0x87,0xe9,0xce,0x55,0x28,0xdf,
-            0x8c,0xa1,0x89,0x0d,0xbf,0xe6,0x42,0x68,0x41,0x99,0x2d,0x0f,0xb0,0x54,0xbb,0x16 )
-#xtime process    与2相乘  若最高位b7=0，最简，若b7=1，和0b100011011异或
-def xtime(x):
-    if((x&lt;&lt;1)&amp;0x100):
-        return (((x&lt;&lt;1)^0x11b))
-    return x&lt;&lt;1
-    
-#MixColumns: Process the entire block   列混合
-def MixColumns():
-    tmp=[0 for t in range(4)]
-    xt=[0 for q in range(4)]
-    n=0       #4次循环
-    for _ in range(4):
-        xt[0]=xtime(blk[n])               #每列xtime运算，乘0x2
-        xt[1]=xtime(blk[n+1])
-        xt[2]=xtime(blk[n+2])
-        xt[3]=xtime(blk[n+3])
-        tmp[0]=xt[0]^xt[1]^blk[n+1]^blk[n+2]^blk[n+3]
-        tmp[1]=blk[n]^xt[1]^xt[2]^blk[n+2]^blk[n+3]
-        tmp[2]=blk[n]^blk[n+1]^xt[2]^xt[3]^blk[n+3]
-        tmp[3]=xt[0]^blk[n]^blk[n+1]^blk[n+2]^xt[3]
-        blk[n]=tmp[0]                    #仍用blk存结果
-        blk[n+1]=tmp[1]
-        blk[n+2]=tmp[2]
-        blk[n+3]=tmp[3]
-        n=n+4
-#ShiftRows:Shifts the entire block  行移位
-def ShiftRows():
-    #第二行左移一位
-    t=blk[1]
-    blk[1]=blk[5]
-    blk[5]=blk[9]
-    blk[9]=blk[13]
-    blk[13]=t
-    #第三行左移两位
-    t=blk[2]
-    blk[2]=blk[10]
-    blk[10]=t
-    t=blk[6]
-    blk[6]=blk[14]
-    blk[14]=t
-    #第四行右移一位
-    t=blk[15]
-    blk[15]=blk[11]
-    blk[11]=blk[7]
-    blk[7]=blk[3]
-    blk[3]=t
-#SubBytes  字节代换
-def SubBytes():
-    for x in range(16):
-        blk[x]=sbox[blk[x]]
-#AddRoundKey  轮密钥加
-def AddRoundKey(key):
-    x=0
-    k=[0 for m in range(16)]
-    for c in range(4):
-        for r in range(4):
-            k[x]=key[r][c]
-            x=x+1
-    for y in range(16):
-        blk[y]^=int(k[y])
-        
-# Schedule a secret key for use.
-def ScheduleKey(w,Nk):
-    Rcon=[0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1b,0x36]
-    for r in range(4):
-        for c in range(4):
-            w[0][r][c]=key[r+c*4]
-    for i in range(1,10+1):#问题1
-        for j in range(Nk):
-            t=[0 for x in range(4)]
-            for r in range(4):
-                if j :
-                    t[r]=w[i][r][j-1]
-                else:
-                    t[r]=w[i-1][r][3]
-            if j==0:
-                temp=t[0]
-                for r in range(3):
-                    t[r]=sbox[t[(r+1)%4]]
-                t[3]=sbox[temp]
-                t[0]^=int(Rcon[i-1])
-            for r in range(4):
-                w[i][r][j]=w[i-1][r][j]^t[r]
-#加密函数
-def AesEncrypt():
-    outkey=[]
-    outkey=[[[0 for  col in range(4)] for row in range(4)] for s in range(11)]
-    ScheduleKey(outkey,4)
-    AddRoundKey(outkey[0])
-    for x in range(1,10):
-        SubBytes()
-        ShiftRows()
-        MixColumns()
-        AddRoundKey(outkey[x])
-    SubBytes()
-    ShiftRows()                                 #最后一轮没有列混合
-    AddRoundKey(outkey[10])
-    c=&quot;&quot;
-    for i in range(16):
-        xxl=hex(blk[i])
-        if len(xxl)==3:                  #如0x05，要输出‘05’而不是‘5’
-            c+='0'+xxl[2:]
-        else:
-            c+=xxl[2:]
-    print(&quot;AES加密的密文为:&quot;,c)
-    return blk
-    
-def StringToListN(string):
-    s=[0 for x in range(16)]    #列表解析，创建16元素0的列表
-    for x in range(len(string)):
-        s[x]=int(ord(string[x]))
-    return s
-
-if __name__==&quot;__main__&quot;:
-    m=input(&quot;请输入明文字符串:&quot;)
-    blk=StringToListN(m)
-    k=input(&quot;请输入秘钥:&quot;)
-    key=StringToListN(k)
-AesEncrypt()
-</code></pre>
-<p>ECB电子密码本模式，主要是增加一个明文分组，每次处理一组：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615261161526.png" alt="" loading="lazy"><br>
-CBC密码分组链接模式，上一个分组的密文和下一组明文异或成为下一组的输入，依次直到所有明文分组加密完毕：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615261236667.png" alt="" loading="lazy"></p>
-<h2 id="hash-算法md5">HASH 算法md5</h2>
-<p>实验代码：</p>
-<pre><code class="language-python">import math
-#定义初始向量abcd,转换成32位2进制
-A0 = '67452301'
-B0 = 'efcdab89'
-C0 = '98badcfe'
-D0 = '10325476'
-A0 = bin(int(A0, 16)).replace('0b', '')
-B0 = bin(int(B0, 16)).replace('0b', '')
-C0 = bin(int(C0, 16)).replace('0b', '')
-D0 = bin(int(D0, 16)).replace('0b', '')
-A0 = '0' + A0
-D0 = '000' + D0
-
-#定义第1-64个式子的第i个32比特常数
-y = {}
-for i in range(0, 64):
-    y[i] = hex(int(2**32*abs(math.sin(i+1)))).replace('0x', '')    # 转成64位
-    y[i] = bin(int(y[i], 16)).replace('0b', '')     # 将16进制转换成2进制且补足32位
-    if len(y[i]) &lt; 32:
-        for t in range(0, 32-len(y[i])):
-            y[i] = '0' + y[i]
-#实现x,y的逐比特与
-def and1(x, y):
-    z = ''
-    for i in range(0, len(x)):
-        if x[i:i+1] == '1' and y[i:i+1] == '1':
-            z = z + '1'
-        else:
-            z = z + '0'
-    return z
- 
-# 实现x,y的逐比特或
-def or1(x, y):
-    z = ''
-    for i in range(0, len(x)):
-        if x[i:i+1] == '0' and y[i:i+1] == '0':
-            z = z + '0'
-        else:
-            z = z + '1'
-    return z
- 
-# 实现x,y的逐比特异或
-def xor(x, y):
-    z = ''
-    for i in range(0, len(x)):
-        if x[i:i + 1] == y[i:i + 1]:
-            z = z + '0'
-        else:
-            z = z + '1'
-    return z
- 
-# 实现x的逐比特逻辑反
-def reverse(x):
-    z = ''
-    for i in range(0, len(x)):
-        if x[i:i + 1] == '1':
-            z = z + '0'
-        else:
-            z = z + '1'
-    return z
- 
-#x的循环左移
-def shift(x, i):
-    z = ''
-    for t in range(0, len(x) - i):
-        z = z + x[t + i:t + i + 1]
-    for y in range(0, i):
-        z = z + x[y:y + 1]
-    return z
-
-#整数模2的三十二次方加法
-def add(x, y):
-    z = ''
-    jinwei = 0
-    for t in range(1, len(x)):
-        if int(x[len(x) - t]) + int(y[len(y) - t]) + jinwei &gt; 1:
-            z = str((int(x[len(x) - t]) + int(y[len(y) - t]) + jinwei) % 2) + z
-            jinwei = 1
-        else:
-            z = str((int(x[len(x) - t]) + int(y[len(y) - t]) + jinwei) % 2) + z
-            jinwei = 0
-    if int(x[0]) + int(y[0]) + jinwei == 2 or int(x[0]) + int(y[0]) + jinwei == 0:
-        z = '0' + z
-    else:
-        z = '1' + z
-    return z
-
-# 定义f,g,h,i函数
-def ffunc(x, y, z):
-    t = and1(x, y)
-    t1 = reverse(x)
-    t2 = and1(t1, z)
-    return or1(t, t2)
-def gfunc(x, y, z):
-    t = and1(x, z)
-    t1 = reverse(z)
-    t2 = and1(y, t1)
-    return or1(t, t2)
-def hfunc(x, y, z):
-    t1 = xor(x, y)
-    t2 = xor(t1, z)
-    return t2
-def ifunc(x, y, z):
-    t = reverse(z)
-    t1 = or1(x, t)
-    return xor(y, t1)
-#填充算法
-def fill(text):
-    text1 = ''
-    for i in text:
-        t = str(ord(i))
-        t = bin(int(t, 10)).replace(&quot;0b&quot;, &quot;&quot;)
-        t = str(t)
-        if len(t) &lt; 8:
-            for num in range(8 - len(t)):
-                t = '0' + t
-        text1 = text1 + t
-    length = len(text1)
-    length1 = 512 - len(text1) - 65
-    text1 = text1 + '1'
-    for i in range(length1):
-        text1 = text1 + '0'
-    text2 = bin(length).replace('0b', '')
-    # 填充后面64位
-    if len(text2) &lt; 8:
-        for i in range(8 - len(text2)):
-            text2 = '0' + text2
-    length2 = 64 - len(text2)
-    for t in range(length2):
-        text2 = text2 + '0'
-    return text1 + text2
-# 将最后得到的ABCD逆序输出
-def reverse_order(a):
-    new_a = a[24:32] + a[16:24] + a[8:16] + a[0:8]
-    return new_a
-#最后开始写算法:
-# 输入要加密的明文
-password = input(&quot;加密前:&quot;)
-# 填充算法
-x = fill(password)
-# 处理数据,注意大端序和小端序
-M0 = x[0:32]
-M0 = M0[24:32]+M0[16:24]+M0[8:16]+M0[0:8]
-M1 = x[32:64]
-M1 = M1[24:32]+M1[16:24]+M1[8:16]+M1[0:8]
-M2 = x[64:96]
-M2 = M2[24:32]+M2[16:24]+M2[8:16]+M2[0:8]
-M3 = x[96:128]
-M3 = M3[24:32]+M3[16:24]+M3[8:16]+M3[0:8]
-M4 = x[128:160]
-M4 = M4[24:32]+M4[16:24]+M4[8:16]+M4[0:8]
-M5 = x[160:192]
-M5 = M5[24:32]+M5[16:24]+M5[8:16]+M5[0:8]
-M6 = x[192:224]
-M6 = M6[24:32]+M6[16:24]+M6[8:16]+M6[0:8]
-M7 = x[224:256]
-M7 = M7[24:32]+M7[16:24]+M7[8:16]+M7[0:8]
-M8 = x[256:288]
-M8 = M8[24:32]+M8[16:24]+M8[8:16]+M8[0:8]
-M9 = x[288:320]
-M9 = M9[24:32]+M9[16:24]+M9[8:16]+M9[0:8]
-M10 = x[320:352]
-M10 = M10[24:32]+M10[16:24]+M10[8:16]+M10[0:8]
-M11 = x[352:384]
-M11 = M11[24:32]+M11[16:24]+M11[8:16]+M11[0:8]
-M12 = x[384:416]
-M12 = M12[24:32]+M12[16:24]+M12[8:16]+M12[0:8]
-M13 = x[416:448]
-M13 = M13[24:32]+M13[16:24]+M13[8:16]+M13[0:8]
-M14 = x[448:480]
-M14 = M14[24:32]+M14[16:24]+M14[8:16]+M14[0:8]
-M15 = x[480:512]
-M15 = M15[24:32]+M15[16:24]+M15[8:16]+M15[0:8]
-
-#主函数 
-# md5第一步
-A = A0
-B = B0
-C = C0
-D = D0
- 
-# md5第二步
-AA = A
-BB = B
-CC = C
-DD = D
- 
-# md5第三步
-# 第一轮
-A = add(B, shift(add(A, add(add(ffunc(B, C, D), M0), y[0])), 7))
-D = add(A, shift(add(D, add(add(ffunc(A, B, C), M1), y[1])), 12))
-C = add(D, shift(add(C, add(add(ffunc(D, A, B), M2), y[2])), 17))
-B = add(C, shift(add(B, add(add(ffunc(C, D, A), M3), y[3])), 22))
- 
-A = add(B, shift(add(A, add(add(ffunc(B, C, D), M4), y[4])), 7))
-D = add(A, shift(add(D, add(add(ffunc(A, B, C), M5), y[5])), 12))
-C = add(D, shift(add(C, add(add(ffunc(D, A, B), M6), y[6])), 17))
-B = add(C, shift(add(B, add(add(ffunc(C, D, A), M7), y[7])), 22))
- 
-A = add(B, shift(add(A, add(add(ffunc(B, C, D), M8), y[8])), 7))
-D = add(A, shift(add(D, add(add(ffunc(A, B, C), M9), y[9])), 12))
-C = add(D, shift(add(C, add(add(ffunc(D, A, B), M10), y[10])), 17))
-B = add(C, shift(add(B, add(add(ffunc(C, D, A), M11), y[11])), 22))
- 
-A = add(B, shift(add(A, add(add(ffunc(B, C, D), M12), y[12])), 7))
-D = add(A, shift(add(D, add(add(ffunc(A, B, C), M13), y[13])), 12))
-C = add(D, shift(add(C, add(add(ffunc(D, A, B), M14), y[14])), 17))
-B = add(C, shift(add(B, add(add(ffunc(C, D, A), M15), y[15])), 22))
- 
-# 第二轮
-A = add(B, shift(add(A, add(add(gfunc(B, C, D), M1), y[16])), 5))
-D = add(A, shift(add(D, add(add(gfunc(A, B, C), M6), y[17])), 9))
-C = add(D, shift(add(C, add(add(gfunc(D, A, B), M11), y[18])), 14))
-B = add(C, shift(add(B, add(add(gfunc(C, D, A), M0), y[19])), 20))
- 
-A = add(B, shift(add(A, add(add(gfunc(B, C, D), M5), y[20])), 5))
-D = add(A, shift(add(D, add(add(gfunc(A, B, C), M10), y[21])), 9))
-C = add(D, shift(add(C, add(add(gfunc(D, A, B), M15), y[22])), 14))
-B = add(C, shift(add(B, add(add(gfunc(C, D, A), M4), y[23])), 20))
- 
-A = add(B, shift(add(A, add(add(gfunc(B, C, D), M9), y[24])), 5))
-D = add(A, shift(add(D, add(add(gfunc(A, B, C), M14), y[25])), 9))
-C = add(D, shift(add(C, add(add(gfunc(D, A, B), M3), y[26])), 14))
-B = add(C, shift(add(B, add(add(gfunc(C, D, A), M8), y[27])), 20))
- 
-A = add(B, shift(add(A, add(add(gfunc(B, C, D), M13), y[28])), 5))
-D = add(A, shift(add(D, add(add(gfunc(A, B, C), M2), y[29])), 9))
-C = add(D, shift(add(C, add(add(gfunc(D, A, B), M7), y[30])), 14))
-B = add(C, shift(add(B, add(add(gfunc(C, D, A), M12), y[31])), 20))
- 
-# 第三轮
-A = add(B, shift(add(A, add(add(hfunc(B, C, D), M5), y[32])), 4))
-D = add(A, shift(add(D, add(add(hfunc(A, B, C), M8), y[33])), 11))
-C = add(D, shift(add(C, add(add(hfunc(D, A, B), M11), y[34])), 16))
-B = add(C, shift(add(B, add(add(hfunc(C, D, A), M14), y[35])), 23))
- 
-A = add(B, shift(add(A, add(add(hfunc(B, C, D), M1), y[36])), 4))
-D = add(A, shift(add(D, add(add(hfunc(A, B, C), M4), y[37])), 11))
-C = add(D, shift(add(C, add(add(hfunc(D, A, B), M7), y[38])), 16))
-B = add(C, shift(add(B, add(add(hfunc(C, D, A), M10), y[39])), 23))
- 
-A = add(B, shift(add(A, add(add(hfunc(B, C, D), M13), y[40])), 4))
-D = add(A, shift(add(D, add(add(hfunc(A, B, C), M0), y[41])), 11))
-C = add(D, shift(add(C, add(add(hfunc(D, A, B), M3), y[42])), 16))
-B = add(C, shift(add(B, add(add(hfunc(C, D, A), M6), y[43])), 23))
- 
-A = add(B, shift(add(A, add(add(hfunc(B, C, D), M9), y[44])), 4))
-D = add(A, shift(add(D, add(add(hfunc(A, B, C), M12), y[45])), 11))
-C = add(D, shift(add(C, add(add(hfunc(D, A, B), M15), y[46])), 16))
-B = add(C, shift(add(B, add(add(hfunc(C, D, A), M2), y[47])), 23))
- 
-# 第四轮
-A = add(B, shift(add(A, add(add(ifunc(B, C, D), M0), y[48])), 6))
-D = add(A, shift(add(D, add(add(ifunc(A, B, C), M7), y[49])), 10))
-C = add(D, shift(add(C, add(add(ifunc(D, A, B), M14), y[50])), 15))
-B = add(C, shift(add(B, add(add(ifunc(C, D, A), M5), y[51])), 21))
- 
-A = add(B, shift(add(A, add(add(ifunc(B, C, D), M12), y[52])), 6))
-D = add(A, shift(add(D, add(add(ifunc(A, B, C), M3), y[53])), 10))
-C = add(D, shift(add(C, add(add(ifunc(D, A, B), M10), y[54])), 15))
-B = add(C, shift(add(B, add(add(ifunc(C, D, A), M1), y[55])), 21))
- 
-A = add(B, shift(add(A, add(add(ifunc(B, C, D), M8), y[56])), 6))
-D = add(A, shift(add(D, add(add(ifunc(A, B, C), M15), y[57])), 10))
-C = add(D, shift(add(C, add(add(ifunc(D, A, B), M6), y[58])), 15))
-B = add(C, shift(add(B, add(add(ifunc(C, D, A), M13), y[59])), 21))
- 
-A = add(B, shift(add(A, add(add(ifunc(B, C, D), M4), y[60])), 6))
-D = add(A, shift(add(D, add(add(ifunc(A, B, C), M11), y[61])), 10))
-C = add(D, shift(add(C, add(add(ifunc(D, A, B), M2), y[62])), 15))
-B = add(C, shift(add(B, add(add(ifunc(C, D, A), M9), y[63])), 21))
- 
-# 第五步
-A = add(A, AA)
-B = add(B, BB)
-C = add(C, CC)
-D = add(D, DD)
- 
-# 输出得到的密文
-answer = reverse_order(A) + reverse_order(B) + reverse_order(C) + reverse_order(D)
-print(hex(int(answer, 2)))
-</code></pre>
-<p>实验结果：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615261397816.png" alt="" loading="lazy"></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[hackme逆向题目部分WP]]></title>
-        <id>https://zyyiszyy.github.io/post/hackme-ni-xiang-ti-mu-bu-fen-wp/</id>
-        <link href="https://zyyiszyy.github.io/post/hackme-ni-xiang-ti-mu-bu-fen-wp/">
-        </link>
-        <updated>2021-01-09T09:29:53.000Z</updated>
-        <content type="html"><![CDATA[<p>注：此平台对我这个新手来说能学会不少东西，比如.net平台的反编译，z3py工具的使用，checksec、ROPgadget命令的使用，java反编译，python字节码文件的反编译等等，还通过一些题目学到了一些爆破脚本怎么写，对本地时间的判断和怎么用脚本不断的更改本地时间……每次做一道题目仿佛我离逆向这个入门门槛更近了一步，每做一道题目都能进步许多。不过后来做题难度不断提升，做到后面分数到达200的时候，几乎每道题目做起来都很困难，个人水平进步有限，经常分析能分析到不少东西，但离做出题目还是相差甚远，所以经常求助于大佬的博客。如果有地方出现问题，还望师傅们谅解。</p>
-<h2 id="helloworld">Helloworld</h2>
-<p>先看文件位数和类型，发现是32位ELF文件。<br>
-<img src="https://zyyiszyy.github.io/post-images/1615189735160.png" alt="" loading="lazy"><br>
-拖到32位ida里，看到源代码：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615189740365.png" alt="" loading="lazy"><br>
-大致逻辑输入n，判断相等就输出flag，很简单，在kali输入数字314159265，此时突然发现这是Π，只是没有小数点，输入进去如图得到flag<br>
-<img src="https://zyyiszyy.github.io/post-images/1615189751649.png" alt="" loading="lazy"></p>
-<h2 id="simple">Simple</h2>
-<p>查看文件细节，32位elf文件，无壳。<br>
-<img src="https://zyyiszyy.github.io/post-images/1615189825818.png" alt="" loading="lazy"><br>
-32位ida打开，找到关键代码：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615189833500.png" alt="" loading="lazy"><br>
-发现是首先判断输入字符串如果有字符ASCII为10，则对应位变为ASCII为0的字符，否则check加1。看check发现没有减1后为10的，所以全-1求字符串即为flag花括号里内容，脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615189842484.png" alt="" loading="lazy"></p>
-<h2 id="passthis">Passthis</h2>
-<p>检查文件，32为exe程序，直接可以cmd里运行。<br>
-<img src="https://zyyiszyy.github.io/post-images/1615189890103.png" alt="" loading="lazy"><br>
-拖入32位ida里运行,查看关键代码，发现判断一串字符和输入flag按位异或看是否-121，都是的话输出good flag。<br>
-<img src="https://zyyiszyy.github.io/post-images/1615189898195.png" alt="" loading="lazy"><br>
-看懂逻辑写脚本如下，得到flag：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615189903491.png" alt="" loading="lazy"></p>
-<h2 id="accumulator">Accumulator</h2>
-<p>查看伪代码：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190316805.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615189977738.png" alt="" loading="lazy"><br>
-找到了关键函数和主函数，key_function是check函数，里面找到一个数组：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190008511.png" alt="" loading="lazy"><br>
-将其导出，全选按shift+E，选择合适的导出方式：结果如下<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190015476.png" alt="" loading="lazy"><br>
-直接看伪代码长时间仍没有看懂，因题目名字为accumlator（累加器），结合伪代码猜测是将每个数累加然后与数组比较，写脚本试一下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190021941.png" alt="" loading="lazy"><br>
-可以看到flag。<br>
-此题后来看别人博客，发现大多都感觉伪代码逻辑有些混乱，因为是用到sha512直接逆向就放弃了，根据动态调试分析得出逻辑大致就是累加然后和数组判断。</p>
-<h2 id="pyyy">Pyyy</h2>
-<p>下载文件发现是.pyc结尾，是python编译生成的二进制文件，<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190396464.png" alt="" loading="lazy"><br>
-下载uncompyle6进行反编译，得到python源文件命名为pyyy.py：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190409352.png" alt="" loading="lazy"><br>
-打开源文件代码如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190416089.png" alt="" loading="lazy"><br>
-这里有一个输入，然后有一个判断，这里可以直接将输入和判断代码注释掉，执行直接就是flag<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190436518.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615190444362.png" alt="" loading="lazy"></p>
-<h2 id="ccc">CCC</h2>
-<p>Ida打开文件，查看主函数内容如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190563200.png" alt="" loading="lazy"><br>
-这时发现一个verify函数，应该是判断flag的函数，进入函数发现如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190588746.png" alt="" loading="lazy"><br>
-逻辑大概是每次增加三位做crc32循环冗余检测，结果和hashes数组里的值判断，相等返回真。查看hashes数组如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190600806.png" alt="" loading="lazy"><br>
-写脚本每次增加三位爆破，如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190613579.png" alt="" loading="lazy"></p>
-<h2 id="bitx">Bitx</h2>
-<p>先查看文件类型，是32位elf，在ida中打开，查看判断结果为good的地方,即判断函数：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190698273.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615190711231.png" alt="" loading="lazy"><br>
-比较容易看懂，把地址0x804a040处的数据依次操作，然后flag对应的位+9后<br>
-与之进行比较，先找到数据如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190718304.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615190749193.png" alt="" loading="lazy"><br>
-写脚本如下，得到flag：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190770365.png" alt="" loading="lazy"></p>
-<h2 id="gccc">GCCC</h2>
-<p>先正常分析文件类型，并用对应的ida打开，发现如下<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190816910.png" alt="" loading="lazy"><br>
-因此发现是使用的IL语言，是.net平台的应用程序，IL是一种中间语言，需要其专门的反编译器，使用.net Reflector对其反编译，然后找到主函数代码：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190823422.png" alt="" loading="lazy"><br>
-比较容易看出函数逻辑，输入的num，buffer和num和num3异或，然后判断是否是大写字母和{}“ ”集合的内容，如果是就放入字符串str，观察后面代码又判断FLAG{}，所以知道str就是flag，写脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190828804.png" alt="" loading="lazy"></p>
-<h2 id="what-the-hell">What-the-hell</h2>
-<p>Ida打开查看主函数代码如图：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190932984.png" alt="" loading="lazy"><br>
-Calc_key3函数如图，再查看Check_prime函数，先看1和2情况，再看是否大于3且为奇数，再看是否为3倍数，一层层检查判断是否为素数：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190949841.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615190984951.png" alt="" loading="lazy"><br>
-再看what函数里,发现是递归求斐波那契数列，这里要小心，因为result是整数，所以可能会发生整数溢出：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615190995544.png" alt="" loading="lazy"><br>
-再查看解密flag函数，发现解密较简单，主要难点不知道a1,a2和key：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191028614.png" alt="" loading="lazy"><br>
-这时搜索资料发现有种方法约束求解，用z3py工具，这里写脚本不熟练，思路是先根据calc_key3函数里的三个if条件作为约束求解，再根据素数排除一部分解。斐波那契判断时可能会发生整数溢出，python写此功能不熟练，所以换C++判断排除剩下的解：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191038205.png" alt="" loading="lazy"><br>
-上图求解结果为：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191055366.png" alt="" loading="lazy"><br>
-判断a1是否时斐波那契数，代码和结果如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191067530.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615191086436.png" alt="" loading="lazy"><br>
-另一个长时间运行不出结果，判断猜测a1=4284256177,a2=1234567890,key=a2*887+1=1095061718431。<br>
-还有一处要注意的是，参数传递时强制转化为了int和unsigned int，会发生整数溢出，在脚本里要注意体现。<br>
-解密脚本和运行结果如图：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191168505.png" alt="" loading="lazy"></p>
-<h2 id="unpackme">unpackme</h2>
-<p>由题目要求得知是有壳程序，先文件分析查看什么壳和判断多少位程序：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191215727.png" alt="" loading="lazy"><br>
-由上图可知是upx壳，使用upx –d xxx脱壳发现提示如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191221427.png" alt="" loading="lazy"><br>
-查阅资料，发现是一种加壳后的再次保护，用16进制文件编辑器打开，发现如下信息：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191253370.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615191305340.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615191310150.png" alt="" loading="lazy"><br>
-16进制编辑器打开界面<br>
-发现标志位都被修改，将ctf改为UPX，最后？改为！，如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191267346.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615191272898.png" alt="" loading="lazy"><br>
-然后保存到文件，再次命令脱壳，脱壳成功：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191338614.png" alt="" loading="lazy"><br>
-直接运行发现失败，32位ida打开，发现函数和字符串都比较正常，判断应该是第一步脱壳成功了：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191343445.png" alt="" loading="lazy"><br>
-找关键代码，最终定位如下图的代码处：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191384784.png" alt="" loading="lazy"><br>
-这里str是已知的，pbData已知的，就char string未知，直接爆破，代码和结果如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191390252.png" alt="" loading="lazy"></p>
-<h2 id="2018-rev">2018-rev</h2>
-<p>先在KALI里打开文件，发现提示如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191449391.png" alt="" loading="lazy"><br>
-用ida远程调试，找到判断变量的那几个位置，逐个更改栈或内存内容：<br>
-第一个判断jnz，将r13寄存器改为7E2：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191460504.png" alt="" loading="lazy"><br>
-单步运行如下图，将rdx的地址里的字节改为01：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191471752.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615191479970.png" alt="" loading="lazy"><br>
-继续单步运行，如下图判断条件处，将rdx地址的字节改为01，<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191487412.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615191497636.png" alt="" loading="lazy"><br>
-继续单步运行，发现跳到这个位置，jnz跳到判断时间的地方，如果不继续更改就会终止程序，输出要在对应的时间打开，如图：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191592537.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615191553496.png" alt="" loading="lazy"><br>
-这里再Kali输入指令，不断更改时间，命令代码如图：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191559884.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615191567342.png" alt="" loading="lazy"><br>
-前面操作不变，再来一次，即可输出flag：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191613141.png" alt="" loading="lazy"></p>
-<h2 id="mov">MOV</h2>
-<p>这道题题目提示是mov是图灵完全的，搜索图灵完全的意思大致是mov一个指令便能实现所有指令的功能，能够实现所有的逻辑表达。Ida打开，先查看字符串，能看到一些提示正确flag和错误flag的提示，剩下的很乱：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191656513.png" alt="" loading="lazy"><br>
-一开始仗着刚复习过一遍汇编，看看能不能看懂汇编，分析一段时间后无奈放弃，实在是太难了……全是mov指令，跳转在哪都找不到：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191664259.png" alt="" loading="lazy"><br>
-查看大佬的题解，发现很多都是拿qira做出来的，还有一位是pin做出来的，自己尝试了下安装环境，一个比一个难装，哎，以后找多点博客再继续尝试安装，经过一些大佬的提示 ，发现这道题存在非预期，也可以说是一个bug，输入只要前面的字符串和flag的相等，就能判断正确：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191670849.png" alt="" loading="lazy"><br>
-通过这道题还学会了写这种爆破脚本，怎么判断程序的输出：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191676902.png" alt="" loading="lazy"><br>
-执行结果如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191683062.png" alt="" loading="lazy"></p>
-<h2 id="a-maze">a-maze</h2>
-<p>一道迷宫题目，和平常迷宫题目不一样的是解压得到两个文件，一个是地图文件，一个是走迷宫的主要逻辑（平时都是算法生成地图或者直接列出地图）。ida打开maze，很容易找到关键代码：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191739514.png" alt="" loading="lazy"><br>
-和：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191747818.png" alt="" loading="lazy"><br>
-qword_601088是map里的内容，<em>a1是输入的内容，v2判断结果是否到达终点，-1的话到达终点。16进制打开文件，搜索0xFFFFFFFF，其为-1的补码，发现如下有大片-1：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191757125.png" alt="" loading="lazy"><br>
-前面代码可以看出，v2左移了9位，然后4</em>（flag&amp;0x7f），后九位是flag决定的，前面的32-9位是由v2决定的。计算0xfb000的v2为2008。然后倒着推flag。<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191767790.png" alt="" loading="lazy"><br>
-脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191776000.png" alt="" loading="lazy"><br>
-运行结果如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615191800631.png" alt="" loading="lazy"></p>
-<p>参考：<br>
-<a href="http://blog.iyzyi.com/index.php/archives/1106/">http://blog.iyzyi.com/index.php/archives/1106/</a><br>
-<a href="https://l1b0.fun/a5a95622/">https://l1b0.fun/a5a95622/</a><br>
-<a href="https://m4x.fun/post/hackme.inndy-writeup/">https://m4x.fun/post/hackme.inndy-writeup/</a></p>
 ]]></content>
     </entry>
 </feed>
