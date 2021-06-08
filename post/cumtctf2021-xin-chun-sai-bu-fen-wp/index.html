@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>CUMTCTF2021新春赛部分WP | zyyire</title>
-<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1617121720046">
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1623167437521">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="CUMTCTF2021新春赛部分WP | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
@@ -21,7 +21,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://zyyiszyy.github.io">
-  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1617121720046" alt="">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1623167437521" alt="">
   </a>
   <h1 class="site-title">
     zyyire
@@ -87,7 +87,7 @@
                 2021-03-30
               </span>
               <span>
-                4 min read
+                16 min read
               </span>
               
                 <a href="https://zyyiszyy.github.io/tag/pOo1m5_Uo/" class="post-tag">
@@ -110,8 +110,18 @@
 <img src="https://zyyiszyy.github.io/post-images/1617117638578.png" alt="" loading="lazy"><br>
 双击字符串“you win”，x交叉引用进入引用字符串的代码区，tab键进入反编译的C语言代码，这里就是关键代码区：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617117674591.png" alt="" loading="lazy"><br>
-这里很容易看到do循环里面的逻辑，把buf1中内容的依次异或一个数，这个数从0开始每次递增1。脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1617117705593.png" alt="" loading="lazy"><br>
+这里很容易看到do循环里面的逻辑，把buf1中内容的依次异或一个数，这个数从0开始每次递增1。脚本如下：</p>
+<pre><code>a=[81,48,84,77,82,64,72,82,90,103,126,114,110,63,55,125,93,69,95,60,65,127,84,71,86,43,110,81,74,94,88,38]
+print(len(a))
+b=0
+for i in a:
+    print(chr(i),end='')
+print()
+for i in a:
+    print(chr(i^b),end='')
+    b=b+1
+</code></pre>
+<p><img src="https://zyyiszyy.github.io/post-images/1617117705593.png" alt="" loading="lazy"><br>
 突破点在这个函数，看懂它是base64加密就容易做了：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617118019047.png" alt="" loading="lazy"><br>
 在线解码得到flag：<br>
@@ -122,13 +132,121 @@
 <img src="https://zyyiszyy.github.io/post-images/1617121067735.png" alt="" loading="lazy"><br>
 查看resource里面有个假flag，一会儿需要用到：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121103045.png" alt="" loading="lazy"><br>
-大致逻辑是先让输入的flag和假flag进入加密函数，然后返回结果和second数组比较，相等就判断正确，这里主要逆向加密函数，关键在第三个循环用到了输入的flag，逆向的话用secend数组异或回去就可以了，脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1617121130040.png" alt="" loading="lazy"></p>
+大致逻辑是先让输入的flag和假flag进入加密函数，然后返回结果和second数组比较，相等就判断正确，这里主要逆向加密函数，关键在第三个循环用到了输入的flag，逆向的话用secend数组异或回去就可以了，脚本如下：</p>
+<pre><code>flag=''
+key='IS_THi5_r3al_FLAg?'
+buffer=[0]*256
+for i in range(256):
+    buffer[i]=i
+index=0
+length=len(key)
+for j in range(256):
+    index=(index+buffer[j]+ord(key[j%length]))%256
+    num=buffer[j]
+    buffer[j]=buffer[index]
+    buffer[index]=num
+num0=0
+index=0
+item=[95,6,174,99,71,28,254,55,90,181,151,89,130,193,211,104,201,31,146,81,214,240,91,211,137,82,140,70,19,37]
+for k in range(len(item)):
+    num0=(num0+1)%256
+    index=(index+buffer[num0])%256
+    num1=buffer[num0]
+    buffer[num0]=buffer[index]
+    buffer[index]=num1
+    flag+=chr(buffer[(buffer[num0]+buffer[index])%256]^item[k])
+print(flag)    
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://zyyiszyy.github.io/post-images/1617121130040.png" alt="" loading="lazy"></figure>
 <h1 id="equation">Equation</h1>
 <p>这道题用到了一个Ghidra反汇编工具，查看反汇编的代码：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121164508.png" alt="" loading="lazy"><br>
-发现26个未知数，26个方程，使用z3py约束器求解，脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1617121217846.png" alt="" loading="lazy"><br>
+发现26个未知数，26个方程，使用z3py约束器求解，脚本如下：</p>
+<pre><code>from z3 import *
+a1=BitVec('a1',8)
+a2=BitVec('a2',8)
+a3=BitVec('a3',8)
+a4=BitVec('a4',8)
+a5=BitVec('a5',8)
+a6=BitVec('a6',8)
+a7=BitVec('a7',8)
+a8=BitVec('a8',8)
+a9=BitVec('a9',8)
+a10=BitVec('a10',8)
+a11=BitVec('a11',8)
+a12=BitVec('a12',8)
+a13=BitVec('a13',8)
+a14=BitVec('a14',8)
+a15=BitVec('a15',8)
+a16=BitVec('a16',8)
+a17=BitVec('a17',8)
+a18=BitVec('a18',8)
+a19=BitVec('a19',8)
+a20=BitVec('a20',8)
+a21=BitVec('a21',8)
+a22=BitVec('a22',8)
+a23=BitVec('a23',8)
+a24=BitVec('a24',8)
+a25=BitVec('a25',8)
+a26=BitVec('a26',8)
+s=Solver()
+s.add(a26*0x1f4b+a25*0x97a+a24*0x891+a23*0x146e+a22*0x15d+a21*0x17dd+a20*0xccf+a19*0x1ec+a18*0x233c+a17*0x12b1+a16*0x1a85+a15*0x74a+a14*0x164e+a13*0x147e+a12*0x9f9+a11*0x51f+a10*0x20b4+a9*0x1126+a8*0x14cc+a7*0x254b+a6*0x1357+a5*0x11a7+a4*0x3d1+a3*0x445+a2*0x7e5+a1*0x260e==0xa13f2e)
+s.add(a26*0x91a+a25*0x510+a24*0xcba+a23*0xcb5+a22*0x2296+a21*9000+a20*0x1f5e+a19*0x1f0+a18*0x1b6d+a17*0xa08+a16*0xfc3+a15*0x1e83+a14*0x6a2+a13*0x25ff+a12*0x218a+a11*0x10fe+a10*0x25f3+a9*0xb3a+a8*0x1bfd+a7*0x10d2+a6*0x1b98+a5*0x20cd+a4*0x2379+a3*0xf3b+a2*0x11bb+a1*0x164c==0xc94c86)
+s.add(a26*0x246d+a25*0x8cb+a24*0x3bf+a23*0x207e+a22*0xfed+a21*0x78e+a20*0x270b+a19*0x38f+a18*0xebf+a17*0xe6b+a16*0x2486+a15*0x7a6+a14*0x5c5+a13*0x1bc0+a12*0x2397+a11*0x393+a10*0x239+a9*0x1399+a8*0x701+a7*0x2590+a6*0x984+a5*0x14ce+a4*0x438+a3*0x1715+a2*0x10b7+a1*0x26f1==0xa8ab81)
+s.add(a26*0x1dd1+a25*0xdac+a24*0x1d33+a23*0x1fa7+a22*0x16c+a21*0x1d78+a20*0x2652+a19*0x1734+a18*0x1cb6+a17*0x19da+a16*0x12bb+a15*0x26c4+a14*0x1299+a13*0xc2f+a12*0x1b54+a11*0x1802+a10*0x1197+a9*0x1dbf+a8*0xd25+a7*0x1dc8+a6*0x1eab+a5*0x15a3+a4*0x1432+a3*0x11f2+a2*0x25bd+a1*0x159f==0xdcf5ed)
+s.add(a26*0x2048+a25*0xb37+a24*0x1d3d+a23*0x15c2+a22*0x1d25+a21*0xd87+a20*0x4f6+a19*0x96b+a18*0x2545+a17*0x6a0+a16*0x90e+a15*0x1f57+a14*0x2379+a13*0xb63+a12*0x1c54+a11*0x6e+a10*0x16c1+a9*0x1dc8+a8*0x755+a7*0x49+a6*0x2e5+a5*0x1a91+a4*0x598+a3*0x1f7+a2*0x1839+a1*0x1423==0xa06d3c)
+s.add(a26*0x1667+a25*0x243b+a24*0x1539+a23*0xa46+a22*0x60c+a21*0x105a+a20*0x912+a19*0x20de+a18*0x1534+a17*0xae4+a16*0xf7b+a15*0x1092+a14*0x1592+a13*0x2138+a12*0x8fb+a11*0x1665+a10*0x1ad2+a9*0x1681+a8*0xc93+a7*0x1a90+a6*0xf63+a5*0xe58+a4*0x15da+a3*0x8ef+a2*0x1b2a+a1*0xceb==0xb43671)
+s.add(a26*0x1ef6+a25*0x201+a24*0xd35+a23*0x1a96+a22*0x59f+a21*0x615+a20*0xec+a19*0x217c+a18*0x1519+a17*0x7be+a16*0x1b8b+a15*0x1c79+a14*0x149+a13*0x239c+a12*0x1681+a11*0x1ed9+a10*0x1c1a+a9*0x1d35+a8*0xfc7+a7*0x1b94+a6*0x22+a5*0x959+a4*0x2e+a3*0x2096+a2*0x1c22+a1*0x10cc==0xaa4363)
+s.add(a26*0xcda+a25*0x1727+a24*0x2083+a23*0x921+a22*0x17ac+a21*0x1ffe+a20*0x17ba+a19*0x25a4+a18*0xc27+a17*0x79f+a16*0x15d2+a15*0x1378+a14*0x21b+a13*0x18f9+a12*0x1faa+a11*0x932+a10*0x1964+a9*0x1937+a8*0x156e+a7*0x1933+a6*0x89f+a5*0x169d+a4*0x1df3+a3*0x9c+a2*0xd8d+a1*0x1336==0xb75629)
+s.add(a26*0x8bb+a25*0x65d+a24*0x1596+a23*0x11d4+a22*0x9f1+a21*0x1869+a20*0x454+a19*0x1319+a18*0x2c8+a17*0xcc4+a16*0x1d8e+a15*0x1f9a+a14*0x1f73+a13*0x9fa+a12*0xfc6+a11*0x1180+a10*0x1c65+a9*0x4d0+a8*0x1e7+a7*0x1593+a6*0xd+a5*0x21dd+a4*0x2127+a3*0x21bd+a2*0x1432+a1*0x2c6==0x9e43ec)
+s.add(a26*0xc34+a25*0x20c0+a24*0x2567+a23*0xf06+a22*0xcaa+a21*0x1cda+a20*0xfeb+a19*0x89b+a18*0x71c+a17*0x2263+a16*0x26e3+a15*0xded+a14*0x11a2+a13*0x377+a12*0x269c+a11*0x163e+a10*0xe9a+a9*0x13b4+a8*0x1597+a7*0x885+a6*0x764+a5*0xfe4+a4*0x23d0+a3*0x30d+a2*0x15bf+a1*0x22ad==0xb53898)
+s.add(a26*0x16d5+a25*0x68c+a24*0x22e0+a23*0x150a+a22*0xfb2+a21*0x1f73+a20*0x2289+a19*0x8d6+a18*0x3a2+a17*0x1267+a16*0x2598+a15*0x2dc+a14*0xef2+a13*0x20bf+a12*900+a11*0x266+a10*0x16b8+a9*0xd91+a8*0xabc+a7*0x1e2c+a6*0x591+a5*0x466+a4*0x268e+a3*0x1a22+a2*0x61d+a1*0x286==0xa47644)
+s.add(a26*0x206b+a25*0x139e+a24*0xded+a23*0x26bd+a22*0xfe0+a21*0x2a0+a20*0x1569+a19*0x14f8+a18*0x121b+a17*0xfc8+a16*0x14e7+a15*0x1716+a14*0x1ed8+a13*0x16d7+a12*0xc89+a11*0x1363+a10*0x489+a9*0x399+a8*0x96f+a7*0x8e8+a6*0xa79+a5*0x1156+a4*0x13bb+a3*0x138a+a2*0x15f5+a1*0x110a==0xa2cafd)
+s.add(a26*0xb59+a25*0x2709+a24*0x1558+a23*0x1d80+a22*0xf16+a21*0x2524+a20*0xe6a+a19*0x1dc5+a18*0x5d+a17*0x700+a16*0x25a7+a15*0x238e+a14*0xe3b+a13*0x2509+a12*0x13fa+a11*0x1917+a10*0x241+a9*0x5c6+a8*0x97f+a7*0xe7d+a6*0x6d5+a5*0xbba+a4*0xa9a+a3*0x884+a2*0x1b24+a1*0x204a==0xaec682)
+s.add(a26*0xfba+a25*0xde2+a24*0xd8b+a23*0x264d+a22*0x17d2+a21*0x1370+a20*0x823+a19*0xd94+a18*0x23be+a17*0x25d9+a16*0x484+a15*0x792+a14*0x14cb+a13*0x262+a12*0x25e+a11*0x8a5+a10*0x2646+a9*0x7be+a8*0x606+a7*0x22cd+a6*0x56a+a5*0xfae+a4*0x3f0+a3*0x1654+a2*0x10a9+a1*0xf69==0x9b5466)
+s.add(a26*0x21ad+a25*0x1d7+a24*0x1854+a23*0x92c+a22*0x685+a21*0x1d7f+a20*0x1139+a19*0x1204+a18*0x191b+a17*0xfeb+a16*0x202+a15*0x10e4+a14*0x1bcd+a13*0x16d6+a12*0x1c59+a11*0x20b3+a10*0xb20+a9*0x1a43+a8*0x255c+a7*0x2174+a6*0x1765+a5*0x208e+a4*0x13d6+a3*0x4c6+a2*0x20ab+a1*0x17f7==0xc2b1b1)
+s.add(a26*0x1803+a25*0x859+a24*0x1f1e+a23*0x14a6+a22*0x759+a21*0x1d00+a20*0x255a+a19*0x18f9+a18*0xe+a17*0x20fd+a16*0xbe3+a15*0x1d44+a14*0x220b+a13*0xb23+a12*0x15be+a11*0x25ef+a10*0x173e+a9*0x10db+a8*0x248d+a7*0xfb8+a6*0x2333+a5*0xfc4+a4*0x16e0+a3*0x1a38+a2*0x1c92+a1*0x1ffa==0xd173a5)
+s.add(a26*0x26b8+a25*0xf8a+a24*0x1d23+a23*0x202+a22*0x3b2+a21*0x2077+a20*0x4d8+a19*0x23d5+a18*0x130+a17*0x1809+a16*0x16aa+a15*0x188+a14*0xcd7+a13*0x2055+a12*0x14ae+a11*0x2110+a10*0x2596+a9*0x1b20+a8*0x1ffb+a7*0xc6c+a6*0x24b2+a5*0xf3e+a4*0x1dcd+a3*0x176c+a2*0xe10+a1*0x229e==0xc4a065)
+s.add(a26*0x7f5+a25*0xd09+a24*0x4e7+a23*0x1d91+a22*0xca0+a21*0x61d+a20*0x1264+a19*0x650+a18*0x825+a17*0xeb6+a16*0x14be+a15*0x24f7+a14*0x1965+a13*0x776+a12*0x206c+a11*0x13c4+a10*0x742+a9*0xa08+a8*0x1c73+a7*0x17c6+a6*0x8a4+a5*0xe14+a4*0x33e+a3*0x230+a2*0x11be+a1*0x245f==0x8e95b4)
+s.add(a26*0x2050+a25*0x8f8+a24*0x2020+a23*0x1784+a22*0x1e10+a21*0x11dd+a20*0x2179+a19*0x1bf4+a18*0x11c6+a17*0x2244+a16*0x2334+a15*0x1dd5+a14*0x2614+a13*0x1149+a12*0x218c+a11*0xae5+a10*0x78a+a9*0x62+a8*0x6de+a7*0x238e+a6*0x12db+a5*0x57b+a4*0x19d8+a3*0x233+a2*0xf18+a1*0x774==0xc51ed8)
+s.add(a26*0x1a67+a25*0x2491+a24*0xfc+a23*0x217c+a22*0x925+a21*0x1825+a20*0x1b2+a19*0x1691+a18*0x4f9+a17*0x1ea9+a16*0x151e+a15*0x15d4+a14*0x2f8+a13*0xf5e+a12*0x1ed2+a11*0x1d2a+a10*0xd58+a9*0x14cb+a8*0xe14+a7*0x2383+a6*0xeb0+a5*0xa29+a4*0x1432+a3*0x5f5+a2*0x1e4c+a1*0xa1a==0xabd395)
+s.add(a26*0x9b9+a25*0x1ab0+a24*0x1030+a23*0x269b+a22*0x1cec+a21*0x246a+a20*0x1b04+a19*0x10ed+a18*0x56+a17*0x122a+a16*0x10e0+a15*0x72e+a14*0x16ee+a13*0x204a+a12*0xc6a+a11*0x941+a10*0x2471+a9*0xaea+a8*0x760+a7*0x171c+a6*0x1476+a5*0x364+a4*0x6ae+a3*0xc4+a2*0x1caf+a1*0x2313==0xac8c7f)
+s.add(a26*0x1296+a25*0x2595+a24*0x1c92+a23*0x244f+a22*0x1b10+a21*0x209f+a20*0x263e+a19*0x228a+a18*0x1c67+a17*0x1fcc+a16*0x1533+a15*0x1373+a14*0x102b+a13*0x1a71+a12*0x11aa+a11*0x2565+a10*0xf43+a9*0x24f6+a8*0xc+a7*0xcfe+a6*0xa59+a5*0x10c6+a4*0x24aa+a3*0x1100+a2*0x10cf+a1*0x172e==0xe68ea2)
+s.add(a26*0xf97+a25*0x111c+a24*0x1e86+a23*0xfff+a22*0x2031+a21*0x22fa+a20*0xb11+a19*0xf5b+a18*0xdd5+a17*0x2318+a16*0x1bd4+a15*0x143a+a14*0xc13+a13*0x81c+a12*0x1d62+a11*0x183b+a10*0xaac+a9*0x2368+a8*0xc5c+a7*0x2153+a6*0x2ac+a5*0xa0d+a4*0x1711+a3*0x2082+a2*0x1b1a+a1*0x13ae==0xc2b254)
+s.add(a26*0x176a+a25*0x24bb+a24*0xe59+a23*3+a22*0x2058+a21*0x16c1+a20*0x53a+a19*0x6fe+a18*0x1e7c+a17*0x10c4+a16*0xa7+a15*0x26d6+a14*0xa4e+a13*0xc6d+a12*1099+a11*0x1773+a10*0x5ef+a9*0xf57+a8*0x1b54+a7*0x1148+a6*0x110b+a5*0xba0+a4*0x1136+a3*0x181e+a2*0x24ec+a1*0x17f0==0xa997a7)
+s.add(a26*0x1f45+a25*0x3a+a24*0x1d19+a23*0x1521+a22*0xb76+a21*0x16c3+a20*0x1ac5+a19*0x18bd+a18*0x110f+a17*0xd0f+a16*0x1f49+a15*0x2165+a14*0x1da4+a13*0x53a+a12*0x449+a11*0x6be+a10*0xf83+a9*0xf9+a8*0x186d+a7*0x2354+a6*0x6cb+a5*0x1099+a4*0x24cb+a3*0x1451+a2*0x1ea2+a1*0x2002==0xb7a49e)
+s.add(a26*0x41b+a25*0x17d7+a24*0x22db+a23*0x81d+a22*0xc16+a21*0x2165+a20*0x2387+a19*0x1860+a18*0x110e+a17*0x174e+a16*0x591+a15*0x2598+a14*0x26e0+a13*0x1a3b+a12*0xa8b+a11*0x387+a10*0xea3+a9*0x1a3a+a8*0x1537+a7*0x14c+a6*0x105+a5*0x4a8+a4*0x199f+a3*0x21bf+a2*0x1b90+a1*0x14c7==0xb6a3de)
+if s.check()!=sat:
+    print('no solusion!')
+while s.check()==sat:
+	print(chr(s.model()[a1].as_long()))
+	print(chr(s.model()[a2].as_long()))
+	print(chr(s.model()[a3].as_long()))
+	print(chr(s.model()[a4].as_long()))
+	print(chr(s.model()[a5].as_long()))
+	print(chr(s.model()[a6].as_long()))
+	print(chr(s.model()[a7].as_long()))
+	print(chr(s.model()[a8].as_long()))
+	print(chr(s.model()[a9].as_long()))
+	print(chr(s.model()[a10].as_long()))
+	print(chr(s.model()[a11].as_long()))
+	print(chr(s.model()[a12].as_long()))
+	print(chr(s.model()[a13].as_long()))
+	print(chr(s.model()[a14].as_long()))
+	print(chr(s.model()[a15].as_long()))
+	print(chr(s.model()[a16].as_long()))
+	print(chr(s.model()[a17].as_long()))
+	print(chr(s.model()[a18].as_long()))
+	print(chr(s.model()[a19].as_long()))
+	print(chr(s.model()[a20].as_long()))
+	print(chr(s.model()[a21].as_long()))
+	print(chr(s.model()[a22].as_long()))
+	print(chr(s.model()[a23].as_long()))
+	print(chr(s.model()[a24].as_long()))
+	print(chr(s.model()[a25].as_long()))
+	print(chr(s.model()[a26].as_long()))
+</code></pre>
+<p><img src="https://zyyiszyy.github.io/post-images/1617121217846.png" alt="" loading="lazy"><br>
 运行结果：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121239557.png" alt="" loading="lazy"></p>
 <h1 id="dante">Dante</h1>
@@ -150,16 +268,30 @@
 <img src="https://zyyiszyy.github.io/post-images/1617121447847.png" alt="" loading="lazy"><br>
 打算跳过去这个断点试试，突然想可能这下面就是解密后的，先dump下来，ida打开试试，打开字符串，发现原本不能用的交叉引用可以用了，进入输出提示要动调的函数，flag就在这里面。<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121471745.png" alt="" loading="lazy"><br>
-后来发现这题目其实是有反动调的，可能并不是加了壳，因为一开始ida打开就显示函数，我的x64dbg自带反动调插件ScyllaHide，直接省事了，后面的异或其实正常做是动调过程看出来，我是dump出来用ida静态看出来的。解密脚本比较简单，如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1617121497088.png" alt="" loading="lazy"></p>
+后来发现这题目其实是有反动调的，可能并不是加了壳，因为一开始ida打开就显示函数，我的x64dbg自带反动调插件ScyllaHide，直接省事了，后面的异或其实正常做是动调过程看出来，我是dump出来用ida静态看出来的。解密脚本比较简单，如下：</p>
+<pre><code>a=['27','1A','08','1F','08','11','09','1F','9','3E','19','38','03','05','1C','0F','2E','6F','0A','03','0F','35','03','6A','21','05','12','12','29','3A','03','05']
+print(len(a))
+for i in range(len(a)):
+    a[i]='0x'+a[i]
+    
+for j in a:
+    print(chr(int(j,16)^92),end='')
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://zyyiszyy.github.io/post-images/1617121497088.png" alt="" loading="lazy"></figure>
 <h1 id="pwn3">Pwn3</h1>
 <p>直接用命令执行漏洞，用到了管道符||，如果前面执行出错则执行后面的语句，输入3||cat flag即获得flag。<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121528718.png" alt="" loading="lazy"></p>
 <h1 id="easy_xor">Easy_XOR</h1>
 <p>先base64解密密文：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121559625.png" alt="" loading="lazy"><br>
-再与BXS*10异或，前面不可打印字符可能网页转码有bug，这里取巧就直接先从后面的解密，加上flag头得到flag。脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1617121583933.png" alt="" loading="lazy"></p>
+再与BXS*10异或，前面不可打印字符可能网页转码有bug，这里取巧就直接先从后面的解密，加上flag头得到flag。脚本如下：</p>
+<pre><code>a=&quot;#6#+* &lt;0y~;= /6!'&amp;.&quot;
+key='BXS'*9+'B'
+print(len(a))
+for i in range(len(a)):
+    print(chr(ord(a[i])^ord(key[i])),end='')
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://zyyiszyy.github.io/post-images/1617121583933.png" alt="" loading="lazy"></figure>
 <h1 id="i-wanna-cumtctf">i wanna CUMTCTF</h1>
 <p>本来想玩一下找找思路，结果直接玩出来的。<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121634610.png" alt="" loading="lazy"></p>

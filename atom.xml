@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zyyiszyy.github.io</id>
     <title>zyyire</title>
-    <updated>2021-03-30T16:29:28.054Z</updated>
+    <updated>2021-06-08T15:51:01.259Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zyyiszyy.github.io"/>
     <link rel="self" href="https://zyyiszyy.github.io/atom.xml"/>
@@ -10,6 +10,149 @@
     <logo>https://zyyiszyy.github.io/images/avatar.png</logo>
     <icon>https://zyyiszyy.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, zyyire</rights>
+    <entry>
+        <title type="html"><![CDATA[CUMTCTF2021初夏赛部分WP]]></title>
+        <id>https://zyyiszyy.github.io/post/cumtctf2021-chu-xia-sai-bu-fen-wp/</id>
+        <link href="https://zyyiszyy.github.io/post/cumtctf2021-chu-xia-sai-bu-fen-wp/">
+        </link>
+        <updated>2021-06-08T15:09:45.000Z</updated>
+        <content type="html"><![CDATA[<p>这次re题目做了6道，pwn做了3道。马上大四了，这算是最后一次打校赛了，遗憾的是最后pwn能力也没提上来，以前一直想着能把re和pwn都打的差不多，独担队伍大旗，怪我一直搁置pwn了，导致我二进制就是个半吊子，哪个二进制手不会做点pwn题呢。不过就算没机会打校赛了，我也下定决心搞pwn了，从0day安全看起，加油！<br>
+<img src="https://zyyiszyy.github.io/post-images/1623167429152.png" alt="" loading="lazy"></p>
+<h1 id="图标好奇怪">图标好奇怪</h1>
+<p>看图标是python编译出来的exe文件，这道题考察的是pythonexe反编译拿到源代码，先用pyinstxtractor反编译文件，拿到一个文件夹，同时发现编译类型是python3.7版本的，接下来要用到：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165169112.png" alt="" loading="lazy"><br>
+从文件夹中找到111文件，改后缀pyc，这个其实就是python字节码文件，用hex工具打开：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165202162.png" alt="" loading="lazy"><br>
+发现开头是E3 00，这是因为这样转换会丢失python magic numbers，我之前总结了几个常用版本的魔法数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165237433.png" alt="" loading="lazy"><br>
+这次用3.7的，加上之后如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165247133.png" alt="" loading="lazy"><br>
+然后用uncompyle6反编译成源码，就会编译成功，查看源码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165286384.png" alt="" loading="lazy"><br>
+倒不是很难，就是先判断异或128，127后这些字符的取值范围，在写反向脚本时添加一些条件判断即可，这里我为了节省时间，一开始大致判断范围，发现有一些字符乱码或明显不对我就单独加对应的条件：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165339369.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165366915.png" alt="" loading="lazy"></p>
+<h1 id="有些奇怪的exe">有些奇怪的exe</h1>
+<p>先查看文件类型，有壳的脱壳，然后对应ida打开：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165409139.png" alt="" loading="lazy"><br>
+这个主要就是逆算法，没什么拐弯的，前面for是大小写交换，非字母不变，下面就是涉及一个中间变量，我这里直接爆破的，节约思考时间，直接上脚本：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165419515.png" alt="" loading="lazy"></p>
+<h1 id="ezcreak">ezCreak</h1>
+<p>先运行一下查看程序功能：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165470380.png" alt="" loading="lazy"><br>
+输入flag，错误直接退出，没有错误提示，暂时不知道有无正确提示。直接ida32打开什么也看不出来，字符串也没有有用信息：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165478656.png" alt="" loading="lazy"><br>
+怀疑加壳或者某种保护，可能运行时自解密，用od打开，查看字符串，发现有信息，应该是正确提示：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165540437.png" alt="" loading="lazy"><br>
+f9运行一下试试，发现停在一个地方程序中断，怀疑这里就是解密后的程序：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165546027.png" alt="" loading="lazy"><br>
+dump下来，用ida分析：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165576052.png" alt="" loading="lazy"><br>
+找到如下关键函数，主要逻辑应该是在do循环那里，有一个byte数组，但是静态分析找不到数组内容：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165581753.png" alt="" loading="lazy"><br>
+再次用x32dbg打开，输入假flag后在图示下断点：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165620233.png" alt="" loading="lazy"><br>
+看寄存器内容，找到[ecx+eax]内存的值，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165632339.png" alt="" loading="lazy"><br>
+接下来就可以写脚本了，注意的是下面是小端序记法，需要改一下顺序：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165662068.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1623165676593.png" alt="" loading="lazy"></p>
+<h1 id="ezmath">ezMath</h1>
+<p>ida打开找有用信息，主要在两个函数里：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165774753.png" alt="" loading="lazy"><br>
+分别打开对应函数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165785324.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1623165808859.png" alt="" loading="lazy"><br>
+有点绕，主要得看清判断界限，提前写清范围就不太容易搞混了，总结得到的信息如图：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165827130.png" alt="" loading="lazy"><br>
+自己做卡了好久，最终由一个队友想到的杨辉三角形，太久没接触都忘了，这道题简单难度，如果看出来了很容易，看不出来就难办了......<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165923924.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1623165943775.png" alt="" loading="lazy"></p>
+<h1 id="ezmaze">ezMaze</h1>
+<p>先运行一下看下程序什么样子：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165973693.png" alt="" loading="lazy"><br>
+正如名字迷宫，ida打开，查看字符串：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165984652.png" alt="" loading="lazy"><br>
+有些乱码，并且有些语句反编译错误，我们尽可能分析，上面一大堆函数我们猜测是构建迷宫：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166010374.png" alt="" loading="lazy"><br>
+静态分析不行就动态分析，用x64dbg打开，查看生成迷宫代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166022335.png" alt="" loading="lazy"><br>
+验证了我们的猜想，发现自动注释有很多o0，但这里不能得到我们的迷宫，它一定生成了迷宫但是放在了一个地方存储，我们在栈里找，很容易找到迷宫：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166050676.png" alt="" loading="lazy"><br>
+我们将其导出来，放在文本文件里方便分析，要注意的是，因为生成迷宫代码运行了14次，所以迷宫很可能是14行，稍加整理，迷宫如下：</p>
+<pre><code>\#ooo000ooo0000
+000ooooo000000
+000o0000000000
+000o0000000000
+000ooooooo0000
+o00000000o0000
+o00000000o0000
+oooooooooo0000
+00000000o00o00
+00000000o00o00
+0000ooooo00o00
+0000o000000o00
+0000oooooooo00
+00000000000000
+</code></pre>
+<p>又从x64dbg中看到下图，发现迷宫是wsad走的：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166209037.png" alt="" loading="lazy"><br>
+又如图提示加上cumtctf{}，所以可以得到flag。<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166226433.png" alt="" loading="lazy"></p>
+<h1 id="神奇的编码">神奇的编码</h1>
+<p>先翻译字节码，写出正向算法的脚本，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166260968.png" alt="" loading="lazy"><br>
+流程大概是先输入flag，再按位和255异或，然后以字节形式排开循环左移一个16进制位，再按字节分开重新组合成字节数组，base64加密和已知列表比较，若相同就是真的flag，否则反之，解密的话就按顺序逆过来，求逆简单但难在编码转换上，一个utf-8编码卡了我一天多的时间：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166266839.png" alt="" loading="lazy"><br>
+如图所示，需要b64解码之后再utf-8解码为字符串，然后再继续解密流程，否则出来的并非真的flag，而是大多数是两位代表一位flag的形式，就是因为一开始没有utf-8解码，完整解密脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166294221.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166307725.png" alt="" loading="lazy"></p>
+<h1 id="pwn1">pwn1</h1>
+<p>ida打开，逻辑如下，先输入个字符，没判断输入长度，然后下面有个v5决定出不出shell：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166344512.png" alt="" loading="lazy"><br>
+查看栈分布，只需要覆盖v5，使之变成2021：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166353220.png" alt="" loading="lazy"><br>
+脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166472711.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166484785.png" alt="" loading="lazy"></p>
+<h1 id="pwn2">pwn2</h1>
+<p>ida打开，发现 Fmtstr字符串，这是个格式化字符串构造payload的工具：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166522535.png" alt="" loading="lazy"><br>
+用法如下：<br>
+fmtstrpayload(offset, writes, numbwritten=0, writesize='byte')<br>
+第一个参数表示格式化字符串的偏移；<br>
+第二个参数表示需要利用%n写入的数据，采用字典形式，写成{GOT: systemAddress}。<br>
+第三个参数表示已经输出的字符个数，这里没有，为0，采用默认值即可；<br>
+第四个参数表示写入方式，是按字节（byte）、按双字节（short）还是按四字节（int），对应着hhn、hn和n，默认值是byte，即按hhn写。<br>
+先输入：aaaa%p.%p.%p.%p.%p.%p.%p.%p.%p.%p泄露格式化字符串的偏移：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166537064.png" alt="" loading="lazy"><br>
+得到偏移是5，找get函数在got plt的位置：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166560344.png" alt="" loading="lazy"><br>
+/bin/shell的地址如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166569274.png" alt="" loading="lazy"><br>
+我们的思路是第一个get输入payload，将binshell地址替换到getGOT的地址，然后二次调用get就是执行我们的binshell，写脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166595038.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166600184.png" alt="" loading="lazy"></p>
+<h1 id="pwn3">pwn3</h1>
+<p>查看程序保护情况：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166636435.png" alt="" loading="lazy"><br>
+ida打开发现如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166641273.png" alt="" loading="lazy"><br>
+再看一下generate函数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166662865.png" alt="" loading="lazy"><br>
+这个先计算passwd，赋值为一个随机数，再在主函数用它和输入作比较，相等就输出flag。这里重点在于linux下的strcmp实现方式，查了下strcmp glibc里的实现：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166671098.png" alt="" loading="lazy"><br>
+这里retuen的是c1-c2，我们程序中输入为c1，随机字符串为c2，所以strcmp里先进入循环判断c1是否为空，是的话就返回c1-c2，c2后面的字节就截断不判断了，所以值判断了一个字节，我们只需要输入空字节，1/256概率等随机第一个字节也为空字节就可以输出flag了。<br>
+脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166687983.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166705585.png" alt="" loading="lazy"></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[CUMTCTF2021新春赛部分WP]]></title>
         <id>https://zyyiszyy.github.io/post/cumtctf2021-xin-chun-sai-bu-fen-wp/</id>
@@ -22,8 +165,18 @@
 <img src="https://zyyiszyy.github.io/post-images/1617117638578.png" alt="" loading="lazy"><br>
 双击字符串“you win”，x交叉引用进入引用字符串的代码区，tab键进入反编译的C语言代码，这里就是关键代码区：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617117674591.png" alt="" loading="lazy"><br>
-这里很容易看到do循环里面的逻辑，把buf1中内容的依次异或一个数，这个数从0开始每次递增1。脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1617117705593.png" alt="" loading="lazy"><br>
+这里很容易看到do循环里面的逻辑，把buf1中内容的依次异或一个数，这个数从0开始每次递增1。脚本如下：</p>
+<pre><code>a=[81,48,84,77,82,64,72,82,90,103,126,114,110,63,55,125,93,69,95,60,65,127,84,71,86,43,110,81,74,94,88,38]
+print(len(a))
+b=0
+for i in a:
+    print(chr(i),end='')
+print()
+for i in a:
+    print(chr(i^b),end='')
+    b=b+1
+</code></pre>
+<p><img src="https://zyyiszyy.github.io/post-images/1617117705593.png" alt="" loading="lazy"><br>
 突破点在这个函数，看懂它是base64加密就容易做了：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617118019047.png" alt="" loading="lazy"><br>
 在线解码得到flag：<br>
@@ -34,13 +187,121 @@
 <img src="https://zyyiszyy.github.io/post-images/1617121067735.png" alt="" loading="lazy"><br>
 查看resource里面有个假flag，一会儿需要用到：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121103045.png" alt="" loading="lazy"><br>
-大致逻辑是先让输入的flag和假flag进入加密函数，然后返回结果和second数组比较，相等就判断正确，这里主要逆向加密函数，关键在第三个循环用到了输入的flag，逆向的话用secend数组异或回去就可以了，脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1617121130040.png" alt="" loading="lazy"></p>
+大致逻辑是先让输入的flag和假flag进入加密函数，然后返回结果和second数组比较，相等就判断正确，这里主要逆向加密函数，关键在第三个循环用到了输入的flag，逆向的话用secend数组异或回去就可以了，脚本如下：</p>
+<pre><code>flag=''
+key='IS_THi5_r3al_FLAg?'
+buffer=[0]*256
+for i in range(256):
+    buffer[i]=i
+index=0
+length=len(key)
+for j in range(256):
+    index=(index+buffer[j]+ord(key[j%length]))%256
+    num=buffer[j]
+    buffer[j]=buffer[index]
+    buffer[index]=num
+num0=0
+index=0
+item=[95,6,174,99,71,28,254,55,90,181,151,89,130,193,211,104,201,31,146,81,214,240,91,211,137,82,140,70,19,37]
+for k in range(len(item)):
+    num0=(num0+1)%256
+    index=(index+buffer[num0])%256
+    num1=buffer[num0]
+    buffer[num0]=buffer[index]
+    buffer[index]=num1
+    flag+=chr(buffer[(buffer[num0]+buffer[index])%256]^item[k])
+print(flag)    
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://zyyiszyy.github.io/post-images/1617121130040.png" alt="" loading="lazy"></figure>
 <h1 id="equation">Equation</h1>
 <p>这道题用到了一个Ghidra反汇编工具，查看反汇编的代码：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121164508.png" alt="" loading="lazy"><br>
-发现26个未知数，26个方程，使用z3py约束器求解，脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1617121217846.png" alt="" loading="lazy"><br>
+发现26个未知数，26个方程，使用z3py约束器求解，脚本如下：</p>
+<pre><code>from z3 import *
+a1=BitVec('a1',8)
+a2=BitVec('a2',8)
+a3=BitVec('a3',8)
+a4=BitVec('a4',8)
+a5=BitVec('a5',8)
+a6=BitVec('a6',8)
+a7=BitVec('a7',8)
+a8=BitVec('a8',8)
+a9=BitVec('a9',8)
+a10=BitVec('a10',8)
+a11=BitVec('a11',8)
+a12=BitVec('a12',8)
+a13=BitVec('a13',8)
+a14=BitVec('a14',8)
+a15=BitVec('a15',8)
+a16=BitVec('a16',8)
+a17=BitVec('a17',8)
+a18=BitVec('a18',8)
+a19=BitVec('a19',8)
+a20=BitVec('a20',8)
+a21=BitVec('a21',8)
+a22=BitVec('a22',8)
+a23=BitVec('a23',8)
+a24=BitVec('a24',8)
+a25=BitVec('a25',8)
+a26=BitVec('a26',8)
+s=Solver()
+s.add(a26*0x1f4b+a25*0x97a+a24*0x891+a23*0x146e+a22*0x15d+a21*0x17dd+a20*0xccf+a19*0x1ec+a18*0x233c+a17*0x12b1+a16*0x1a85+a15*0x74a+a14*0x164e+a13*0x147e+a12*0x9f9+a11*0x51f+a10*0x20b4+a9*0x1126+a8*0x14cc+a7*0x254b+a6*0x1357+a5*0x11a7+a4*0x3d1+a3*0x445+a2*0x7e5+a1*0x260e==0xa13f2e)
+s.add(a26*0x91a+a25*0x510+a24*0xcba+a23*0xcb5+a22*0x2296+a21*9000+a20*0x1f5e+a19*0x1f0+a18*0x1b6d+a17*0xa08+a16*0xfc3+a15*0x1e83+a14*0x6a2+a13*0x25ff+a12*0x218a+a11*0x10fe+a10*0x25f3+a9*0xb3a+a8*0x1bfd+a7*0x10d2+a6*0x1b98+a5*0x20cd+a4*0x2379+a3*0xf3b+a2*0x11bb+a1*0x164c==0xc94c86)
+s.add(a26*0x246d+a25*0x8cb+a24*0x3bf+a23*0x207e+a22*0xfed+a21*0x78e+a20*0x270b+a19*0x38f+a18*0xebf+a17*0xe6b+a16*0x2486+a15*0x7a6+a14*0x5c5+a13*0x1bc0+a12*0x2397+a11*0x393+a10*0x239+a9*0x1399+a8*0x701+a7*0x2590+a6*0x984+a5*0x14ce+a4*0x438+a3*0x1715+a2*0x10b7+a1*0x26f1==0xa8ab81)
+s.add(a26*0x1dd1+a25*0xdac+a24*0x1d33+a23*0x1fa7+a22*0x16c+a21*0x1d78+a20*0x2652+a19*0x1734+a18*0x1cb6+a17*0x19da+a16*0x12bb+a15*0x26c4+a14*0x1299+a13*0xc2f+a12*0x1b54+a11*0x1802+a10*0x1197+a9*0x1dbf+a8*0xd25+a7*0x1dc8+a6*0x1eab+a5*0x15a3+a4*0x1432+a3*0x11f2+a2*0x25bd+a1*0x159f==0xdcf5ed)
+s.add(a26*0x2048+a25*0xb37+a24*0x1d3d+a23*0x15c2+a22*0x1d25+a21*0xd87+a20*0x4f6+a19*0x96b+a18*0x2545+a17*0x6a0+a16*0x90e+a15*0x1f57+a14*0x2379+a13*0xb63+a12*0x1c54+a11*0x6e+a10*0x16c1+a9*0x1dc8+a8*0x755+a7*0x49+a6*0x2e5+a5*0x1a91+a4*0x598+a3*0x1f7+a2*0x1839+a1*0x1423==0xa06d3c)
+s.add(a26*0x1667+a25*0x243b+a24*0x1539+a23*0xa46+a22*0x60c+a21*0x105a+a20*0x912+a19*0x20de+a18*0x1534+a17*0xae4+a16*0xf7b+a15*0x1092+a14*0x1592+a13*0x2138+a12*0x8fb+a11*0x1665+a10*0x1ad2+a9*0x1681+a8*0xc93+a7*0x1a90+a6*0xf63+a5*0xe58+a4*0x15da+a3*0x8ef+a2*0x1b2a+a1*0xceb==0xb43671)
+s.add(a26*0x1ef6+a25*0x201+a24*0xd35+a23*0x1a96+a22*0x59f+a21*0x615+a20*0xec+a19*0x217c+a18*0x1519+a17*0x7be+a16*0x1b8b+a15*0x1c79+a14*0x149+a13*0x239c+a12*0x1681+a11*0x1ed9+a10*0x1c1a+a9*0x1d35+a8*0xfc7+a7*0x1b94+a6*0x22+a5*0x959+a4*0x2e+a3*0x2096+a2*0x1c22+a1*0x10cc==0xaa4363)
+s.add(a26*0xcda+a25*0x1727+a24*0x2083+a23*0x921+a22*0x17ac+a21*0x1ffe+a20*0x17ba+a19*0x25a4+a18*0xc27+a17*0x79f+a16*0x15d2+a15*0x1378+a14*0x21b+a13*0x18f9+a12*0x1faa+a11*0x932+a10*0x1964+a9*0x1937+a8*0x156e+a7*0x1933+a6*0x89f+a5*0x169d+a4*0x1df3+a3*0x9c+a2*0xd8d+a1*0x1336==0xb75629)
+s.add(a26*0x8bb+a25*0x65d+a24*0x1596+a23*0x11d4+a22*0x9f1+a21*0x1869+a20*0x454+a19*0x1319+a18*0x2c8+a17*0xcc4+a16*0x1d8e+a15*0x1f9a+a14*0x1f73+a13*0x9fa+a12*0xfc6+a11*0x1180+a10*0x1c65+a9*0x4d0+a8*0x1e7+a7*0x1593+a6*0xd+a5*0x21dd+a4*0x2127+a3*0x21bd+a2*0x1432+a1*0x2c6==0x9e43ec)
+s.add(a26*0xc34+a25*0x20c0+a24*0x2567+a23*0xf06+a22*0xcaa+a21*0x1cda+a20*0xfeb+a19*0x89b+a18*0x71c+a17*0x2263+a16*0x26e3+a15*0xded+a14*0x11a2+a13*0x377+a12*0x269c+a11*0x163e+a10*0xe9a+a9*0x13b4+a8*0x1597+a7*0x885+a6*0x764+a5*0xfe4+a4*0x23d0+a3*0x30d+a2*0x15bf+a1*0x22ad==0xb53898)
+s.add(a26*0x16d5+a25*0x68c+a24*0x22e0+a23*0x150a+a22*0xfb2+a21*0x1f73+a20*0x2289+a19*0x8d6+a18*0x3a2+a17*0x1267+a16*0x2598+a15*0x2dc+a14*0xef2+a13*0x20bf+a12*900+a11*0x266+a10*0x16b8+a9*0xd91+a8*0xabc+a7*0x1e2c+a6*0x591+a5*0x466+a4*0x268e+a3*0x1a22+a2*0x61d+a1*0x286==0xa47644)
+s.add(a26*0x206b+a25*0x139e+a24*0xded+a23*0x26bd+a22*0xfe0+a21*0x2a0+a20*0x1569+a19*0x14f8+a18*0x121b+a17*0xfc8+a16*0x14e7+a15*0x1716+a14*0x1ed8+a13*0x16d7+a12*0xc89+a11*0x1363+a10*0x489+a9*0x399+a8*0x96f+a7*0x8e8+a6*0xa79+a5*0x1156+a4*0x13bb+a3*0x138a+a2*0x15f5+a1*0x110a==0xa2cafd)
+s.add(a26*0xb59+a25*0x2709+a24*0x1558+a23*0x1d80+a22*0xf16+a21*0x2524+a20*0xe6a+a19*0x1dc5+a18*0x5d+a17*0x700+a16*0x25a7+a15*0x238e+a14*0xe3b+a13*0x2509+a12*0x13fa+a11*0x1917+a10*0x241+a9*0x5c6+a8*0x97f+a7*0xe7d+a6*0x6d5+a5*0xbba+a4*0xa9a+a3*0x884+a2*0x1b24+a1*0x204a==0xaec682)
+s.add(a26*0xfba+a25*0xde2+a24*0xd8b+a23*0x264d+a22*0x17d2+a21*0x1370+a20*0x823+a19*0xd94+a18*0x23be+a17*0x25d9+a16*0x484+a15*0x792+a14*0x14cb+a13*0x262+a12*0x25e+a11*0x8a5+a10*0x2646+a9*0x7be+a8*0x606+a7*0x22cd+a6*0x56a+a5*0xfae+a4*0x3f0+a3*0x1654+a2*0x10a9+a1*0xf69==0x9b5466)
+s.add(a26*0x21ad+a25*0x1d7+a24*0x1854+a23*0x92c+a22*0x685+a21*0x1d7f+a20*0x1139+a19*0x1204+a18*0x191b+a17*0xfeb+a16*0x202+a15*0x10e4+a14*0x1bcd+a13*0x16d6+a12*0x1c59+a11*0x20b3+a10*0xb20+a9*0x1a43+a8*0x255c+a7*0x2174+a6*0x1765+a5*0x208e+a4*0x13d6+a3*0x4c6+a2*0x20ab+a1*0x17f7==0xc2b1b1)
+s.add(a26*0x1803+a25*0x859+a24*0x1f1e+a23*0x14a6+a22*0x759+a21*0x1d00+a20*0x255a+a19*0x18f9+a18*0xe+a17*0x20fd+a16*0xbe3+a15*0x1d44+a14*0x220b+a13*0xb23+a12*0x15be+a11*0x25ef+a10*0x173e+a9*0x10db+a8*0x248d+a7*0xfb8+a6*0x2333+a5*0xfc4+a4*0x16e0+a3*0x1a38+a2*0x1c92+a1*0x1ffa==0xd173a5)
+s.add(a26*0x26b8+a25*0xf8a+a24*0x1d23+a23*0x202+a22*0x3b2+a21*0x2077+a20*0x4d8+a19*0x23d5+a18*0x130+a17*0x1809+a16*0x16aa+a15*0x188+a14*0xcd7+a13*0x2055+a12*0x14ae+a11*0x2110+a10*0x2596+a9*0x1b20+a8*0x1ffb+a7*0xc6c+a6*0x24b2+a5*0xf3e+a4*0x1dcd+a3*0x176c+a2*0xe10+a1*0x229e==0xc4a065)
+s.add(a26*0x7f5+a25*0xd09+a24*0x4e7+a23*0x1d91+a22*0xca0+a21*0x61d+a20*0x1264+a19*0x650+a18*0x825+a17*0xeb6+a16*0x14be+a15*0x24f7+a14*0x1965+a13*0x776+a12*0x206c+a11*0x13c4+a10*0x742+a9*0xa08+a8*0x1c73+a7*0x17c6+a6*0x8a4+a5*0xe14+a4*0x33e+a3*0x230+a2*0x11be+a1*0x245f==0x8e95b4)
+s.add(a26*0x2050+a25*0x8f8+a24*0x2020+a23*0x1784+a22*0x1e10+a21*0x11dd+a20*0x2179+a19*0x1bf4+a18*0x11c6+a17*0x2244+a16*0x2334+a15*0x1dd5+a14*0x2614+a13*0x1149+a12*0x218c+a11*0xae5+a10*0x78a+a9*0x62+a8*0x6de+a7*0x238e+a6*0x12db+a5*0x57b+a4*0x19d8+a3*0x233+a2*0xf18+a1*0x774==0xc51ed8)
+s.add(a26*0x1a67+a25*0x2491+a24*0xfc+a23*0x217c+a22*0x925+a21*0x1825+a20*0x1b2+a19*0x1691+a18*0x4f9+a17*0x1ea9+a16*0x151e+a15*0x15d4+a14*0x2f8+a13*0xf5e+a12*0x1ed2+a11*0x1d2a+a10*0xd58+a9*0x14cb+a8*0xe14+a7*0x2383+a6*0xeb0+a5*0xa29+a4*0x1432+a3*0x5f5+a2*0x1e4c+a1*0xa1a==0xabd395)
+s.add(a26*0x9b9+a25*0x1ab0+a24*0x1030+a23*0x269b+a22*0x1cec+a21*0x246a+a20*0x1b04+a19*0x10ed+a18*0x56+a17*0x122a+a16*0x10e0+a15*0x72e+a14*0x16ee+a13*0x204a+a12*0xc6a+a11*0x941+a10*0x2471+a9*0xaea+a8*0x760+a7*0x171c+a6*0x1476+a5*0x364+a4*0x6ae+a3*0xc4+a2*0x1caf+a1*0x2313==0xac8c7f)
+s.add(a26*0x1296+a25*0x2595+a24*0x1c92+a23*0x244f+a22*0x1b10+a21*0x209f+a20*0x263e+a19*0x228a+a18*0x1c67+a17*0x1fcc+a16*0x1533+a15*0x1373+a14*0x102b+a13*0x1a71+a12*0x11aa+a11*0x2565+a10*0xf43+a9*0x24f6+a8*0xc+a7*0xcfe+a6*0xa59+a5*0x10c6+a4*0x24aa+a3*0x1100+a2*0x10cf+a1*0x172e==0xe68ea2)
+s.add(a26*0xf97+a25*0x111c+a24*0x1e86+a23*0xfff+a22*0x2031+a21*0x22fa+a20*0xb11+a19*0xf5b+a18*0xdd5+a17*0x2318+a16*0x1bd4+a15*0x143a+a14*0xc13+a13*0x81c+a12*0x1d62+a11*0x183b+a10*0xaac+a9*0x2368+a8*0xc5c+a7*0x2153+a6*0x2ac+a5*0xa0d+a4*0x1711+a3*0x2082+a2*0x1b1a+a1*0x13ae==0xc2b254)
+s.add(a26*0x176a+a25*0x24bb+a24*0xe59+a23*3+a22*0x2058+a21*0x16c1+a20*0x53a+a19*0x6fe+a18*0x1e7c+a17*0x10c4+a16*0xa7+a15*0x26d6+a14*0xa4e+a13*0xc6d+a12*1099+a11*0x1773+a10*0x5ef+a9*0xf57+a8*0x1b54+a7*0x1148+a6*0x110b+a5*0xba0+a4*0x1136+a3*0x181e+a2*0x24ec+a1*0x17f0==0xa997a7)
+s.add(a26*0x1f45+a25*0x3a+a24*0x1d19+a23*0x1521+a22*0xb76+a21*0x16c3+a20*0x1ac5+a19*0x18bd+a18*0x110f+a17*0xd0f+a16*0x1f49+a15*0x2165+a14*0x1da4+a13*0x53a+a12*0x449+a11*0x6be+a10*0xf83+a9*0xf9+a8*0x186d+a7*0x2354+a6*0x6cb+a5*0x1099+a4*0x24cb+a3*0x1451+a2*0x1ea2+a1*0x2002==0xb7a49e)
+s.add(a26*0x41b+a25*0x17d7+a24*0x22db+a23*0x81d+a22*0xc16+a21*0x2165+a20*0x2387+a19*0x1860+a18*0x110e+a17*0x174e+a16*0x591+a15*0x2598+a14*0x26e0+a13*0x1a3b+a12*0xa8b+a11*0x387+a10*0xea3+a9*0x1a3a+a8*0x1537+a7*0x14c+a6*0x105+a5*0x4a8+a4*0x199f+a3*0x21bf+a2*0x1b90+a1*0x14c7==0xb6a3de)
+if s.check()!=sat:
+    print('no solusion!')
+while s.check()==sat:
+	print(chr(s.model()[a1].as_long()))
+	print(chr(s.model()[a2].as_long()))
+	print(chr(s.model()[a3].as_long()))
+	print(chr(s.model()[a4].as_long()))
+	print(chr(s.model()[a5].as_long()))
+	print(chr(s.model()[a6].as_long()))
+	print(chr(s.model()[a7].as_long()))
+	print(chr(s.model()[a8].as_long()))
+	print(chr(s.model()[a9].as_long()))
+	print(chr(s.model()[a10].as_long()))
+	print(chr(s.model()[a11].as_long()))
+	print(chr(s.model()[a12].as_long()))
+	print(chr(s.model()[a13].as_long()))
+	print(chr(s.model()[a14].as_long()))
+	print(chr(s.model()[a15].as_long()))
+	print(chr(s.model()[a16].as_long()))
+	print(chr(s.model()[a17].as_long()))
+	print(chr(s.model()[a18].as_long()))
+	print(chr(s.model()[a19].as_long()))
+	print(chr(s.model()[a20].as_long()))
+	print(chr(s.model()[a21].as_long()))
+	print(chr(s.model()[a22].as_long()))
+	print(chr(s.model()[a23].as_long()))
+	print(chr(s.model()[a24].as_long()))
+	print(chr(s.model()[a25].as_long()))
+	print(chr(s.model()[a26].as_long()))
+</code></pre>
+<p><img src="https://zyyiszyy.github.io/post-images/1617121217846.png" alt="" loading="lazy"><br>
 运行结果：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121239557.png" alt="" loading="lazy"></p>
 <h1 id="dante">Dante</h1>
@@ -62,16 +323,30 @@
 <img src="https://zyyiszyy.github.io/post-images/1617121447847.png" alt="" loading="lazy"><br>
 打算跳过去这个断点试试，突然想可能这下面就是解密后的，先dump下来，ida打开试试，打开字符串，发现原本不能用的交叉引用可以用了，进入输出提示要动调的函数，flag就在这里面。<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121471745.png" alt="" loading="lazy"><br>
-后来发现这题目其实是有反动调的，可能并不是加了壳，因为一开始ida打开就显示函数，我的x64dbg自带反动调插件ScyllaHide，直接省事了，后面的异或其实正常做是动调过程看出来，我是dump出来用ida静态看出来的。解密脚本比较简单，如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1617121497088.png" alt="" loading="lazy"></p>
+后来发现这题目其实是有反动调的，可能并不是加了壳，因为一开始ida打开就显示函数，我的x64dbg自带反动调插件ScyllaHide，直接省事了，后面的异或其实正常做是动调过程看出来，我是dump出来用ida静态看出来的。解密脚本比较简单，如下：</p>
+<pre><code>a=['27','1A','08','1F','08','11','09','1F','9','3E','19','38','03','05','1C','0F','2E','6F','0A','03','0F','35','03','6A','21','05','12','12','29','3A','03','05']
+print(len(a))
+for i in range(len(a)):
+    a[i]='0x'+a[i]
+    
+for j in a:
+    print(chr(int(j,16)^92),end='')
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://zyyiszyy.github.io/post-images/1617121497088.png" alt="" loading="lazy"></figure>
 <h1 id="pwn3">Pwn3</h1>
 <p>直接用命令执行漏洞，用到了管道符||，如果前面执行出错则执行后面的语句，输入3||cat flag即获得flag。<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121528718.png" alt="" loading="lazy"></p>
 <h1 id="easy_xor">Easy_XOR</h1>
 <p>先base64解密密文：<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121559625.png" alt="" loading="lazy"><br>
-再与BXS*10异或，前面不可打印字符可能网页转码有bug，这里取巧就直接先从后面的解密，加上flag头得到flag。脚本如下：<br>
-<img src="https://zyyiszyy.github.io/post-images/1617121583933.png" alt="" loading="lazy"></p>
+再与BXS*10异或，前面不可打印字符可能网页转码有bug，这里取巧就直接先从后面的解密，加上flag头得到flag。脚本如下：</p>
+<pre><code>a=&quot;#6#+* &lt;0y~;= /6!'&amp;.&quot;
+key='BXS'*9+'B'
+print(len(a))
+for i in range(len(a)):
+    print(chr(ord(a[i])^ord(key[i])),end='')
+</code></pre>
+<figure data-type="image" tabindex="3"><img src="https://zyyiszyy.github.io/post-images/1617121583933.png" alt="" loading="lazy"></figure>
 <h1 id="i-wanna-cumtctf">i wanna CUMTCTF</h1>
 <p>本来想玩一下找找思路，结果直接玩出来的。<br>
 <img src="https://zyyiszyy.github.io/post-images/1617121634610.png" alt="" loading="lazy"></p>
@@ -247,9 +522,9 @@ simplexml_import_dom($dom)  //获取XML文档节点，成功则返回SimpleXMLEl
 <li>对上传的文件进行重命名，如rand(10,99).date(&quot;YmdHis&quot;).&quot;.jpg&quot;。</li>
 </ul>
 <h1 id="关卡1-js检测绕过攻击">关卡1 JS检测绕过攻击</h1>
-<p>这里已提交php文件就提示消息框：<br>
-<img src="https://zyyiszyy.github.io/post-images/1615907146277.png" alt="" loading="lazy"><br>
-判断是前端的验证，首先生成一句话木马文件，改名为webshell.png，然后上传，这时可以通过js验证。同时burpsuite抓包，在burpsuite里改文件后缀，发送文件即上传成功。<br>
+<p>这里已提交php文件就提示消息框：</p>
+<figure data-type="image" tabindex="1"><img src="https://zyyiszyy.github.io/post-images/1615907146277.png" alt="" loading="lazy"></figure>
+<p>判断是前端的验证，首先生成一句话木马文件，改名为webshell.png，然后上传，这时可以通过js验证。同时burpsuite抓包，在burpsuite里改文件后缀，发送文件即上传成功。<br>
 另一种方法：直接禁止JS运行，火狐浏览器地址栏输入about:config，找到javascript.enabled，关闭选项，刷新页面，重新上传文件即可上传成功。</p>
 <h1 id="关卡2-服务端对mime检查">关卡2 服务端对MIME检查</h1>
 <p>查看源代码的判断：<br>
@@ -281,9 +556,9 @@ simplexml_import_dom($dom)  //获取XML文档节点，成功则返回SimpleXMLEl
 <img src="https://zyyiszyy.github.io/post-images/1615911326907.png" alt="" loading="lazy"><br>
 windows特性，会自动去掉后缀名中最后的”.”,所以改名为“shell.php.”。</p>
 <h1 id="关卡9-data绕过">关卡9 ::$DATA绕过</h1>
-<p>观察源代码，没有去除字符串::<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>A</mi><mi>T</mi><mi>A</mi><mi mathvariant="normal">。</mi><mo>!</mo><mo>[</mo><mo>]</mo><mo>(</mo><mi>h</mi><mi>t</mi><mi>t</mi><mi>p</mi><mi>s</mi><mo>:</mo><mi mathvariant="normal">/</mi><mi mathvariant="normal">/</mi><mi>z</mi><mi>y</mi><mi>y</mi><mi>i</mi><mi>s</mi><mi>z</mi><mi>y</mi><mi>y</mi><mi mathvariant="normal">.</mi><mi>g</mi><mi>i</mi><mi>t</mi><mi>h</mi><mi>u</mi><mi>b</mi><mi mathvariant="normal">.</mi><mi>i</mi><mi>o</mi><mi mathvariant="normal">/</mi><mi>p</mi><mi>o</mi><mi>s</mi><mi>t</mi><mo>−</mo><mi>i</mi><mi>m</mi><mi>a</mi><mi>g</mi><mi>e</mi><mi>s</mi><mi mathvariant="normal">/</mi><mn>1615911947145.</mn><mi>p</mi><mi>n</mi><mi>g</mi><mo>)</mo><mi mathvariant="normal">在</mi><mi>p</mi><mi>h</mi><mi>p</mi><mo>+</mo><mi>w</mi><mi>i</mi><mi>n</mi><mi>d</mi><mi>o</mi><mi>w</mi><mi>s</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">情</mi><mi mathvariant="normal">况</mi><mi mathvariant="normal">下</mi><mi mathvariant="normal">：</mi><mi mathvariant="normal">如</mi><mi mathvariant="normal">果</mi><mi mathvariant="normal">文</mi><mi mathvariant="normal">件</mi><mi mathvariant="normal">名</mi><mo>+</mo><mi mathvariant="normal">&quot;</mi><mo>:</mo><mo>:</mo></mrow><annotation encoding="application/x-tex">DATA。
-![](https://zyyiszyy.github.io/post-images/1615911947145.png)
-在php+windows的情况下：如果文件名+&quot;::</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">A</span><span class="mord cjk_fallback">。</span><span class="mclose">!</span><span class="mopen">[</span><span class="mclose">]</span><span class="mopen">(</span><span class="mord mathdefault">h</span><span class="mord mathdefault">t</span><span class="mord mathdefault">t</span><span class="mord mathdefault">p</span><span class="mord mathdefault">s</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">/</span><span class="mord">/</span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault">i</span><span class="mord mathdefault">s</span><span class="mord mathdefault" style="margin-right:0.04398em;">z</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord mathdefault" style="margin-right:0.03588em;">y</span><span class="mord">.</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">i</span><span class="mord mathdefault">t</span><span class="mord mathdefault">h</span><span class="mord mathdefault">u</span><span class="mord mathdefault">b</span><span class="mord">.</span><span class="mord mathdefault">i</span><span class="mord mathdefault">o</span><span class="mord">/</span><span class="mord mathdefault">p</span><span class="mord mathdefault">o</span><span class="mord mathdefault">s</span><span class="mord mathdefault">t</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">i</span><span class="mord mathdefault">m</span><span class="mord mathdefault">a</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mord mathdefault">e</span><span class="mord mathdefault">s</span><span class="mord">/</span><span class="mord">1</span><span class="mord">6</span><span class="mord">1</span><span class="mord">5</span><span class="mord">9</span><span class="mord">1</span><span class="mord">1</span><span class="mord">9</span><span class="mord">4</span><span class="mord">7</span><span class="mord">1</span><span class="mord">4</span><span class="mord">5</span><span class="mord">.</span><span class="mord mathdefault">p</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.03588em;">g</span><span class="mclose">)</span><span class="mord cjk_fallback">在</span><span class="mord mathdefault">p</span><span class="mord mathdefault">h</span><span class="mord mathdefault">p</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">i</span><span class="mord mathdefault">n</span><span class="mord mathdefault">d</span><span class="mord mathdefault">o</span><span class="mord mathdefault" style="margin-right:0.02691em;">w</span><span class="mord mathdefault">s</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">情</span><span class="mord cjk_fallback">况</span><span class="mord cjk_fallback">下</span><span class="mord cjk_fallback">：</span><span class="mord cjk_fallback">如</span><span class="mord cjk_fallback">果</span><span class="mord cjk_fallback">文</span><span class="mord cjk_fallback">件</span><span class="mord cjk_fallback">名</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord">&quot;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mrel">:</span></span></span></span>DATA&quot;会把::<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi><mi>A</mi><mi>T</mi><mi>A</mi><mi mathvariant="normal">之</mi><mi mathvariant="normal">后</mi><mi mathvariant="normal">的</mi><mi mathvariant="normal">数</mi><mi mathvariant="normal">据</mi><mi mathvariant="normal">当</mi><mi mathvariant="normal">成</mi><mi mathvariant="normal">文</mi><mi mathvariant="normal">件</mi><mi mathvariant="normal">流</mi><mi mathvariant="normal">处</mi><mi mathvariant="normal">理</mi><mo separator="true">,</mo><mi mathvariant="normal">不</mi><mi mathvariant="normal">会</mi><mi mathvariant="normal">检</mi><mi mathvariant="normal">测</mi><mi mathvariant="normal">后</mi><mi mathvariant="normal">缀</mi><mi mathvariant="normal">名</mi><mi mathvariant="normal">，</mi><mi mathvariant="normal">保</mi><mi mathvariant="normal">持</mi><mi mathvariant="normal">&quot;</mi><mo>:</mo><mo>:</mo></mrow><annotation encoding="application/x-tex">DATA之后的数据当成文件流处理,不会检测后缀名，保持&quot;::</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mord mathdefault">A</span><span class="mord mathdefault" style="margin-right:0.13889em;">T</span><span class="mord mathdefault">A</span><span class="mord cjk_fallback">之</span><span class="mord cjk_fallback">后</span><span class="mord cjk_fallback">的</span><span class="mord cjk_fallback">数</span><span class="mord cjk_fallback">据</span><span class="mord cjk_fallback">当</span><span class="mord cjk_fallback">成</span><span class="mord cjk_fallback">文</span><span class="mord cjk_fallback">件</span><span class="mord cjk_fallback">流</span><span class="mord cjk_fallback">处</span><span class="mord cjk_fallback">理</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord cjk_fallback">不</span><span class="mord cjk_fallback">会</span><span class="mord cjk_fallback">检</span><span class="mord cjk_fallback">测</span><span class="mord cjk_fallback">后</span><span class="mord cjk_fallback">缀</span><span class="mord cjk_fallback">名</span><span class="mord cjk_fallback">，</span><span class="mord cjk_fallback">保</span><span class="mord cjk_fallback">持</span><span class="mord">&quot;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">:</span></span><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mrel">:</span></span></span></span>DATA&quot;之前的文件名。所以可以借助burpsuite在后缀名加“::$DATA”进行绕过。</p>
+<p>观察源代码，没有去除字符串<code>::$DATA</code><br>
+<img src="https://zyyiszyy.github.io/post-images/1615911947145.png" alt="" loading="lazy"><br>
+在php+windows的情况下：如果文件名+<code>::$DATA</code>会把<code>::$DATA</code>之后的数据当成文件流处理,不会检测后缀名，保持<code>::$DATA</code>之前的文件名。所以可以借助burpsuite在后缀名加<code>::$DATA</code>进行绕过。</p>
 <h1 id="关卡10-点空格点绕过">关卡10 点+空格+点绕过</h1>
 <p>保存文件的时候没有重命名而使用的原始的文件名，源代码如下：<br>
 <img src="https://zyyiszyy.github.io/post-images/1615912732277.png" alt="" loading="lazy"><br>
@@ -706,35 +981,6 @@ sort（a,a+n）;
 <h3 id="栅栏密码传统">栅栏密码（传统）：</h3>
 <pre><code>http://www.atoolbox.net/Tool.php?Id=855
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[CUMTCTF2021寒假赛部分WP]]></title>
-        <id>https://zyyiszyy.github.io/post/cumtctf-han-jia-sai-bu-fen-wp/</id>
-        <link href="https://zyyiszyy.github.io/post/cumtctf-han-jia-sai-bu-fen-wp/">
-        </link>
-        <updated>2021-01-31T12:45:49.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="re1">RE1</h2>
-<p>先根据ida分析逻辑，写出了加密的脚本，下图是加密的逻辑，还不是完全正确，可能还要部位或怎么，但主要逻辑如下，有两层循环每次外层循环，一开始存flag的那块内存就会改变，并且ki改变。外层循环结束得到一个ki，然后存str【ki】，最终比较是否为已知的那串字符串，借此判断flag正误。</p>
-<figure data-type="image" tabindex="1"><img src="https://zyyiszyy.github.io/post-images/1615187267465.png" alt="" loading="lazy"></figure>
-<p>一开始没看出来是base58，硬着头皮逆，一直卡了两三天，因为是左移8位，所以直接flagg【i】*58+ki取低八位就是ascii值，每次确定一个位，先从最后一位开始逆，上一位的ki也是可以求出来。逆脚本中的k一开始以为是多少都不影响结果，因为试了好多次都算出来最后一位是125就是‘}’，但再多算几位就不一样了。最后几乎要放弃这道题的时候试了下如图让每轮初始k=0，结果出来正确结果。可以说在自己都没理解的情况下写出了解题脚本🤣</p>
-<p><img src="https://zyyiszyy.github.io/post-images/1615187280597.png" alt="" loading="lazy"><br>
-<img src="https://zyyiszyy.github.io/post-images/1615187287238.png" alt="" loading="lazy"></p>
-<p>后来得到flag才焕然大悟这是个算法，可能base64的变行，叫做base58，要是能一眼看出，直接就可用在线工具求解。</p>
-<figure data-type="image" tabindex="2"><img src="https://zyyiszyy.github.io/post-images/1615187296228.png" alt="" loading="lazy"></figure>
-<h2 id="re2">RE2</h2>
-<p>先随便输入flag如下，flag头是正确的：</p>
-<figure data-type="image" tabindex="3"><img src="https://zyyiszyy.github.io/post-images/1615187359242.png" alt="" loading="lazy"></figure>
-<p>动态调试先看出32位flag：</p>
-<figure data-type="image" tabindex="4"><img src="https://zyyiszyy.github.io/post-images/1615187362936.png" alt="" loading="lazy"></figure>
-<p>走到如图位置发现是一个判断，因为我输入的flag开头CUMTCTF{是正确的，先出现几次相等，未发生跳转，后来出错，跳转输出提示错误。</p>
-<figure data-type="image" tabindex="5"><img src="https://zyyiszyy.github.io/post-images/1615187390149.png" alt="" loading="lazy"></figure>
-<p>这是一开始CUMTCTF{的判断：</p>
-<figure data-type="image" tabindex="6"><img src="https://zyyiszyy.github.io/post-images/1615187393682.png" alt="" loading="lazy"></figure>
-<p>这里出现错误，前面发现C和T出现两次的字母对应的数字也是一样的，由此推测应该是一个字符能对应出一个数字，是个单表查表操作：</p>
-<figure data-type="image" tabindex="7"><img src="https://zyyiszyy.github.io/post-images/1615187487734.png" alt="" loading="lazy"></figure>
-<p>将下面的跳转语句nop掉，方便F9快速观察做表，然后依次输入可见字符列表，查表得到flag。</p>
-<figure data-type="image" tabindex="8"><img src="https://zyyiszyy.github.io/post-images/1615187491921.png" alt="" loading="lazy"></figure>
 ]]></content>
     </entry>
 </feed>

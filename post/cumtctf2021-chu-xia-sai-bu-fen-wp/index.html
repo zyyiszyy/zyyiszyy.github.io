@@ -1,0 +1,326 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CUMTCTF2021初夏赛部分WP | zyyire</title>
+<link rel="shortcut icon" href="https://zyyiszyy.github.io/favicon.ico?v=1623167437521">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://zyyiszyy.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="CUMTCTF2021初夏赛部分WP | zyyire - Atom Feed" href="https://zyyiszyy.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="这次re题目做了6道，pwn做了3道。马上大四了，这算是最后一次打校赛了，遗憾的是最后pwn能力也没提上来，以前一直想着能把re和pwn都打的差不多，独担队伍大旗，怪我一直搁置pwn了，导致我二进制就是个半吊子，哪个二进制手不会做点pwn题..." />
+    <meta name="keywords" content="WriteUp,CTF" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://zyyiszyy.github.io">
+  <img class="avatar" src="https://zyyiszyy.github.io/images/avatar.png?v=1623167437521" alt="">
+  </a>
+  <h1 class="site-title">
+    zyyire
+  </h1>
+  <p class="site-description">
+    破碎吧现实，崩裂吧精神，放逐这个世界！
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+      
+        <a href="/1.html" class="menu">
+          CSRF测试
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              CUMTCTF2021初夏赛部分WP
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-06-08
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+                <a href="https://zyyiszyy.github.io/tag/pOo1m5_Uo/" class="post-tag">
+                  # WriteUp
+                </a>
+              
+                <a href="https://zyyiszyy.github.io/tag/lrSFwTVcv/" class="post-tag">
+                  # CTF
+                </a>
+              
+            </div>
+            
+              <img class="post-feature-image" src="https://zyyiszyy.github.io/post-images/cumtctf2021-chu-xia-sai-bu-fen-wp.jfif" alt="">
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>这次re题目做了6道，pwn做了3道。马上大四了，这算是最后一次打校赛了，遗憾的是最后pwn能力也没提上来，以前一直想着能把re和pwn都打的差不多，独担队伍大旗，怪我一直搁置pwn了，导致我二进制就是个半吊子，哪个二进制手不会做点pwn题呢。不过就算没机会打校赛了，我也下定决心搞pwn了，从0day安全看起，加油！<br>
+<img src="https://zyyiszyy.github.io/post-images/1623167429152.png" alt="" loading="lazy"></p>
+<h1 id="图标好奇怪">图标好奇怪</h1>
+<p>看图标是python编译出来的exe文件，这道题考察的是pythonexe反编译拿到源代码，先用pyinstxtractor反编译文件，拿到一个文件夹，同时发现编译类型是python3.7版本的，接下来要用到：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165169112.png" alt="" loading="lazy"><br>
+从文件夹中找到111文件，改后缀pyc，这个其实就是python字节码文件，用hex工具打开：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165202162.png" alt="" loading="lazy"><br>
+发现开头是E3 00，这是因为这样转换会丢失python magic numbers，我之前总结了几个常用版本的魔法数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165237433.png" alt="" loading="lazy"><br>
+这次用3.7的，加上之后如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165247133.png" alt="" loading="lazy"><br>
+然后用uncompyle6反编译成源码，就会编译成功，查看源码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165286384.png" alt="" loading="lazy"><br>
+倒不是很难，就是先判断异或128，127后这些字符的取值范围，在写反向脚本时添加一些条件判断即可，这里我为了节省时间，一开始大致判断范围，发现有一些字符乱码或明显不对我就单独加对应的条件：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165339369.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165366915.png" alt="" loading="lazy"></p>
+<h1 id="有些奇怪的exe">有些奇怪的exe</h1>
+<p>先查看文件类型，有壳的脱壳，然后对应ida打开：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165409139.png" alt="" loading="lazy"><br>
+这个主要就是逆算法，没什么拐弯的，前面for是大小写交换，非字母不变，下面就是涉及一个中间变量，我这里直接爆破的，节约思考时间，直接上脚本：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165419515.png" alt="" loading="lazy"></p>
+<h1 id="ezcreak">ezCreak</h1>
+<p>先运行一下查看程序功能：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165470380.png" alt="" loading="lazy"><br>
+输入flag，错误直接退出，没有错误提示，暂时不知道有无正确提示。直接ida32打开什么也看不出来，字符串也没有有用信息：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165478656.png" alt="" loading="lazy"><br>
+怀疑加壳或者某种保护，可能运行时自解密，用od打开，查看字符串，发现有信息，应该是正确提示：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165540437.png" alt="" loading="lazy"><br>
+f9运行一下试试，发现停在一个地方程序中断，怀疑这里就是解密后的程序：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165546027.png" alt="" loading="lazy"><br>
+dump下来，用ida分析：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165576052.png" alt="" loading="lazy"><br>
+找到如下关键函数，主要逻辑应该是在do循环那里，有一个byte数组，但是静态分析找不到数组内容：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165581753.png" alt="" loading="lazy"><br>
+再次用x32dbg打开，输入假flag后在图示下断点：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165620233.png" alt="" loading="lazy"><br>
+看寄存器内容，找到[ecx+eax]内存的值，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165632339.png" alt="" loading="lazy"><br>
+接下来就可以写脚本了，注意的是下面是小端序记法，需要改一下顺序：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165662068.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1623165676593.png" alt="" loading="lazy"></p>
+<h1 id="ezmath">ezMath</h1>
+<p>ida打开找有用信息，主要在两个函数里：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165774753.png" alt="" loading="lazy"><br>
+分别打开对应函数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165785324.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1623165808859.png" alt="" loading="lazy"><br>
+有点绕，主要得看清判断界限，提前写清范围就不太容易搞混了，总结得到的信息如图：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165827130.png" alt="" loading="lazy"><br>
+自己做卡了好久，最终由一个队友想到的杨辉三角形，太久没接触都忘了，这道题简单难度，如果看出来了很容易，看不出来就难办了......<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165923924.png" alt="" loading="lazy"><br>
+<img src="https://zyyiszyy.github.io/post-images/1623165943775.png" alt="" loading="lazy"></p>
+<h1 id="ezmaze">ezMaze</h1>
+<p>先运行一下看下程序什么样子：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165973693.png" alt="" loading="lazy"><br>
+正如名字迷宫，ida打开，查看字符串：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623165984652.png" alt="" loading="lazy"><br>
+有些乱码，并且有些语句反编译错误，我们尽可能分析，上面一大堆函数我们猜测是构建迷宫：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166010374.png" alt="" loading="lazy"><br>
+静态分析不行就动态分析，用x64dbg打开，查看生成迷宫代码：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166022335.png" alt="" loading="lazy"><br>
+验证了我们的猜想，发现自动注释有很多o0，但这里不能得到我们的迷宫，它一定生成了迷宫但是放在了一个地方存储，我们在栈里找，很容易找到迷宫：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166050676.png" alt="" loading="lazy"><br>
+我们将其导出来，放在文本文件里方便分析，要注意的是，因为生成迷宫代码运行了14次，所以迷宫很可能是14行，稍加整理，迷宫如下：</p>
+<pre><code>\#ooo000ooo0000
+000ooooo000000
+000o0000000000
+000o0000000000
+000ooooooo0000
+o00000000o0000
+o00000000o0000
+oooooooooo0000
+00000000o00o00
+00000000o00o00
+0000ooooo00o00
+0000o000000o00
+0000oooooooo00
+00000000000000
+</code></pre>
+<p>又从x64dbg中看到下图，发现迷宫是wsad走的：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166209037.png" alt="" loading="lazy"><br>
+又如图提示加上cumtctf{}，所以可以得到flag。<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166226433.png" alt="" loading="lazy"></p>
+<h1 id="神奇的编码">神奇的编码</h1>
+<p>先翻译字节码，写出正向算法的脚本，如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166260968.png" alt="" loading="lazy"><br>
+流程大概是先输入flag，再按位和255异或，然后以字节形式排开循环左移一个16进制位，再按字节分开重新组合成字节数组，base64加密和已知列表比较，若相同就是真的flag，否则反之，解密的话就按顺序逆过来，求逆简单但难在编码转换上，一个utf-8编码卡了我一天多的时间：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166266839.png" alt="" loading="lazy"><br>
+如图所示，需要b64解码之后再utf-8解码为字符串，然后再继续解密流程，否则出来的并非真的flag，而是大多数是两位代表一位flag的形式，就是因为一开始没有utf-8解码，完整解密脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166294221.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166307725.png" alt="" loading="lazy"></p>
+<h1 id="pwn1">pwn1</h1>
+<p>ida打开，逻辑如下，先输入个字符，没判断输入长度，然后下面有个v5决定出不出shell：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166344512.png" alt="" loading="lazy"><br>
+查看栈分布，只需要覆盖v5，使之变成2021：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166353220.png" alt="" loading="lazy"><br>
+脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166472711.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166484785.png" alt="" loading="lazy"></p>
+<h1 id="pwn2">pwn2</h1>
+<p>ida打开，发现 Fmtstr字符串，这是个格式化字符串构造payload的工具：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166522535.png" alt="" loading="lazy"><br>
+用法如下：<br>
+fmtstrpayload(offset, writes, numbwritten=0, writesize='byte')<br>
+第一个参数表示格式化字符串的偏移；<br>
+第二个参数表示需要利用%n写入的数据，采用字典形式，写成{GOT: systemAddress}。<br>
+第三个参数表示已经输出的字符个数，这里没有，为0，采用默认值即可；<br>
+第四个参数表示写入方式，是按字节（byte）、按双字节（short）还是按四字节（int），对应着hhn、hn和n，默认值是byte，即按hhn写。<br>
+先输入：aaaa%p.%p.%p.%p.%p.%p.%p.%p.%p.%p泄露格式化字符串的偏移：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166537064.png" alt="" loading="lazy"><br>
+得到偏移是5，找get函数在got plt的位置：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166560344.png" alt="" loading="lazy"><br>
+/bin/shell的地址如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166569274.png" alt="" loading="lazy"><br>
+我们的思路是第一个get输入payload，将binshell地址替换到getGOT的地址，然后二次调用get就是执行我们的binshell，写脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166595038.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166600184.png" alt="" loading="lazy"></p>
+<h1 id="pwn3">pwn3</h1>
+<p>查看程序保护情况：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166636435.png" alt="" loading="lazy"><br>
+ida打开发现如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166641273.png" alt="" loading="lazy"><br>
+再看一下generate函数：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166662865.png" alt="" loading="lazy"><br>
+这个先计算passwd，赋值为一个随机数，再在主函数用它和输入作比较，相等就输出flag。这里重点在于linux下的strcmp实现方式，查了下strcmp glibc里的实现：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166671098.png" alt="" loading="lazy"><br>
+这里retuen的是c1-c2，我们程序中输入为c1，随机字符串为c2，所以strcmp里先进入循环判断c1是否为空，是的话就返回c1-c2，c2后面的字节就截断不判断了，所以值判断了一个字节，我们只需要输入空字节，1/256概率等随机第一个字节也为空字节就可以输出flag了。<br>
+脚本如下：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166687983.png" alt="" loading="lazy"><br>
+运行结果：<br>
+<img src="https://zyyiszyy.github.io/post-images/1623166705585.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%9B%BE%E6%A0%87%E5%A5%BD%E5%A5%87%E6%80%AA">图标好奇怪</a></li>
+<li><a href="#%E6%9C%89%E4%BA%9B%E5%A5%87%E6%80%AA%E7%9A%84exe">有些奇怪的exe</a></li>
+<li><a href="#ezcreak">ezCreak</a></li>
+<li><a href="#ezmath">ezMath</a></li>
+<li><a href="#ezmaze">ezMaze</a></li>
+<li><a href="#%E7%A5%9E%E5%A5%87%E7%9A%84%E7%BC%96%E7%A0%81">神奇的编码</a></li>
+<li><a href="#pwn1">pwn1</a></li>
+<li><a href="#pwn2">pwn2</a></li>
+<li><a href="#pwn3">pwn3</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://zyyiszyy.github.io/post/cumtctf2021-xin-chun-sai-bu-fen-wp/">
+              <h3 class="post-title">
+                CUMTCTF2021新春赛部分WP
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://zyyiszyy.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
